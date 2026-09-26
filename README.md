@@ -23,16 +23,17 @@ send your earnings, and then shows you, live, what your card is making in real m
 
 ## Why miners choose GlintMiner
 
-| Measured, stock clocks | **GlintMiner** |
-|---|:-:|
-| RTX 4090 @ 435 W | **304 TH/s** |
-| RTX 4090 @ 300 W | **258 TH/s** (0.86 TH/s per watt) |
-| RTX 5060 | **~70 TH/s** |
-| Developer fee | **1%** |
-| Pool fee, Pearl payouts (HeroMiners) | **0%** |
-| Getting started | **paste your wallet** |
+| RTX 4090, stock clocks | **GlintMiner** | Nearest competitor |
+|---|:-:|:-:|
+| Hashrate @ 435 W | **304 TH/s** | 302 TH/s |
+| Hashrate @ 300 W | **258 TH/s** | 235 TH/s |
+| Efficiency @ 300 W | **0.86 TH/s per watt** | 0.78 |
+| Fees, all-in (Pearl payouts) | **1%** (0% pool fee on HeroMiners) | 1–3% (0% miner fee, 1–3% pool fee) |
+| Getting started | **paste your wallet** | edit a .bat file |
 
-<sub>Measured September 2026. Results vary by card, driver and settings.</sub>
+<sub>Measured September 2026 on one RTX 4090, both miners on the same card the same day. "Nearest competitor" is the
+fastest other Pearl miner we tested; it has no miner fee but mines on its own pool, which charges one. Results vary
+by card, driver and settings.</sub>
 
 - **More Pearl per watt.** Full speed at full power, and it keeps more of that speed when you limit the card's power
   for heat, noise or electricity cost.
@@ -58,10 +59,12 @@ Never mined before? This takes a few minutes and needs no technical knowledge.
 2. **A wallet address**, which is where your earnings are sent. You have two choices:
    - **A Pearl address** (it starts with `prl1`). You are paid in PRL, Pearl's own coin.
    - **An address for a coin you already use**, such as Bitcoin, Litecoin, Dogecoin or Solana. Your crypto exchange
-     or wallet app shows it as your "receive" or "deposit" address. GlintMiner mines Pearl and you are paid in that coin.
+     or wallet app shows it as your "receive" or "deposit" address. GlintMiner mines Pearl, and unMineable converts it
+     and pays you in that coin.
 
-   Not sure which to choose? If you already hold Bitcoin or another popular coin, use that address. It is the
-   quickest way to start.
+   Not sure which to choose? A **Pearl address** avoids the conversion and its fee. You can get one free from the
+   Pearl wallet app (open **Receive**). If you'd rather be paid in a coin you already hold, use that address:
+   unMineable converts for a 1% fee, and GlintMiner shows unMineable's own estimate of what you'll receive.
 
 ### Three steps
 
@@ -127,6 +130,21 @@ count. The dashboard shows your balance and every payment made to you.
 - **Stock clocks, always.** GlintMiner never overclocks and never touches clocks, voltages or fans. The only setting
   it ever changes is the power limit, and only downward: the temperature guard eases a hot card down, and optional
   profit mode picks the most profitable limit. Your card's own limit is put back when GlintMiner closes.
+
+## Several GPUs and several rigs
+
+- **One PC, several cards.** GlintMiner uses every supported NVIDIA card in the PC automatically, and you can mix
+  models (say, a 3080 and a 4070). Each card gets its own line in the live view and the dashboard, with its own
+  hashrate, temperature, power and shares. The cards share one pool connection, so the pool sees one worker per PC.
+- **Choose which cards mine.** `--devices 0,2` uses only those cards (numbered as in `glint --gpu-info`).
+- **A card that fails doesn't stop the rest.** If one card can't start, the others mine on and the live view says
+  why. If a card stops responding, GlintMiner restarts itself and carries on.
+- **Every card is looked after on its own.** The temperature guard watches each card separately.
+- **Several PCs.** Run GlintMiner on each one with its own worker name (`--worker rig2`), all to the same wallet.
+  Your pool's stats page lists each PC separately.
+- **Memory.** Allow about 1.5 GB of system memory per GPU.
+- **Headless rigs.** Use the HiveOS, MMPOS or Docker packages, or the systemd service (below). Add
+  `--api-bind 0.0.0.0` to open the dashboard from another device on your network.
 
 ## For rig owners and power users
 

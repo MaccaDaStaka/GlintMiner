@@ -2,6 +2,14 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.1.1] - 2026-09-26
+
+### Fixed
+- Earnings for a wallet paid in another coin (through unMineable) now use unMineable's own estimate: its Pearl yield,
+  its 1% fee and its prices, shown in the coin you're paid in (for example BTC/day). Before, they used the direct
+  Pearl rate, which unMineable doesn't always pay.
+- The setup explains what the conversion means when you enter a non-Pearl address.
+
 ## [1.1.0] - 2026-09-26
 
 ### Added
