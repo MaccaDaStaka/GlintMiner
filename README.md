@@ -23,21 +23,19 @@ send your earnings, and then shows you, live, what your card is making in real m
 
 ## Why miners choose GlintMiner
 
-| | **GlintMiner** | WildRig | SRBMiner | RGMiner | BzMiner |
-|---|:-:|:-:|:-:|:-:|:-:|
-| Developer fee | **1%** | 0%\* | 2% | 2% | 2% |
-| Pool fee, Pearl payouts | **0%** (HeroMiners) | 1–3%\* (Pearlhash) | your pool | your pool | your pool |
-| RTX 4090 @ 435 W | **304 TH/s** | 302 | 301 | ~300 | 294 |
-| RTX 4090 @ 300 W | **258 TH/s** | 235 | | | |
-| Efficiency @ 300 W | **0.86 TH/s per W** | 0.78 | | | |
-| Getting started | **paste your wallet** | edit a .bat | edit a .bat | edit a .bat | edit a config |
+| Measured, stock clocks | **GlintMiner** |
+|---|:-:|
+| RTX 4090 @ 435 W | **304 TH/s** |
+| RTX 4090 @ 300 W | **258 TH/s** (0.86 TH/s per watt) |
+| RTX 5060 | **~70 TH/s** |
+| Developer fee | **1%** |
+| Pool fee, Pearl payouts (HeroMiners) | **0%** |
+| Getting started | **paste your wallet** |
 
-<sub>Our measurements, September 2026: one RTX 4090 at stock clocks, WildRig 0.51.3, SRBMiner 3.6.9, RGMiner 1.0.9b,
-BzMiner v100.36. Blank = not measured. \*WildRig's 0% fee applies on the Pearlhash pool, which charges its own pool fee
-(1% on its site, 3% on independent trackers). Results vary by card, driver and settings.</sub>
+<sub>Measured September 2026. Results vary by card, driver and settings.</sub>
 
-- **More Pearl per watt.** Level with the fastest miners at full power, and around 10% ahead when the card is
-  power-limited for heat, noise or electricity cost.
+- **More Pearl per watt.** Full speed at full power, and it keeps more of that speed when you limit the card's power
+  for heat, noise or electricity cost.
 - **1% all-in for Pearl payouts.** Our 1% fee, and HeroMiners charges no pool fee. You can watch the fee being taken.
 - **Paid in the coin you want.** Mine to a Pearl wallet, or to Bitcoin, Litecoin, Dogecoin, Solana and around 25 more.
 - **Know what you earn.** Daily earnings in USD, EUR, GBP or your own currency, and profit after power if you enter
@@ -77,6 +75,9 @@ Never mined before? This takes a few minutes and needs no technical knowledge.
 
 **2. Unzip and run.** Unzip it to a folder of your choice, for example `C:\GlintMiner`, and double-click
 `glint.exe`. On Linux, run `./glint`.
+
+> The first time, Windows may show **"Windows protected your PC"**. It does this for new programs that haven't been
+> downloaded widely yet. Click **More info**, then **Run anyway**. You only need to do this once.
 
 **3. Answer the setup.**
 
@@ -123,8 +124,9 @@ count. The dashboard shows your balance and every payment made to you.
   itself.
 - **Your settings stay with you.** Everything is saved in `glint.json` next to the program, in plain text you can
   read.
-- **Stock GPU settings.** GlintMiner never overclocks your card. Profit mode, which is optional, only tries lower
-  power limits and picks the one that earns the most.
+- **Stock clocks, always.** GlintMiner never overclocks and never touches clocks, voltages or fans. The only setting
+  it ever changes is the power limit, and only downward: the temperature guard eases a hot card down, and optional
+  profit mode picks the most profitable limit. Your card's own limit is put back when GlintMiner closes.
 
 ## For rig owners and power users
 
@@ -177,8 +179,9 @@ checksum with the one on the Releases page. Only download GlintMiner from this r
 ## FAQ
 
 **Is it safe for my graphics card?**
-GlintMiner runs your card at its standard settings and never overclocks it. It watches temperatures continuously,
-eases the power down if a card runs hot, and pauses a card that gets close to its limit until it cools.
+GlintMiner never overclocks and never changes clocks or voltages. It watches temperatures continuously, eases the
+power limit down if a card runs hot (this needs GlintMiner run as administrator), and pauses a card that gets close to
+its limit until it cools. Your original power limit is restored when you close it.
 
 **Can I use my PC while mining?**
 Yes, though games and video editing will feel slower while it runs. Close GlintMiner (Ctrl+C or close the window)

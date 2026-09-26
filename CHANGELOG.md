@@ -2,9 +2,11 @@
 
 All notable changes to GlintMiner are listed here.
 
-## [Unreleased]
+## [1.1.0] - 2026-09-26
 
 ### Added
+- Opens the dashboard in your browser when GlintMiner starts, if you want it to: asked once, and changeable in
+  Settings or with `--open-dashboard` / `--no-open-dashboard`.
 - Web dashboard with Home, Earnings, Rigs and Settings pages, plus hashrate, temperature and power history kept for 90 days.
 - Wallet balance and payment history, fetched from your pool.
 - Thermal guard: power is eased down on a hot card, and a card near its temperature limit pauses until it cools.
@@ -14,6 +16,8 @@ All notable changes to GlintMiner are listed here.
 ### Fixed
 - The live console view now works in older Windows consoles, not only Windows Terminal.
 - Saving settings from the dashboard no longer stores one-off command-line options.
+- Power limits lowered by the temperature guard or profit mode are put back when GlintMiner closes (Ctrl+C, closing
+  the window, or stopping the service).
 
 ## [1.0.0] - 2026-09-25
 
