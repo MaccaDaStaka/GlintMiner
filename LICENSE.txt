@@ -1,0 +1,11 @@
+GlintMiner licence
+
+GlintMiner is free to use, for personal and commercial mining alike.
+
+You may redistribute the official release archives unmodified, with this notice and THIRD_PARTY_NOTICES.txt.
+You may not modify, reverse engineer, or redistribute modified copies of the binaries.
+
+The software is provided "as is", without warranty of any kind. You are responsible for your hardware, your
+electricity, and your compliance with local rules. Mining changes over time; check the Releases page for updates.
+
+Open-source components and their licences are listed in THIRD_PARTY_NOTICES.txt.

@@ -1,0 +1,11 @@
+# Release binaries are attached to GitHub Releases, not committed.
+*.exe
+*.zip
+*.tar.gz
+glint
+!glint.service
+glint.json
+glint.log
+*.log
+glint-history.jsonl
+glint-benchmarks.json

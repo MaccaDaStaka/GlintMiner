@@ -1,0 +1,14 @@
+name: Feature request
+description: Suggest an idea for GlintMiner
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like GlintMiner to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: How would it help you?

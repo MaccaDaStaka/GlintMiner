@@ -1,0 +1,46 @@
+name: Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report this. English, Russian and Chinese are all fine.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: GlintMiner version
+      placeholder: e.g. 1.1.0
+    validations:
+      required: true
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU(s) and NVIDIA driver version
+      placeholder: e.g. RTX 4070, driver 571.96
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows 11, Windows 10, Linux, HiveOS, MMPOS, Docker, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: selftest
+    attributes:
+      label: Output of `glint --self-test`
+      render: text
+  - type: textarea
+    id: log
+    attributes:
+      label: Relevant lines from glint.log
+      description: Please remove your wallet address if you'd rather not share it.
+      render: text

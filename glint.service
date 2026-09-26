@@ -1,0 +1,15 @@
+# systemd unit for a Linux rig: copy to /etc/systemd/system/glint.service, edit the wallet, then
+#   systemctl enable --now glint
+[Unit]
+Description=GlintMiner (Pearl GPU miner)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/opt/glint/glint --plain --wallet prl1YOURADDRESS --worker rig1
+WorkingDirectory=/opt/glint
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
