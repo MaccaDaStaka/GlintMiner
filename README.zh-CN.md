@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ 下载 GlintMiner 1.2.0](../../releases/latest)
+### [⬇ 下载 GlintMiner 1.2.1](../../releases/latest)
 Windows · Linux · HiveOS · 免费使用，开发者抽水 1%
 
 [English](README.md) · [Русский](README.ru.md) · **简体中文**

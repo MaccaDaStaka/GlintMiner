@@ -2,6 +2,13 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.1] - 2026-09-27
+
+### Changed
+- Auto-tune without administrator rights now says so within seconds, instead of after measuring stock for three
+  minutes, and tells you what to do: close GlintMiner and start it again with right-click, Run as administrator (on
+  Linux, with sudo). The card keeps mining at stock until then.
+
 ## [1.2.0] - 2026-09-27
 
 ### Added
