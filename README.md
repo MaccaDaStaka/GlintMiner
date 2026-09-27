@@ -4,14 +4,19 @@
 
 ### Turn your NVIDIA graphics card into a Pearl miner, in about a minute.
 
-**Paste your wallet. Press Enter. Start earning.**
+**Choose how you're paid. Paste your address. Start earning.**
 
 ![Dev fee 1%](https://img.shields.io/badge/dev%20fee-1%25-2ea44f)
 ![NVIDIA RTX 30 | 40 | 50](https://img.shields.io/badge/NVIDIA-RTX%2030%20%7C%2040%20%7C%2050-76b900)
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
+### [⬇ Download GlintMiner 1.2.0](../../releases/latest)
+Windows · Linux · HiveOS · free to use, 1% dev fee
+
 **English** · [Русский](README.ru.md) · [简体中文](README.zh-CN.md)
+
+<img src="images/dashboard-desktop.jpg" width="860" alt="The GlintMiner dashboard: profit per day, hashrate, cards, shares and pool at a glance">
 
 </div>
 
@@ -20,6 +25,10 @@
 GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pearl out of every watt, and to be the
 easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
 and where to send it, and then shows you, live, what your card is making in real money.
+
+**New in 1.2:** a redesigned dashboard for phone and desktop, in English, Russian and Chinese · optional **auto-tune**
+(on our RTX 4090: **+6% hashrate**, or stock speed on **24% less power**) · choose at setup to be paid in Pearl,
+Bitcoin/USDT/USDC through Kryptex, or another coin.
 
 ## Why miners choose GlintMiner
 
@@ -35,6 +44,17 @@ and where to send it, and then shows you, live, what your card is making in real
 fastest other Pearl miner we tested; it has no miner fee but mines on its own pool, which charges one. Results vary
 by card, driver and settings.</sub>
 
+**With auto-tune (optional).** Let GlintMiner find the best stable setting for your card:
+
+| RTX 4090 | Hashrate | Power | TH/s per watt |
+|---|:-:|:-:|:-:|
+| Stock | 308 TH/s | 445 W | 0.69 |
+| **Auto-tune: Speed** | **328 TH/s** (+6%) | 414 W | 0.79 |
+| **Auto-tune: Efficiency** | 307 TH/s | **337 W** (−24%) | **0.91** |
+
+<sub>GlintMiner 1.2.0 mining live on HeroMiners, September 2026, one RTX 4090. Every chip is a little different, so
+your card's result will be too.</sub>
+
 - **More Pearl per watt.** Full speed at full power, and it keeps more of that speed when you limit the card's power
   for heat, noise or electricity cost.
 - **1% all-in for Pearl payouts.** Our 1% fee, and HeroMiners charges no pool fee. You can watch the fee being taken.
@@ -43,8 +63,17 @@ by card, driver and settings.</sub>
   your electricity price.
 - **Looks after your hardware.** Every card's temperature is watched. A card that runs hot has its power eased
   down, and one near its limit pauses until it cools.
+- **Get more from your card, if you want it.** Optional [auto-tune](#auto-tune-optional) finds your card's best
+  stable setting while it mines: more hashrate, or the same hashrate on much less power.
 - **Set it and forget it.** Watchdog, automatic pool failover, encrypted (TLS) pool connections, and plain-language
   messages when something needs your attention.
+
+<p align="center">
+  <img src="images/phone-home.jpg" width="260" alt="The dashboard on a phone: profit per day, hashrate, power and shares">
+  &nbsp;&nbsp;
+  <img src="images/phone-tuned.jpg" width="260" alt="A card after auto-tune: +6.3% hashrate against stock, with every result checked">
+</p>
+<p align="center"><sub>The dashboard on a phone: your earnings at a glance, and a card after auto-tune.</sub></p>
 
 ---
 
@@ -75,7 +104,7 @@ Never mined before? This takes a few minutes and needs no technical knowledge.
 
 ### Three steps
 
-**1. Download.** Open the [Releases](../../releases) page and download the file for your computer:
+**1. Download.** Open the [latest release](../../releases/latest) and download the file for your computer:
 
 | Your computer | Download |
 |---|---|
@@ -157,7 +186,8 @@ count. The dashboard shows your balance and every payment made to you.
   Your pool's stats page lists each PC separately.
 - **Memory.** Allow about 1.5 GB of system memory per GPU.
 - **Headless rigs.** Use the HiveOS, MMPOS or Docker packages, or the systemd service (below). Add
-  `--api-bind 0.0.0.0` to open the dashboard from another device on your network.
+  `--api-bind 0.0.0.0` to open the dashboard from another device on your network. From there it's view-only; add
+  `--api-allow-remote-control` too if you want to change settings from those devices.
 
 ## Auto-tune (optional)
 
@@ -202,7 +232,8 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 | `--profit-mode` | Find the most profitable power limit (run as administrator) |
 | `--tune MODE` | Auto-tune: `speed`, `efficiency`, `profit` or `off` (run as administrator; add `--confirm-tuning` the first time) |
 | `--retune` | Forget the saved tune and search again |
-| `--api-bind 0.0.0.0` | View the dashboard from other devices on your network (view-only; add `--api-allow-remote-control` to allow changes from them) |
+| `--api-bind 0.0.0.0` | View the dashboard from other devices on your network (view-only) |
+| `--api-allow-remote-control` | Also allow changes from those devices (only on a network you trust) |
 | `--telegram-token`, `--telegram-chat` | Get alerts on Telegram |
 | `--plain` | Plain log lines, for services and rig operating systems |
 | `--save` | Save these options to `glint.json` |
@@ -232,6 +263,8 @@ checksum with the one on the Releases page. Only download GlintMiner from this r
 - Windows 10/11 64-bit, or Linux x86-64 (glibc 2.17+)
 - About 1.5 GB of system memory per GPU
 - No CUDA toolkit or other software to install
+- For auto-tune: administrator (Windows) or root (Linux) rights and a recent NVIDIA driver; without them GlintMiner
+  simply mines at stock settings
 
 ## FAQ
 

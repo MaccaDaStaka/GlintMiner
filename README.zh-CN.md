@@ -4,14 +4,19 @@
 
 ### 大约一分钟，让你的 NVIDIA 显卡开始挖 Pearl。
 
-**粘贴钱包地址，按回车，开始赚钱。**
+**选择收款方式，粘贴地址，开始赚钱。**
 
 ![Dev fee 1%](https://img.shields.io/badge/dev%20fee-1%25-2ea44f)
 ![NVIDIA RTX 30 | 40 | 50](https://img.shields.io/badge/NVIDIA-RTX%2030%20%7C%2040%20%7C%2050-76b900)
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
+### [⬇ 下载 GlintMiner 1.2.0](../../releases/latest)
+Windows · Linux · HiveOS · 免费使用，开发者抽水 1%
+
 [English](README.md) · [Русский](README.ru.md) · **简体中文**
+
+<img src="images/dashboard-desktop.jpg" width="860" alt="GlintMiner 面板：每日利润、算力、显卡、份额和矿池一目了然">
 
 </div>
 
@@ -19,6 +24,8 @@
 
 GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。它的目标是让每一瓦电挖出更多 Pearl，同时也是上手最简单的：
 不用改配置文件，不用写 bat 脚本，也不用学命令行。它会问你想用什么方式收款、收益发到哪里，然后实时显示你的显卡按法币计算能赚多少。
+
+**1.2 新功能：** 全新面板，手机和电脑都好用，支持英文、俄文和中文 · 可选的**自动调校**（在我们的 RTX 4090 上：**算力 +6%**，或保持出厂算力的同时**功耗降低 24%**）· 设置时可选择用 Pearl、通过 Kryptex 收 Bitcoin/USDT/USDC，或其他币种收款。
 
 ## 为什么选择 GlintMiner
 
@@ -32,12 +39,30 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 
 <sub>测试于 2026 年 9 月：单张 RTX 4090，两款软件在同一张卡、同一天测试。“最接近的竞品”指我们测试过的其他 Pearl 挖矿软件中最快的一款；它不收软件抽水，但只能在自家矿池挖矿，而该矿池收费。实际结果因显卡、驱动和设置而异。</sub>
 
+**开启自动调校（可选）。** 让 GlintMiner 为你的显卡找到最佳稳定设置：
+
+| RTX 4090 | 算力 | 功耗 | 每瓦 TH/s |
+|---|:-:|:-:|:-:|
+| 出厂 | 308 TH/s | 445 W | 0.69 |
+| **自动调校：速度** | **328 TH/s**（+6%） | 414 W | 0.79 |
+| **自动调校：能效** | 307 TH/s | **337 W**（−24%） | **0.91** |
+
+<sub>GlintMiner 1.2.0 在 HeroMiners 实际挖矿，2026 年 9 月，单张 RTX 4090。每颗芯片都略有不同，你的显卡结果也会不同。</sub>
+
 - **每瓦挖得更多。** 满功耗时全速运行；为了温度、噪音或电费限制功耗时，GlintMiner 能保留更多算力。
 - **PRL 结算总费用仅 1%。** 我们抽水 1%，HeroMiners 不收矿池费。抽水过程全程可见。
 - **想要什么币就付什么币。** 可以直接挖到 Pearl 钱包，也可以用 Bitcoin、Litecoin、Dogecoin、Solana 等约 25 种币结算。
 - **收益一目了然。** 以 USD、EUR、CNY 或你自己的货币显示每日收益；填入电价后还能显示扣除电费后的利润。
 - **保护你的硬件。** 每张显卡的温度都受到监控：温度偏高时自动降低功耗，接近极限时暂停该卡，冷却后再继续。
+- **想要更多，也可以。** 可选的[自动调校](#自动调校可选)会在挖矿时为你的显卡找到最佳稳定设置：更高的算力，或以明显更低的功耗保持同样算力。
 - **开了就不用管。** 看门狗、自动切换备用矿池、TLS 加密连接，出问题时给出通俗易懂的提示。
+
+<p align="center">
+  <img src="images/phone-home.jpg" width="260" alt="手机上的面板：每日利润、算力、功耗和份额">
+  &nbsp;&nbsp;
+  <img src="images/phone-tuned.jpg" width="260" alt="自动调校后的显卡：比出厂高 6.3% 的算力，每个结果都经过校验">
+</p>
+<p align="center"><sub>手机上的面板：收益一目了然，以及自动调校后的显卡（截图为英文界面；面板也支持中文）。</sub></p>
 
 ---
 
@@ -63,7 +88,7 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 
 ### 三步开始
 
-**1. 下载。** 打开 [Releases](../../releases) 页面，下载适合你系统的文件：
+**1. 下载。** 打开[最新版本](../../releases/latest)页面，下载适合你系统的文件：
 
 | 你的系统 | 下载文件 |
 |---|---|
@@ -130,7 +155,7 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 - **每张卡单独保护。** 温度保护会分别监控每一张卡。
 - **多台电脑。** 每台电脑运行 GlintMiner 时用不同的矿工名（`--worker rig2`），使用同一个钱包。矿池统计页面会分别列出每台电脑。
 - **内存。** 每张显卡约需 1.5 GB 系统内存。
-- **无显示器矿机。** 使用 HiveOS、MMPOS、Docker 包或 systemd 服务（见下文）。加上 `--api-bind 0.0.0.0` 即可在局域网内其他设备上查看面板。
+- **无显示器矿机。** 使用 HiveOS、MMPOS、Docker 包或 systemd 服务（见下文）。加上 `--api-bind 0.0.0.0` 即可在局域网内其他设备上查看面板（只读）；如需从这些设备修改设置，请再加上 `--api-allow-remote-control`。
 
 ## 自动调校（可选）
 
@@ -166,7 +191,8 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 | `--profit-mode` | 自动寻找收益最高的功耗上限（需以管理员身份运行） |
 | `--tune MODE` | 自动调校：`speed`、`efficiency`、`profit` 或 `off`（需以管理员身份运行；第一次需加 `--confirm-tuning`） |
 | `--retune` | 清除已保存的调校结果并重新调校 |
-| `--api-bind 0.0.0.0` | 允许局域网内其他设备查看面板（只读；如需从这些设备修改设置，请加上 `--api-allow-remote-control`） |
+| `--api-bind 0.0.0.0` | 允许局域网内其他设备查看面板（只读） |
+| `--api-allow-remote-control` | 同时允许从这些设备修改设置（仅在你信任的网络中使用） |
 | `--telegram-token`, `--telegram-chat` | 通过 Telegram 接收提醒 |
 | `--plain` | 纯文本日志，适用于系统服务和矿机系统 |
 | `--save` | 将这些参数保存到 `glint.json` |
@@ -196,6 +222,7 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 - Windows 10/11 64 位，或 Linux x86-64（glibc 2.17+）
 - 每张显卡约需 1.5 GB 系统内存
 - 无需安装 CUDA Toolkit 或其他软件
+- 自动调校需要管理员（Windows）或 root（Linux）权限以及较新的 NVIDIA 驱动；不满足时 GlintMiner 会以出厂设置正常挖矿
 
 ## 常见问题
 
