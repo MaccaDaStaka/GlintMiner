@@ -17,7 +17,11 @@
 - Checks this repository once a day for a newer release, and tells you if there is one. It never downloads or
   installs anything by itself.
 - Serves its dashboard on `127.0.0.1:4078`, reachable from this computer only, unless you choose `--api-bind 0.0.0.0`.
-- Writes `glint.json` (your settings), `glint.log`, and its history files next to the program. Nothing else.
+  Even then, other devices on your network can only view it: settings and tuning can be changed from this computer
+  alone, unless you also start GlintMiner with `--api-allow-remote-control`. Only do that on a network you trust.
+- Writes, next to the program: `glint.json` (your settings; on Linux readable by you only), `glint.log`, its history
+  and benchmark files, and, while auto-tune has changed a card, a small `glint-tuned.json` so the next start can put
+  the card back after a crash. Nothing else.
 
 ## Reporting a vulnerability
 

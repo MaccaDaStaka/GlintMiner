@@ -18,7 +18,7 @@
 ---
 
 GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。它的目标是让每一瓦电挖出更多 Pearl，同时也是上手最简单的：
-不用改配置文件，不用写 bat 脚本，也不用学命令行。它只问你一个问题——收益发到哪里——然后实时显示你的显卡按法币计算能赚多少。
+不用改配置文件，不用写 bat 脚本，也不用学命令行。它会问你想用什么方式收款、收益发到哪里，然后实时显示你的显卡按法币计算能赚多少。
 
 ## 为什么选择 GlintMiner
 
@@ -49,12 +49,17 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 
 1. **一张 NVIDIA 显卡**，RTX 30、40 或 50 系列（例如 RTX 3060、4070、5060），并安装较新的 NVIDIA 驱动。
    如果你用这台电脑玩游戏，大概率已经有了。
-2. **一个钱包地址**，也就是收益的收款地址。有两种选择：
+2. **收益发到哪里。** 有三种选择：
    - **Pearl 地址**（以 `prl1` 开头）：以 Pearl 自己的币 PRL 结算。
    - **你已经在用的其他币的地址**，例如 Bitcoin、Litecoin、Dogecoin、Solana 等。在交易所或钱包 App 的“收款”/“充值”页面可以找到。
      GlintMiner 挖的是 Pearl，收益以你选择的币结算。
 
-   不知道选哪个？**Pearl 地址**无需兑换，也没有兑换费用，可以在 Pearl 钱包 App 中免费获取（打开 **Receive**）。如果你更想收到自己已持有的币，就填那个币的地址：unMineable 负责兑换，收取 1% 费用，GlintMiner 会显示 unMineable 自己给出的收益估算。
+   - **Kryptex 账户 ID**（以 `krx` 开头；在 pool.kryptex.com 免费注册，只需邮箱）。Kryptex 会自动把 Pearl 兑换成比特币，你可以从 Kryptex 账户提现为 **BTC、USDT 或 USDC**。
+
+   不知道选哪个？
+   - **最划算：** **Pearl 地址**。无需兑换，HeroMiners 也不收矿池费。可在 Pearl 钱包 App 中免费获取（打开 **Receive**）。
+   - **想省心地拿到比特币或稳定币：** **Kryptex 账户**。Kryptex 收取 2%，且不公布兑换汇率，但据我们估算，它很可能比通过 unMineable 兑换明显更划算。
+   - **想把其他币直接打到自己的钱包：** 填写该币的地址。unMineable 负责兑换，收取 1% 费用，GlintMiner 会显示 unMineable 自己给出的收益估算。
 
 ### 三步开始
 
@@ -71,13 +76,18 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 > 首次运行时，Windows 可能会显示 **“Windows 已保护你的电脑”**。对于下载量还不多的新程序，Windows 都会这样提示。
 > 点击 **更多信息**，然后点击 **仍要运行** 即可。只需操作一次。
 
-**3. 回答设置问题。** 程序界面为英文，只有三个问题：钱包地址、矿机名称，以及（可选）每千瓦时电价。
+**3. 回答设置问题。** 程序界面为英文。先选择收款方式（1：Pearl；2：通过 Kryptex 账户收 BTC、USDT 或 USDC；3：其他币种），再粘贴对应地址，然后填写矿机名称，以及（可选）每千瓦时电价。
 
 ```
-  Welcome to GlintMiner. One thing is needed: where to send what you mine.
+  Welcome to GlintMiner. How do you want to be paid?
 
-  Paste your wallet address: bc1q...
-  -> BTC address, mining on unMineable.
+    1) Pearl (PRL) to your Pearl wallet          best value: no pool fee, no conversion
+    2) Bitcoin, USDT or USDC via a free Kryptex account   Kryptex converts for you (2% fee)
+    3) Another coin (LTC, DOGE, SOL, ETH...) to your own wallet   unMineable converts (1% fee)
+
+  Choose 1, 2 or 3 [1]: 1
+  Paste your Pearl address (starts with prl1; get one free in the Pearl wallet app, Receive): prl1...
+  -> Paid in PRL to your Pearl wallet, mining on HeroMiners (no pool fee).
   Name for this rig (shown on the pool) [rig1]:
   Electricity price per kWh, for profit after power (e.g. 0.12; Enter to skip): 0.6
   Currency of that price [USD]: CNY
@@ -88,7 +98,7 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 ### 你会看到什么
 
 每张显卡的实时画面：算力、温度、功耗、已接受的份额，以及**每日收益**。GlintMiner 运行时，在浏览器打开
-**http://127.0.0.1:4078** 可以查看图表和历史记录。
+**http://127.0.0.1:4078** 可以查看图表、历史记录和付款（启动时也可以自动打开）。面板同样适用于手机，支持英文、俄文和中文，并把本矿机的收益估算与钱包在矿池的余额和付款分开显示。
 
 ### 什么时候能收到钱？
 
@@ -109,8 +119,8 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 
 - **每个份额在提交前都会在你的电脑上**用 Pearl 官方校验器验证。如果 Pearl 网络规则变更，GlintMiner 会停下来提示你更新，而不是继续提交会被拒绝的份额。
 - **没有意外。** 有新版本时 GlintMiner 会提醒你，但绝不会自行下载或安装任何东西。
-- **设置掌握在你手中。** 所有设置都以纯文本保存在程序旁边的 `glint.json` 中。
-- **始终默认频率。** GlintMiner 从不超频，也不改动频率、电压或风扇。它唯一可能调整的是功耗上限，而且只会调低：温度保护会为过热的显卡降低功耗，可选的利润模式会选出收益最高的一档。关闭 GlintMiner 时会恢复显卡原来的功耗上限。
+- **设置掌握在你手中。** 所有设置都保存在程序旁边的 `glint.json` 中。
+- **默认使用出厂设置，除非你另行选择。** 默认情况下 GlintMiner 不改动频率、电压或风扇，只会在显卡过热时调低功耗上限。可选的**自动调校**（见下文）只有在你开启后才会调整频率。GlintMiner 所做的一切更改都会在关闭时恢复。
 
 ## 多显卡与多台矿机
 
@@ -121,6 +131,21 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 - **多台电脑。** 每台电脑运行 GlintMiner 时用不同的矿工名（`--worker rig2`），使用同一个钱包。矿池统计页面会分别列出每台电脑。
 - **内存。** 每张显卡约需 1.5 GB 系统内存。
 - **无显示器矿机。** 使用 HiveOS、MMPOS、Docker 包或 systemd 服务（见下文）。加上 `--api-bind 0.0.0.0` 即可在局域网内其他设备上查看面板。
+
+## 自动调校（可选）
+
+每颗显卡芯片都略有不同。自动调校会在挖矿的同时，为**你的**显卡自动找到最佳的稳定设置，只保留经 Pearl 官方校验器验证无误、并留有安全余量的设置。在我们的 RTX 4090 上，**速度**模式找到了**比出厂设置高 6% 的算力，同时功耗降低 30 W**；**能效**模式在保持出厂算力的同时，**功耗降低约四分之一**（337 W，出厂为 445 W）。
+
+| 模式 | 目标 |
+|---|---|
+| **关闭**（默认） | 出厂设置 |
+| **速度** | 显卡能零错误稳定运行的最高算力 |
+| **能效** | 以尽可能低的功耗保持出厂算力（更凉、更安静） |
+| **利润** | 扣除电费后收益最高（需要填写电价） |
+
+在面板中开启（**设置 → 调优**），或使用 `glint --tune speed --confirm-tuning`（也可用 `efficiency`、`profit`）。`--confirm-tuning` 只需第一次添加，用来确认你接受下文所述的风险；`--tune off` 关闭调校。需要以管理员（Windows）或 root（Linux）身份运行。首次调校约需一小时，期间显卡照常挖矿；结果会保存，并在每次启动时自动应用。
+
+**坦白说明风险：**自动调校会让显卡运行在出厂设置之外。它在第一个错误时就会退回，绝不超频显存，不会超过显卡自身的最大功耗，并在 GlintMiner 关闭时（或崩溃后的下一次启动时）恢复一切。但不稳定的设置仍可能导致挖矿程序崩溃，极少数情况下导致显卡驱动重置。开启与否由你决定，风险自负；你不开启，它就一直关闭。
 
 ## 矿机用户与进阶用户
 
@@ -139,7 +164,9 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 | `--devices 0,1` | 只使用指定的显卡 |
 | `--kwh-price`, `--currency` | 显示扣除电费后的利润 |
 | `--profit-mode` | 自动寻找收益最高的功耗上限（需以管理员身份运行） |
-| `--api-bind 0.0.0.0` | 允许局域网内其他设备查看面板 |
+| `--tune MODE` | 自动调校：`speed`、`efficiency`、`profit` 或 `off`（需以管理员身份运行；第一次需加 `--confirm-tuning`） |
+| `--retune` | 清除已保存的调校结果并重新调校 |
+| `--api-bind 0.0.0.0` | 允许局域网内其他设备查看面板（只读；如需从这些设备修改设置，请加上 `--api-allow-remote-control`） |
 | `--telegram-token`, `--telegram-chat` | 通过 Telegram 接收提醒 |
 | `--plain` | 纯文本日志，适用于系统服务和矿机系统 |
 | `--save` | 将这些参数保存到 `glint.json` |
@@ -173,7 +200,7 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 ## 常见问题
 
 **对显卡安全吗？**
-GlintMiner 从不超频，也不改动频率或电压。它持续监控温度：温度偏高时降低功耗上限（需以管理员身份运行），接近极限时暂停该卡，冷却后再继续。关闭程序时会恢复原来的功耗上限。
+在默认设置下，GlintMiner 不改动频率或电压。它持续监控温度：温度偏高时降低功耗上限（需以管理员身份运行），接近极限时暂停该卡，冷却后再继续。只有开启自动调校后才会调整频率。关闭程序时一切都会恢复。
 
 **挖矿时还能用电脑吗？**
 可以，但游戏和视频剪辑会变慢。需要显卡全部性能时，关闭 GlintMiner 即可（Ctrl+C 或直接关闭窗口）。

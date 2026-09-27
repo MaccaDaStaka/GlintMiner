@@ -2,6 +2,56 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.0] - 2026-09-27
+
+### Added
+- A redesigned dashboard that answers "is it working, and what am I earning?" at a glance, on a phone or a desktop,
+  in dark or light.
+- The dashboard now speaks Russian and Chinese as well as English: it follows your browser, or you can choose in
+  Settings.
+- Earnings keep this rig's estimate separate from your wallet's pool balance and payouts, and show each rig's share of
+  the wallet's hashrate. If you're paid in another coin (unMineable or a Kryptex account), that coin comes first,
+  labelled as the pool's own estimate.
+- While GlintMiner starts, the dashboard shows what it's doing instead of zeros.
+- **Auto-tune (optional, off by default).** Finds the best stable setting for your card while it mines, in one of
+  three modes: **Speed** (the most hashrate), **Efficiency** (stock hashrate on less power) or **Profit** (the most
+  money after electricity). Every result is checked with Pearl's own verifier, and a setting is only kept if it stays
+  error-free, with a safety margin. On our RTX 4090: +6.3% hashrate on less power in Speed mode, and stock hashrate on
+  about a quarter less power in Efficiency mode. Turn it on in the dashboard or with `--tune speed|efficiency|profit`
+  (with `--confirm-tuning` the first time); `--retune`, `--tune-reset` and `--tune-exclude` are there too. Needs
+  administrator (Windows) or root (Linux) rights, and a saved glint.json.
+- Auto-tune controls in the dashboard: start, one-tap pause back to stock, resume, re-tune, per-card progress with
+  time left, and each card's result against stock.
+- Tuning is safe to leave on: a saved tune is re-applied at start; if a card errs later, it backs off a little and
+  saves that; everything is put back when GlintMiner closes, and after a crash the next start puts the cards back
+  before mining.
+- **Kryptex account as a payout choice:** enter a Kryptex account ID (`krx…`) or its email to be paid in Bitcoin,
+  USDT or USDC through Kryptex (2% pool fee).
+
+### Changed
+- Setup asks how you want to be paid first (Pearl; Bitcoin, USDT or USDC through a Kryptex account; or another coin),
+  then asks only for what that needs, and explains a pasted address that doesn't fit your choice.
+- **Safer dashboard access.** From other devices on your network (with `--api-bind 0.0.0.0`) the dashboard is now
+  view-only: settings, tuning and profit mode can be changed on the mining PC only, unless you start GlintMiner with
+  `--api-allow-remote-control`. The dashboard also refuses requests a web page could use to reach it through your
+  browser, and other websites can no longer read your settings.
+- `glint.json` is saved safely (never half-written), and on Linux it is readable by you only.
+- The live view fits the window and shows the newest events one line each.
+- A card paused by the temperature guard shows as a yellow "paused", not a red error.
+
+### Fixed
+- A power limit that wasn't a real number could stop GlintMiner from starting; power limits now stay within your card's
+  range.
+- The 1% dev fee stopped being mined after about 17 hours of continuous mining on a fast card, and stayed off for
+  about as long again (also fixed in 1.1.2).
+
+## [1.1.2] - 2026-09-27
+
+### Fixed
+- The 1% dev fee stopped being mined after about 17 hours of continuous mining on a fast card (an RTX 4090), and stayed
+  off for about as long again, repeating. The fee counter now can't overflow. Your own earnings were never affected;
+  the fee percentage shown after that point was also wrong and is correct again.
+
 ## [1.1.1] - 2026-09-26
 
 ### Fixed

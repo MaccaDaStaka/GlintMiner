@@ -9,4 +9,5 @@ docker build -t glint .
 docker run -d --restart unless-stopped --gpus all -p 127.0.0.1:4078:4078 glint --wallet prl1... --worker rig1
 ```
 
-The dashboard is then at http://127.0.0.1:4078 on the host.
+The dashboard is then at http://127.0.0.1:4078 on the host. Keep the `127.0.0.1:` in `-p`: the container lets its
+dashboard change settings and tuning, so publishing the port to your network would let other devices do that too.

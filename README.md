@@ -18,8 +18,8 @@
 ---
 
 GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pearl out of every watt, and to be the
-easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks one question, where to
-send your earnings, and then shows you, live, what your card is making in real money.
+easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
+and where to send it, and then shows you, live, what your card is making in real money.
 
 ## Why miners choose GlintMiner
 
@@ -56,15 +56,22 @@ Never mined before? This takes a few minutes and needs no technical knowledge.
 
 1. **An NVIDIA graphics card** from the RTX 30, 40 or 50 series (for example an RTX 3060, 4070 or 5060), with a
    recent NVIDIA driver. If you play games on it, you almost certainly have one.
-2. **A wallet address**, which is where your earnings are sent. You have two choices:
+2. **Where to send your earnings.** You have three choices:
    - **A Pearl address** (it starts with `prl1`). You are paid in PRL, Pearl's own coin.
    - **An address for a coin you already use**, such as Bitcoin, Litecoin, Dogecoin or Solana. Your crypto exchange
      or wallet app shows it as your "receive" or "deposit" address. GlintMiner mines Pearl, and unMineable converts it
      and pays you in that coin.
+   - **A Kryptex account ID** (it starts with `krx`, from a free account at pool.kryptex.com, email only). Kryptex
+     converts your Pearl to Bitcoin automatically, and you can withdraw it as **BTC, USDT or USDC** from your Kryptex
+     account.
 
-   Not sure which to choose? A **Pearl address** avoids the conversion and its fee. You can get one free from the
-   Pearl wallet app (open **Receive**). If you'd rather be paid in a coin you already hold, use that address:
-   unMineable converts for a 1% fee, and GlintMiner shows unMineable's own estimate of what you'll receive.
+   Not sure which to choose?
+   - **Best value:** a **Pearl address**. There's no conversion and no pool fee on HeroMiners. You can get one free
+     from the Pearl wallet app (open **Receive**).
+   - **Want Bitcoin or a stablecoin with no effort:** a **Kryptex account**. Kryptex charges 2% and doesn't publish its
+     conversion rate, but by our estimate it's likely to pay noticeably more than converting through unMineable.
+   - **Want another coin straight to your own wallet:** use that coin's address. unMineable converts for a 1% fee,
+     and GlintMiner shows unMineable's own estimate of what you'll receive.
 
 ### Three steps
 
@@ -85,10 +92,15 @@ Never mined before? This takes a few minutes and needs no technical knowledge.
 **3. Answer the setup.**
 
 ```
-  Welcome to GlintMiner. One thing is needed: where to send what you mine.
+  Welcome to GlintMiner. How do you want to be paid?
 
-  Paste your wallet address: bc1q...
-  -> BTC address, mining on unMineable.
+    1) Pearl (PRL) to your Pearl wallet          best value: no pool fee, no conversion
+    2) Bitcoin, USDT or USDC via a free Kryptex account   Kryptex converts for you (2% fee)
+    3) Another coin (LTC, DOGE, SOL, ETH...) to your own wallet   unMineable converts (1% fee)
+
+  Choose 1, 2 or 3 [1]: 1
+  Paste your Pearl address (starts with prl1; get one free in the Pearl wallet app, Receive): prl1...
+  -> Paid in PRL to your Pearl wallet, mining on HeroMiners (no pool fee).
   Name for this rig (shown on the pool) [rig1]:
   Electricity price per kWh, for profit after power (e.g. 0.12; Enter to skip): 0.15
 ```
@@ -98,7 +110,9 @@ You're mining. GlintMiner remembers your answers, so next time it starts straigh
 ### What you'll see
 
 A live view of every card: speed, temperature, power, accepted shares and **how much you're earning per day**. For
-charts and history, open your browser at **http://127.0.0.1:4078** while GlintMiner is running.
+charts, history and payouts, open the dashboard at **http://127.0.0.1:4078** while GlintMiner is running (it can open by
+itself when GlintMiner starts). It works on a phone too, speaks English, Russian and Chinese, and keeps this rig's
+estimate separate from your wallet's balance and payments on the pool.
 
 ### When do I get paid?
 
@@ -125,11 +139,10 @@ count. The dashboard shows your balance and every payment made to you.
   changes its rules, GlintMiner stops and asks you to update rather than sending work that would be rejected.
 - **No surprises.** GlintMiner tells you when a new version exists, and never downloads or installs anything by
   itself.
-- **Your settings stay with you.** Everything is saved in `glint.json` next to the program, in plain text you can
-  read.
-- **Stock clocks, always.** GlintMiner never overclocks and never touches clocks, voltages or fans. The only setting
-  it ever changes is the power limit, and only downward: the temperature guard eases a hot card down, and optional
-  profit mode picks the most profitable limit. Your card's own limit is put back when GlintMiner closes.
+- **Your settings stay with you.** Everything is saved in `glint.json` next to the program.
+- **Stock settings unless you choose otherwise.** Out of the box GlintMiner never touches clocks, voltages or fans. It
+  only eases the power limit down when a card runs hot. Optional **auto-tune** (below) changes clocks only if you turn
+  it on. Everything GlintMiner changes is put back when it closes.
 
 ## Several GPUs and several rigs
 
@@ -145,6 +158,30 @@ count. The dashboard shows your balance and every payment made to you.
 - **Memory.** Allow about 1.5 GB of system memory per GPU.
 - **Headless rigs.** Use the HiveOS, MMPOS or Docker packages, or the systemd service (below). Add
   `--api-bind 0.0.0.0` to open the dashboard from another device on your network.
+
+## Auto-tune (optional)
+
+Every graphics chip is a little different. Auto-tune finds the best stable setting for **your** card, automatically,
+while it mines, and keeps only a setting that stays error-free under Pearl's own verifier, with a safety margin. On our
+RTX 4090, **Speed** found **+6% hashrate on 30 W less power**, and **Efficiency** kept stock hashrate on **about a
+quarter less power** (337 W instead of 445 W).
+
+| Mode | What it aims for |
+|---|---|
+| **Off** (default) | Stock settings |
+| **Speed** | The highest hashrate your card can hold with zero errors |
+| **Efficiency** | Stock hashrate on as little power as possible (cooler and quieter) |
+| **Profit** | The most money after electricity (needs your electricity price) |
+
+Turn it on in the dashboard (**Settings → Tuning**), or with `glint --tune speed --confirm-tuning` (or `efficiency`,
+`profit`). `--confirm-tuning` is needed once, to confirm you accept the risk below; `--tune off` turns it off. It needs
+GlintMiner to run as administrator (Windows) or root (Linux). The first search takes about an hour while the card keeps
+mining; the result is saved and re-applied at every start.
+
+**The risk, plainly:** auto-tune runs your card outside its factory settings. It backs off at the first error, never
+overclocks memory, never goes above your card's own power maximum, and puts everything back when GlintMiner closes
+(or on the next start after a crash). But an unstable setting can still crash the miner or, rarely, the display
+driver. You turn it on at your own risk, and it stays off unless you do.
 
 ## For rig owners and power users
 
@@ -163,7 +200,9 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 | `--devices 0,1` | Mine on selected GPUs only |
 | `--kwh-price`, `--currency` | Show profit after electricity |
 | `--profit-mode` | Find the most profitable power limit (run as administrator) |
-| `--api-bind 0.0.0.0` | View the dashboard from other devices on your network |
+| `--tune MODE` | Auto-tune: `speed`, `efficiency`, `profit` or `off` (run as administrator; add `--confirm-tuning` the first time) |
+| `--retune` | Forget the saved tune and search again |
+| `--api-bind 0.0.0.0` | View the dashboard from other devices on your network (view-only; add `--api-allow-remote-control` to allow changes from them) |
 | `--telegram-token`, `--telegram-chat` | Get alerts on Telegram |
 | `--plain` | Plain log lines, for services and rig operating systems |
 | `--save` | Save these options to `glint.json` |
@@ -197,9 +236,9 @@ checksum with the one on the Releases page. Only download GlintMiner from this r
 ## FAQ
 
 **Is it safe for my graphics card?**
-GlintMiner never overclocks and never changes clocks or voltages. It watches temperatures continuously, eases the
+At its default settings GlintMiner never changes clocks or voltages. It watches temperatures continuously, eases the
 power limit down if a card runs hot (this needs GlintMiner run as administrator), and pauses a card that gets close to
-its limit until it cools. Your original power limit is restored when you close it.
+its limit until it cools. Clocks change only if you turn on auto-tune. Everything is restored when you close it.
 
 **Can I use my PC while mining?**
 Yes, though games and video editing will feel slower while it runs. Close GlintMiner (Ctrl+C or close the window)
