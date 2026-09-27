@@ -281,6 +281,13 @@ whenever you want the full card back.
 That depends on your card, the Pearl price and network difficulty, which all change over time. GlintMiner shows
 your real earnings per day, live, from the moment it starts.
 
+**How do I update to a new version?**
+GlintMiner tells you when one is out; there's nothing to uninstall. Close GlintMiner, download the new zip from the
+[latest release](../../releases/latest), and unzip it into the same folder, replacing the files. Your settings
+(`glint.json`), history and benchmarks aren't in the zip, so they stay. Start `glint.exe` again and it carries on
+mining with your settings. (Linux: replace `glint`. HiveOS: update the custom miner's download link to the new
+version.)
+
 **I have several rigs on one wallet.**
 Give each rig its own `--worker` name. Your pool's stats page then lists every rig separately.
 
