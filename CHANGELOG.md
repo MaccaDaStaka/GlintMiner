@@ -2,6 +2,73 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.2] - 2026-09-27
+
+### Added
+- **Pearl paid to your own Pearl wallet through Kryptex.** A new setup choice for a steady payout: 2% pool fee, paid
+  for every share (PPS+), sent to your wallet from 1 PRL. With a Pearl address you can switch between HeroMiners and
+  Kryptex any time in Settings. Earnings estimates for Pearl on Kryptex are after the 2% fee.
+- **Kryptex's own figures on the dashboard** for Pearl on Kryptex: your balance (ready to pay and still maturing), how
+  close it is to the 1 PRL payout, about when the next payout comes (counting the time new blocks take to mature),
+  your last payout and pending payouts, each rig's hashrate as Kryptex sees it (including rigs that are offline), and
+  a link to your address's page on Kryptex. If Kryptex's website can't be reached, the dashboard says so and shows
+  GlintMiner's own estimate only. A Kryptex account's balance stays private to that account (check it on kryptex.com).
+- **Kryptex backup servers.** On Kryptex, Kryptex's regional servers are the backups (nearest first), so a server
+  outage doesn't stop mining and your payout stays in one place.
+- **The next payout time for every payout coin**, not only Pearl (for unMineable, from unMineable's own conversion).
+  When there isn't enough to go on, no time is shown rather than a guess.
+- **Windows: restart as administrator.** With auto-tune on but GlintMiner not started as administrator, it offers to
+  restart itself as administrator (Windows asks you to allow it), in setup and at every start. Say no and the card
+  simply mines at stock.
+- **Check your miner from your phone, anywhere.** The dashboard opens by its Tailscale name
+  (`your-pc.your-tailnet.ts.net`), and the README explains how to use Tailscale to see it from your phone without
+  opening your PC to the internet (view-only, firewall rule for Tailscale only).
+
+### Changed
+- **A redesigned dashboard: Home tells the story.** A one-line **Is it working?** (green, or amber or red with the
+  reason and the one thing to do), then three answers ordered by what matters now: **What am I earning?** (with a
+  what-to-expect card in the first minutes), **Is my card at its best?** (auto-tune's progress and time left, then its
+  outcome) and **When do I get paid?** (per payout route, with only the figures GlintMiner really has), and a quieter
+  **Details** section with the 24-hour hashrate and its average. **Earnings** adds a projection and the daily figures;
+  **Rigs** keeps every card's details and all the tuning controls in the same look; **Settings** has the four ways to
+  be paid, the tuning mode with its risk to accept, the automatic temperature limit, who can open the dashboard, and
+  language. In English, Russian and Chinese. On another device (view-only) every control is hidden.
+- **Setup is pick-by-number:** type a number and press Enter (Enter alone picks the first choice). It finds your
+  address on the clipboard (so there's nothing to paste), suggests your computer's name for the rig, suggests your
+  system's currency when you enter an electricity price, and asks whether to turn on auto-tune (off unless you choose
+  it, and only after you accept the risk).
+- **The temperature limit is automatic and fits each card:** it comes from the card's own safe maximum as the driver
+  reports it: 3 °C under it at stock, and the maximum itself when tuned, never above it (on an RTX 4090, 80 °C at stock
+  and 83 °C tuned). Setup names the limit when you turn tuning on. A limit you set yourself stays yours, but is never
+  allowed above your card's maximum. If you never changed the old 80 °C, you get the automatic limit.
+- **The emergency pause uses your card's real slowdown and shutdown points** (on newer cards the driver's older fixed
+  figures were far higher than the card's real ones).
+- **Tuning shows progress and outcome only:** progress and time left while a card tunes (the console shows "tuning
+  N%"), then the result. Once tuning has finished, the header says the outcome (for example "Tuned +6.4%") instead of
+  "Tuning on", which read as still tuning. Tuning messages say what happened in plain words, in all three languages.
+- While tuning is on, the power-limit history chart is hidden.
+- The event list no longer shows raw pool traffic.
+- Electricity prices up to 100000 per kWh are accepted, in setup and in Settings (before, 10 or more was refused,
+  which ruled out currencies like yen, won, tenge, forint or rupees).
+- A card too old for Pearl mining (for example a CMP 100-210) is skipped with a clear message instead of being reset
+  and retried over and over.
+
+### Fixed
+- On Kryptex every rig showed up as one worker called "worker", so several rigs merged into one. Each rig now shows
+  under its own name.
+- With a Kryptex account, GlintMiner mined the first time but refused to start again ("That is not a valid Bitcoin
+  address"). Your saved Kryptex account now loads normally; nothing to change on your side.
+- Text with non-English letters (for example "Привет") no longer crashes GlintMiner: on the clipboard or typed in
+  setup, in a Kryptex account's email, or from the pool.
+- `--wallet` on the command line no longer mines on a pool saved for a different wallet: if the saved pool can't pay
+  the new wallet, GlintMiner uses the wallet's own pools (unless you also give `--pool`).
+- Windows: after restarting as administrator, a settings file given with `--config` relative to the current folder is
+  still found.
+- Home said "Price from Kryptex" when the price came from elsewhere; it now names the real source, and for Pearl on
+  Kryptex says the estimate is after Kryptex's 2% pool fee.
+- A tuned card showed a different gain in different places while it warmed up. It now shows the same saved result
+  everywhere (header, tuning card, card rows); the live figure stays in the card's details.
+
 ## [1.2.1] - 2026-09-27
 
 ### Changed

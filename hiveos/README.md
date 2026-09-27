@@ -8,6 +8,8 @@
    - **Hash algorithm:** `pearl`
    - **Wallet and worker template:** `%WAL%` (a Pearl `prl1…` address, or `COIN:address` for other coins, e.g. `BTC:bc1q…`)
    - **Pool URL:** leave empty to let GlintMiner choose the nearest server, or enter your own `stratum+ssl://host:port`
+     (for example `stratum+ssl://prl.kryptex.network:8048` to be paid in PRL through Kryptex: 2% fee, paid for every
+     share, sent to your wallet from 1 PRL)
    - **Extra config arguments:** optional, e.g. `--kwh-price 0.12 --currency EUR`
 4. Apply the Flight Sheet to your rig.
 
