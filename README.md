@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ Download GlintMiner 1.2.3](../../releases/latest)
+### [⬇ Download GlintMiner 1.2.4](../../releases/latest)
 Windows · Linux · HiveOS · free to use, 1% dev fee
 
 **English** · [Русский](README.ru.md) · [简体中文](README.zh-CN.md)
@@ -25,6 +25,10 @@ Windows · Linux · HiveOS · free to use, 1% dev fee
 GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pearl out of every watt, and to be the
 easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
 and where to send it, and then shows you, live, what your card is making in real money.
+
+**New in 1.2.4:** the auto-tune result is measured as the card mines, so it matches your live hashrate (on our RTX
+4090: **330–333 TH/s, about +7–8%** against stock) · clearer, calmer error messages: when a pool or price site can't be
+reached, the dashboard says so in plain words and keeps the last figures, with their age.
 
 **New in 1.2.3:** faster mining on every card (about +1% on RTX 40, +1.8% on RTX 50, up to +3.6% more on cards
 like the RTX 5090 and 3080 as work is now split evenly across the whole chip) · a smarter auto-tune (on our RTX 4090:
@@ -303,7 +307,7 @@ quarter less power** (337 W instead of 445 W).
 Turn it on in the dashboard (**Settings → Tuning**), or with `glint --tune speed --confirm-tuning` (or `efficiency`,
 `profit`). `--confirm-tuning` is needed once, to confirm you accept the risk below; `--tune off` turns it off. It needs
 GlintMiner to run as administrator (Windows) or root (Linux); on Windows, GlintMiner offers to restart itself as
-administrator when tuning is on. Tuning takes about an hour on a fast card (about 25 minutes in Efficiency mode), and
+administrator when tuning is on. Tuning takes about an hour on a fast card (about 30 minutes in Efficiency mode), and
 the card keeps mining meanwhile. The dashboard shows its progress and time left, then the outcome (for example
 **Tuned +6.3%**); the result is saved and re-applied at every start. While a card is tuned, its automatic temperature
 limit is the card's own safe maximum.

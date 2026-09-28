@@ -2,6 +2,34 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.4] - 2026-09-28
+
+### Changed
+- **Clearer, calmer error messages.** What you see on the dashboard, in the console and in the event list is now a
+  short sentence saying what happened and what to do, if anything, in English, Russian or Chinese; web addresses,
+  operating-system error codes and other technical detail go only to `glint.log` (on HiveOS, mmpOS and Docker, to the
+  miner's own log). When a pool, price or balance site can't be reached for a moment, the dashboard says so plainly
+  and keeps showing the last figures with their age, for example *Couldn't refresh your balance just now; showing
+  the figure from 12 min ago.*; if the site's name can't be looked up, it says to check this PC's internet or DNS
+  settings. Messages that need you to act (no driver, administrator rights for tuning, a refused login, an
+  unsupported card) stay as clear as before.
+- The same error repeating (a pool down for a while) is logged at most once every five minutes instead of at every
+  retry, and balance and price refreshes retry sooner at first and then less often while a failure lasts.
+- Tuning takes about four minutes longer per tune (the result's measurement, below).
+
+### Fixed
+- The tuned result shown is now measured the way the card mines normally, so it matches the live hashrate; before, it
+  read 1–2% low, more on a busy PC (our RTX 4090's speed tune now shows 330–333 TH/s, about +7–8% against stock). A
+  tune saved by an earlier version keeps working as it is and has its figures measured again once, the next time it
+  runs.
+- A newly found tune is always written to the log once, even when its measurement is interrupted (paused by you or
+  by the temperature guard, a mode change, a retune, or GlintMiner closing); it is then logged with the figures from
+  tuning.
+- The wallet panel no longer shows a raw connection error (a web address and an operating-system error) in red when
+  a balance refresh fails.
+- A long pool message with non-English characters can no longer stop the pool connection.
+- The Telegram bot token is kept out of the log when a Telegram message can't be sent.
+
 ## [1.2.3] - 2026-09-27
 
 ### Added
