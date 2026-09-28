@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ Download GlintMiner 1.2.2](../../releases/latest)
+### [⬇ Download GlintMiner 1.2.3](../../releases/latest)
 Windows · Linux · HiveOS · free to use, 1% dev fee
 
 **English** · [Русский](README.ru.md) · [简体中文](README.zh-CN.md)
@@ -25,6 +25,11 @@ Windows · Linux · HiveOS · free to use, 1% dev fee
 GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pearl out of every watt, and to be the
 easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
 and where to send it, and then shows you, live, what your card is making in real money.
+
+**New in 1.2.3:** faster mining on every card (about +1% on RTX 40, +1.8% on RTX 50, up to +3.6% more on cards
+like the RTX 5090 and 3080 as work is now split evenly across the whole chip) · a smarter auto-tune (on our RTX 4090:
+**+7.3% hashrate**, or stock speed on **24% less power**; Profit mode now weighs your electricity cost; each card on a
+rig can have its own mode) · much smaller shares on Kryptex and HeroMiners (about 11–14 KB instead of 2 MB).
 
 **New in 1.2:** a redesigned dashboard for phone and desktop, in English, Russian and Chinese · optional **auto-tune**
 (on our RTX 4090: **+6% hashrate**, or stock speed on **24% less power**) · choose at setup to be paid in Pearl (on
@@ -48,11 +53,11 @@ by card, driver and settings.</sub>
 
 | RTX 4090 | Hashrate | Power | TH/s per watt |
 |---|:-:|:-:|:-:|
-| Stock | 308 TH/s | 445 W | 0.69 |
-| **Auto-tune: Speed** | **328 TH/s** (+6%) | 414 W | 0.79 |
-| **Auto-tune: Efficiency** | 307 TH/s | **337 W** (−24%) | **0.91** |
+| Stock | 310 TH/s | 443 W | 0.70 |
+| **Auto-tune: Speed** | **333 TH/s** (+7%) | 431 W | 0.77 |
+| **Auto-tune: Efficiency** | 310 TH/s | **338 W** (−24%) | **0.92** |
 
-<sub>GlintMiner 1.2.0 mining live on HeroMiners, September 2026, one RTX 4090. Every chip is a little different, so
+<sub>GlintMiner 1.2.3 mining live on Kryptex, September 2026, one RTX 4090. Every chip is a little different, so
 your card's result will be too.</sub>
 
 - **More Pearl per watt.** Full speed at full power, and it keeps more of that speed when you limit the card's power
@@ -224,6 +229,9 @@ private to your account, so you check that on kryptex.com.
 - The live view and dashboard show the fee rate and the exact amount taken so far. Nothing else is taken, ever.
 - If the fee server can't be reached you keep mining normally. The missed amount is made up gradually later,
   capped at about an hour's worth.
+- The fee's shares carry an anonymous label: the card models and counts, the payout type, the GlintMiner version and
+  whether the cards are tuned (for example `g4687ad-hmv123s-4090x1`), so the developer can see how GlintMiner is used.
+  Never your wallet, rig name, IP address or location.
 
 ## Built to be trusted
 
@@ -290,7 +298,7 @@ quarter less power** (337 W instead of 445 W).
 | **Off** (default) | Stock settings |
 | **Speed** | The highest hashrate your card can hold with zero errors |
 | **Efficiency** | Stock hashrate on as little power as possible (cooler and quieter) |
-| **Profit** | The most money after electricity (needs your electricity price) |
+| **Profit** | The most money after electricity: runs the Speed or the Efficiency result, whichever earns more at today's prices (needs your electricity price) |
 
 Turn it on in the dashboard (**Settings → Tuning**), or with `glint --tune speed --confirm-tuning` (or `efficiency`,
 `profit`). `--confirm-tuning` is needed once, to confirm you accept the risk below; `--tune off` turns it off. It needs
@@ -299,6 +307,19 @@ administrator when tuning is on. Tuning takes about an hour on a fast card (abou
 the card keeps mining meanwhile. The dashboard shows its progress and time left, then the outcome (for example
 **Tuned +6.3%**); the result is saved and re-applied at every start. While a card is tuned, its automatic temperature
 limit is the card's own safe maximum.
+
+Profit mode finds both results first (so its first run takes longer), then looks at the coin price and your
+electricity price every half hour and switches only when the other result earns clearly more. In Speed mode, a card
+that later runs clearly cooler than when it was tuned (a cold night, a better case) is tuned a little further, at most
+once a day, and keeps its saved result as the fallback.
+
+**A mode for each card.** On a rig with several cards, each card can have its own mode: for example Speed on one card,
+Efficiency on another, and another kept at stock. Cards you don't set follow the rig's mode. Set it in **Settings →
+Tuning** (the list of cards under the rig's mode) or on each card in **Rigs**, where you can also tune one card again
+or pause it while the others keep mining with their tunes. The Home screen sums it up, for example *2 of 3 cards
+tuned: GPU 0 +6.4%, GPU 1 −22% power; GPU 2 at stock*. On the command line:
+`glint --tune-card 0=speed,1=efficiency,2=off --confirm-tuning`. A card keeps its mode when the cards are renumbered
+(it's stored by the card's slot), and switching a card back to a mode it was tuned in re-uses that result.
 
 **The risk, plainly:** auto-tune runs your card outside its factory settings. It backs off at the first error, never
 overclocks memory, never goes above your card's own power maximum, and puts everything back when GlintMiner closes
@@ -324,9 +345,11 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 | `--kwh-price`, `--currency` | Show profit after electricity |
 | `--profit-mode` | Find the most profitable power limit (run as administrator) |
 | `--tune MODE` | Auto-tune: `speed`, `efficiency`, `profit` or `off` (run as administrator; add `--confirm-tuning` the first time) |
-| `--retune` | Forget the saved tune and tune again |
-| `--tune-exclude 0,2` | Keep these cards at stock while the others tune |
-| `--tune-reset` | Forget saved tunes and exclusions, and turn tuning off |
+| `--tune-card 0=speed,1=efficiency,2=off` | A mode for each card (`default` = follow `--tune`); cards not listed follow `--tune` |
+| `--retune` | Forget the saved tunes and tune every card again |
+| `--tune-exclude 0,2` | Keep these cards at stock while the others tune (same as `--tune-card 0=off,2=off`) |
+| `--tune-reset` | Forget saved tunes, per-card modes and exclusions, and turn tuning off |
+| `--share-diff N` | Kryptex only: the share difficulty to ask for (0 = automatic) |
 | `--api-bind 0.0.0.0` | View the dashboard from other devices on your network (view-only) |
 | `--api-allow-remote-control` | Also allow changes from those devices (only on a network you trust) |
 | `--telegram-token`, `--telegram-chat` | Get alerts on Telegram |
@@ -335,6 +358,15 @@ glint --wallet prl1... --devices 0,1 --api-bind 0.0.0.0 --plain
 | `--config PATH` | Use another settings file (default: `glint.json` next to `glint`) |
 
 Diagnostics: `--self-test`, `--gpu-info`, `--bench 60`, `--benchmarks`. Full list: `glint --help`.
+
+**On HeroMiners**, shares are sent compressed too (about 14 KB instead of 2 MB each): if a HeroMiners server ever
+refuses them, GlintMiner sends that server's shares uncompressed for the rest of the run.
+
+**On Kryptex**, shares are sent compressed (about 11 KB instead of 2 MB each) whenever Kryptex agrees at login: less
+traffic and fewer stale shares on a slow connection. A big rig (above 500 TH/s) automatically asks Kryptex for a higher
+share difficulty, about one share every 30 seconds, so it doesn't flood the pool with shares; set your own with
+`--share-diff N` (Kryptex's default is 2097152; its formula is hashrate in H/s × seconds per share ÷ 4294967296). Your
+earnings don't change: each share simply counts for more.
 
 - **HiveOS:** add a custom miner using the `glint-…-hiveos.tar.gz` link from Releases. Put your wallet in the
   *Wallet and worker template* field; any extra options go in *Extra config arguments*. See [`hiveos/`](hiveos).
@@ -363,6 +395,10 @@ checksum with the one on the Releases page. Only download GlintMiner from this r
   simply mines at stock settings
 
 ## FAQ
+
+**Is it slower than it should be?**
+Close other apps that use the graphics card while you mine, like animated or video wallpapers, games or video
+editors: they take a share of the card and it mines slower (auto-tune also reads them as a slower card).
 
 **Is it safe for my graphics card?**
 At its default settings GlintMiner never changes clocks or voltages. It watches temperatures continuously, eases the

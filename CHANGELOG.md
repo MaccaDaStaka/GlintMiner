@@ -2,6 +2,100 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.3] - 2026-09-27
+
+### Added
+- **A tuning mode for each card.** On a rig with several cards, each card can run its own mode (Off, Speed,
+  Efficiency or Profit); cards you don't set follow the rig's mode. Set it in **Settings → Tuning** (a list of your
+  cards, each with its mode and its outcome, under the rig's mode) or on each card in **Rigs**. The one risk
+  confirmation covers every card.
+- **Per-card controls on Rigs:** each card shows its mode and has a mode picker, **Tune this card again** (only that
+  card's saved result is dropped; the others keep theirs and keep mining) and pause/resume for that card only.
+- **Home sums up mixed modes**, for example *2 of 3 cards tuned: GPU 0 +6.4%, GPU 1 −22% power; GPU 2 at stock*.
+- **`--tune-card 0=speed,1=efficiency,2=off`** sets each card's mode from the command line (`default` follows
+  `--tune`; a PCI bus id works in place of the number).
+- A card keeps a saved result per mode: switching it back to a mode it was tuned in re-uses that result.
+- `/api/stats` gives each card's `tune_mode`, `tune_mode_own` and `pci_bus_id`, and `tuning.modes_active`;
+  `POST /api/tuning` accepts a `gpu` (card number or PCI bus id) for `start`, `retune`, `pause`, `resume`, `stop` and
+  `set_mode` (mode `default` = follow the rig).
+- **Smaller shares on Kryptex.** GlintMiner now speaks Kryptex's compressed share format: when Kryptex agrees at
+  login, each share goes out gzipped, about 11 KB instead of 2 MB, which cuts traffic and the stale shares a slow
+  upload causes. If Kryptex doesn't agree, shares go uncompressed as before. The log says which at every login. Other
+  pools are unchanged.
+- **Share difficulty for big rigs on Kryptex.** A rig that measures above 500 TH/s asks Kryptex for a higher share
+  difficulty (about one share every 30 seconds, never below Kryptex's default), so it sends fewer, larger shares; it
+  logs in again once to apply it. Set your own with `--share-diff N` (or `"share_diff"` in `glint.json`; 0 =
+  automatic). Earnings estimates, the dev fee and hashrate figures don't depend on it; only the count of shares gets
+  smaller, each one counting for more.
+- `/api/stats` shows `pool.compressed` and `pool.share_diff`.
+- GlintMiner names itself to Kryptex (`GlintMiner/<version>`) at login.
+- **Smaller shares on HeroMiners.** Shares to HeroMiners (yours and the dev fee's) now go compressed, about 14 KB
+  instead of 2 MB each: on an RTX 4090 that is roughly 6 GB less upload a day. If a HeroMiners server refuses them,
+  that server gets uncompressed shares for the rest of the run.
+
+### Changed
+- **About 1% faster on every card:** the mining kernel loads its next data one step later, which keeps the tensor units
+  busier (RTX 4090: +0.9% at stock, +1.0% tuned; RTX 5060: +1.7%). Results are checked exactly as before.
+- **RTX 50 and many RTX 30/40 cards mine up to 3.6% faster:** work is now split evenly across all of the card's
+  cores (about +3.6% on an RTX 5090, +1.4% on a 3080 Ti, 4080 Super or 4070 Ti Super, +1% on a 3070 or 4070; the
+  RTX 4090 was already even).
+- **The dev fee's shares carry an anonymous rig label** (card models and counts, payout type, version, tuned or
+  stock), so the developer can see how GlintMiner is used. No wallet, rig name, IP address or location. The fee's
+  rate and pools are unchanged.
+- A card's mode is stored by its PCI bus id (`tune_cards` in glint.json), so it stays with the card's slot when the
+  cards are renumbered. Settings from 1.2.2 and earlier load unchanged: cards in `tune_exclude` are simply off.
+- A card whose mode changes goes back to stock and tunes again on its own; the other cards carry on.
+- **Stop tuning** (for the whole rig) now also clears the cards' own modes, so every card is back at stock.
+- The dashboard and API number cards as CUDA does (the numbers the console, `--devices` and `--tune-card` use).
+  `exclude`/`include` in `POST /api/tuning` now take that number (the same as before unless `--devices` picks a subset).
+- Profit mode needs an electricity price wherever it is turned on (dashboard, API), not only in setup.
+- Setup, on a rig with more than one card, mentions that each card can have its own mode.
+- **Profit mode now really weighs power.** It finds both the Speed and the Efficiency result for the card, runs
+  whichever earns more after electricity at today's coin price and your electricity price, and looks again every half
+  hour (it switches only when the other earns clearly more, and not more than once every two hours). Before, it tuned
+  exactly like Speed. The first run takes longer, since it finds both results.
+- **Speed keeps climbing while it gains.** It no longer stops after a fixed number of steps up: it keeps going while each
+  step holds and is measurably faster, so a well-cooled card goes as far as it can.
+- **Speed looks again when the card runs cooler.** A tuned card that runs clearly cooler than when it was tuned (for
+  example on a cold night) is tuned a little further, at most once a day; its saved result stays as the fallback. The
+  card's message then reads, for example, *Tuned +7.1% (updated for cooler conditions)*.
+- **Speed may raise the card's power limit** to the card's own maximum, only when the card is held back by its power
+  limit and only if that measurably gains; otherwise the limit is left as it is. It is put back when GlintMiner closes
+  or tuning stops (and on the next start after a crash).
+- **The safety margin costs next to nothing.** When the margin itself would slow the card down (it runs into its power
+  limit), the tuner narrows it by one notch or settles on the speed the card really holds.
+- **Efficiency keeps stock speed.** It aims for the card's average stock speed (not the most common reading, which can
+  be lower), and only keeps a result that saves at least 2% power.
+- **Clearer reasons when a card stays at stock:** too hot already, not stable even with a small change, the computer
+  too busy to check the card, locked by the card's maker (many laptops), sensors not readable, or a driver too old for
+  tuning. Each shows on the dashboard and once in the log.
+- Profit mode's power-limit search (the separate *profit mode* setting) leaves cards that auto-tune looks after alone,
+  so the two never work against each other.
+- **On a rig with several cards, auto-tune tests one card at a time** (the others keep mining at stock or at their
+  saved result), so a setting that crashes is always blamed on the card that was testing it. Total tuning time is about
+  the same.
+- Speed tries a clock step above the card's usual ceiling at a little more voltage, and keeps it only if it gains.
+- The log states a tuning outcome the way the dashboard does (an Efficiency result as the power it saves).
+
+### Fixed
+- Stock is measured once the card has warmed up. A card measured cold (right after GlintMiner starts) read too fast at
+  stock, which could make real gains look like losses and leave the card at stock.
+- A card whose first tuning step was slower with its memory clock held low (not every card likes that) now tries again
+  without it instead of staying at stock.
+- A card that already runs at its temperature limit at stock is no longer failed for staying there while tuned; only
+  running hotter than stock counts against a setting.
+- The power-limit search no longer saves options given only on the command line (like `--wallet` without `--save`) into
+  glint.json, and it only uses prices in the currency of your electricity price.
+- The thermal guard never raises a power limit back past the card's own after tuning has put it back.
+- On a rig with several cards tuning at once, one card's crash (which resets the driver for every card on Windows)
+  was recorded against every card being tested, so healthy cards gave up and stayed at stock. A crash now counts only
+  against the card that was testing alone; a card that would give up because of crashes recorded the old way tests the
+  lowest of them again, on its own, once.
+- A card's saved result is no longer backed off because another card crashed while it was being tested.
+- Profit mode switching from the Efficiency result to the Speed result could crash the card: the new clock limit went
+  on before the voltage came up. The voltage now comes up first.
+- Price, pool and update sites were told GlintMiner 1.1.1 whatever the real version; they now get the real one.
+
 ## [1.2.2] - 2026-09-27
 
 ### Added
