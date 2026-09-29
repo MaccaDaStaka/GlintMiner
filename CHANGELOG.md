@@ -17,7 +17,6 @@ All notable changes to GlintMiner are listed here.
   filling the balance; with other rigs mining to the same address (any miner), it came out too long, about twice as
   long with two similar rigs. It now uses this rig's live rate plus every other rig the pool lists on the address.
 - A tiny leftover in the pool's balance (its rounding) shows as 0, not as *2.14e-9 PRL*.
-
 - **A tuned card gets its tune back after a pause.** After the temperature guard had stopped a tuned card, or you
   paused and resumed tuning, the card mined on at factory settings until GlintMiner was restarted.
 - After a pause or a wait for work in the middle of a tuning step, the step's stability checks no longer flood the
