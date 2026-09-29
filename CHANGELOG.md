@@ -2,6 +2,164 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.5] - 2026-09-29
+
+### Added
+- **Auto-tune starts from a true stock card.** A card that already had its own overclock (a clock offset from MSI
+  Afterburner, the NVIDIA app's automatic tuning or nvidia-settings, or a power limit set outside GlintMiner) is put
+  to factory settings before tuning, so the tune starts from real stock. The log says so plainly: *Your card had its
+  own overclock; tuning starts from factory settings and puts yours back when GlintMiner closes.* Your own settings
+  come back when GlintMiner closes (or on the next start after a crash). Clock locks another tool set are released.
+- **Other tuning tools are detected (Windows).** While MSI Afterburner, EVGA Precision X1, ASUS GPU Tweak, GIGABYTE
+  AORUS Engine, GIGABYTE Graphics Engine, ZOTAC FireStorm, Palit ThunderMaster or GALAX Xtreme Tuner is running, a tune doesn't start (they can
+  re-apply their own clocks at any time, which spoils the measurements); the card keeps mining at stock and the
+  dashboard, console and log say which program to close, for example *MSI Afterburner is running. Close it (and turn
+  off its 'apply overclocking at startup'), then tuning starts by itself.* GlintMiner looks again every minute. If one
+  is opened while a card is tuning, that card goes back to stock and tunes again once it is closed. RivaTuner's
+  on-screen display alone is fine. `--tune-ignore-tools` (or `"tune_ignore_tools": true` in glint.json) tunes anyway,
+  for those who know what their tools do.
+- Setup and the dashboard's tuning section remind you to close these tools before tuning; the READMEs have a short
+  *Before you auto-tune* list.
+- While a card tunes, the dashboard (Home, Rigs and Settings) and the console say why its hashrate is a little lower:
+  every result is double-checked, and the result is measured afterwards the way the card mines, so let it finish.
+  Setup says so too when you turn tuning on.
+
+- **New guides.** The README is now a short landing page, and the details moved to guides of their own, in English,
+  Russian and Chinese: *Getting started*, *The dashboard*, *Auto-tune*, *Phone access*, *For rig owners and power
+  users* and *FAQ and troubleshooting*, plus a FAQ for each platform (Windows, Linux, HiveOS, MMPOS and Docker).
+  They come in the Windows and Linux downloads too. The HiveOS guide now says
+  stats need no setup, how to change the port so they keep working, and how to open the dashboard from another
+  computer.
+
+### Changed
+- **A new logo:** a lustrous pearl with its glint, in the dashboard and the browser tab.
+- **Payouts on the dashboard** show the latest five, with *Show all* for the rest and a link to the pool's full
+  history, instead of a list that grew with every payout (Kryptex pays six times a day).
+- **Recent events** (Rigs) show what matters: a card starting or restarting, the pool connecting or switching,
+  tuning finishing or backing off, errors. Each accepted share and the minute's hashrate line are left out;
+  they filled the list within minutes and, because that line always reads *rejected 0*, showed a red error dot.
+- Measuring stock before a tune takes about three minutes longer: stock is measured as the card mines and again with
+  the extra checks every tuning step runs with, so steps are compared with stock like with like.
+
+### Fixed
+- **Tunes no longer come out lower than they should.** A busy PC, or the extra checks themselves, made every tuning
+  step look a little slower than stock (stock was measured without them): cards could end at *No stable gain*,
+  efficiency could find nothing on a card with power to spare, and searches could stop early. Stock and every step
+  are now measured the same way; the gain you see is still against stock as the card mines.
+- **Heat during tuning no longer lowers the tune for good.** While a card is being measured, the temperature guard
+  doesn't give its power back and only takes power away when the card runs well over its limit, so every measurement
+  of a search runs on the same power. When a warm room (not the setting being tested) makes the card run hot, tuning
+  waits for it to cool and tests that step again. Before, a warm spell late in a search could leave a tune several
+  percent below what the same card found on a cooler day.
+- The tuned result is measured only while the card mines normally (after the extra checks are all done, and on one
+  power limit), and again when the card's power limit has changed for a while (the temperature guard giving power
+  back, for example), so it keeps matching the live hashrate. A reading no card could give is measured again instead
+  of being shown.
+- **Rigs that run for days:** GlintMiner's hashrate counter rolls over after about 15 hours of running (sooner on
+  faster cards). A tune measured at that moment could show wrong figures, fail a good step or end at *No stable
+  gain*. Every measurement now reads right across it, and the console's actual dev fee no longer drifts after a day.
+- **Pause and Resume carry on.** Pausing tuning, the temperature guard stopping a card, another tuning tool being
+  opened, choosing the mode that is already running, or Resume with nothing paused no longer throw the search away:
+  it carries on from where it was once the card is back (after a heat stop, once it has cooled). Each of these used
+  to start the whole search again from stock, an hour or more each time.
+- **Rigs with several cards:** one card tunes at a time, from its stock measurement to its result, so no card is
+  measured while another is being tested. A card waiting its turn says *Waiting for another card to finish tuning.*
+  and its time left includes the cards ahead of it, instead of 99% and *less than a minute* for hours.
+- A card whose self-test fails right after a tuning step no longer restarts over and over at that step: the step
+  counts as failed and tuning moves on.
+- A saved tune that makes the PC crash (a blue screen or a freeze) within minutes of being applied is backed off at
+  the next start, instead of being applied again at every boot.
+- A card that stops responding while it tests a step has found its limit there at once. GlintMiner being closed,
+  killed or losing power during a step (nothing says the step did it) tests that step once more before it counts, and
+  so does a single GPU error with nothing else wrong. A step that makes another card stop can no longer restart
+  GlintMiner over and over.
+- A new search starts with a clean slate: crash records belong to the search they happened in (a search a restart
+  interrupted keeps its own).
+- After a tune backs off a notch (an error while mining), its figures are measured again at the new setting instead of
+  showing the old, faster ones; in profit mode the right tune backs off.
+- A search that found nothing isn't run again at every start (hours of tuning, every day): the card stays at stock
+  with the reason for a week, or until you start or retune it, update the driver or update GlintMiner.
+- A tuning step is judged by its own results: a check that fails after the card moved on counts against the step
+  that produced it, not the next one, and on a very busy PC a step is tested again rather than judged before its
+  results are all checked. A step that loses its work for a moment (a pool outage, the card restarting) is tested
+  again as soon as work is back, not after running to its end.
+- glint.json can no longer be damaged by two parts of GlintMiner saving it at the same moment (tuning and a settings
+  change); a damaged entry in it drops only itself.
+- Smaller things: the power-limit try is skipped on cards held back by something else (like an RTX 4090's power rail),
+  saving a few minutes per tune; a final check that runs hot is settled the cooler way; a
+  tune that has backed off doesn't look for more speed where it already failed; *Re-tuning from stock.* goes once
+  every card is done; a bug in one card's tuning puts that card back to stock instead of stopping tuning.
+- The time left while tuning covers everything still ahead (the rest of the search, the final check and the
+  measurement after it), rounded up to whole minutes, instead of only the current part: near the end it could say
+  *about 2 min left* with 15–20 minutes to go. It now mostly counts down, and grows by a few minutes at most when the
+  card turns out to have more to give.
+- **Tune again** starts with a clean slate for the card: settings that crashed in earlier searches (often long ago,
+  in other conditions or on another version) no longer hold it back. On an RTX 4090 they had kept a retune slower
+  than the tune it had found the night before.
+- A new tune's result is measured again when the measurement reads below the tuning figures (a busy moment on the
+  PC), up to twice, and the middle one of the readings that read right is kept. A saved tune whose measurement never
+  finished is measured the next time it runs and shows as tuned only then, with the figures as mined, instead of the
+  tuning figures at once.
+- After a restart during tuning, the progress carries on from where it was (for example 72%, with the true time left)
+  instead of starting again from a few percent; the card says *Carrying on after a restart.*
+- When the dev fee's shares go to its backup pool (Kryptex, if HeroMiners can't be reached), they now carry the same
+  anonymous rig label as on HeroMiners: Kryptex reads the worker name only from the login, so the fee session logs in
+  there as the fee address followed by the label. The fee session on Kryptex also sends compressed shares, like
+  yours; it never asks for a share difficulty of its own. Nothing changes on HeroMiners.
+- **The temperature hard stop no longer stops a card over and over.** A card's slowdown and shutdown points are read
+  from the driver's temperature margin, which lags the temperature when it moves fast: read while a card was cooling
+  (just after GlintMiner restarted, or during a stop) they could come out several degrees low, and an RTX 4090 mining
+  at 79 C was stopped as *close to its shutdown point (82 C)* every ten seconds, losing half its hashrate (its real
+  points are 85 and 90 C). The points are now read only while the temperature holds still, readings that don't add
+  up are not used (the driver's fixed thresholds are, and the log says so once), and a stop lasts at least a minute,
+  longer when it comes back soon after.
+- **After GlintMiner is killed** (Task Manager, `taskkill /F`) the next start waits a few seconds for the driver to let
+  go of the card if it has to, puts each setting back on its own and reads the card back before calling it stock. A
+  card that can't be put back yet is never shown at stock: it says so and isn't tuned until it is back (GlintMiner
+  tries again before tuning it). *Tuning needs administrator rights* now shows only when the driver refuses for want
+  of rights, not for any other error. A tune that was still on the card when GlintMiner was killed is applied again
+  and measured, not backed off as if the PC had crashed.
+- **The tuned result matches what the card mines after a restart.** A tune measured right after GlintMiner started
+  (for example after it was killed while measuring) took what the card mined in GlintMiner's first few minutes, about
+  2% less than it mines after that, so an RTX 4090 showed *Tuned +6.6%* while mining about 8.5% over stock. Nothing
+  is measured as the card mines during GlintMiner's first minutes any more, nor while the extra checks are still being
+  worked through; stock is measured the same way at the first start. A new tune is also measured once more right
+  after it is announced, the way the card mines from then on, and the figure follows.
+- **The tuned figure checks itself.** While a card is tuned, what it actually mines over a quarter of an hour of normal
+  mining is compared with the figure shown. Clearly faster (1%) or slower (2%, not counting heat, the temperature
+  guard or the pool), the tune is measured again, at most once an hour, and the log says so in one line.
+- **A tune's safety margin no longer costs speed.** The extra checks during tuning lower a card's power draw a little,
+  so a tune could pass them at full speed and then, mining normally, meet the card's power cap and run slower. The
+  margin is now also judged the way the card mines: a tune held back that way is checked and measured with a slightly
+  smaller margin (still a margin), and the faster of the two is kept. On an RTX 4090, about half a percent.
+- **Tuning climbs as far as the card really holds.** A real gain near the top could be compared with a reading that
+  ran a little fast by chance, look like none, and leave the tune a notch lower. Each gain is now compared like with
+  like.
+- A restart GlintMiner makes by itself (after a GPU stops responding during tuning) no longer opens the dashboard in
+  your browser again: before, each one left another tab on the mining PC.
+- **Tuning no longer settles short when the card crashes once on the way.** Near a card's limit a single crash can be
+  a matter of luck on the day; the tune then settled a notch lower for good. It now gives that point one more, safer
+  try before settling. On our RTX 4090 this is what gets it to its best result: *Tuned +7.4%*, 332.5 TH/s as mined.
+- The tuning progress never goes backwards: when the time left is revised upwards, the bar holds and the time left
+  grows instead (it could drop from 98% to 78%).
+- Dashboard layout: the status card keeps its gap to the card below while tuning; the Rigs tuning panel spaces its
+  figures (*78%about 3 min left*) and shows no second progress bar for a single card; tile subtitles wrap to two lines
+  instead of being cut off (Russian on small phones); the power cost is easier to read in the light theme; the masked
+  wallet stays on one line; the time-range buttons are bigger on touch screens.
+- Just after a start, the wallet's rig split says the pool hasn't caught up yet instead of *This rig is 0% of your
+  wallet's hashrate* (pools report a 30-minute average).
+- The Settings power section no longer says *Stock clocks* (not true while tuned), and a multi-card rig no longer says
+  all cards tune at the same time (one card tunes at a time).
+- **An unattended start doesn't wait at a question.** With tuning on and GlintMiner started without administrator
+  rights (for example from a Startup shortcut after a power cut), the question *Restart GlintMiner as administrator
+  now?* now gives up after a minute and mines at stock, instead of waiting for a key while the card earned nothing.
+- **HiveOS:** each card's stats reach the right card in HiveOS on a rig whose CUDA order differs from its PCI order
+  (a mix of models), and a card without a temperature or fan reading no longer shifts the other cards' figures.
+  Worker names keep only what pools accept (letters, digits, `-` and `_`).
+- `--help` gives the right place for the log (next to `glint.json`).
+- The dashboard no longer animates endlessly while a card tunes (a page left open on the mining PC drew on the GPU
+  being tuned).
+
 ## [1.2.4] - 2026-09-28
 
 ### Changed

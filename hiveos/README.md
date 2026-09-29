@@ -14,7 +14,13 @@
 4. Apply the Flight Sheet to your rig.
 
 The rig name from HiveOS is used as the worker name. Hashrate, temperatures, fans and shares appear in the HiveOS
-dashboard as usual.
+dashboard by themselves: nothing to enable. GlintMiner serves its stats on the rig at `127.0.0.1:4078` and
+`h-stats.sh` reads them. If you change the port, do it with `--api-port` in *Extra config arguments* (the stats
+script follows that; a port changed on the dashboard's settings page isn't followed).
+
+To open GlintMiner's own dashboard from another computer on your network, add `--api-bind 0.0.0.0` to *Extra config
+arguments* and browse to `http://<rig-ip>:4078`. It is view-only from there; add `--api-allow-remote-control` as well
+to change settings from that computer.
 
 Files: `h-manifest.conf`, `h-config.sh` (builds the command line), `h-run.sh` (starts the miner), `h-stats.sh`
 (reports stats to HiveOS from GlintMiner's local API).
