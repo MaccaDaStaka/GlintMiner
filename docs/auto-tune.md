@@ -10,7 +10,7 @@ It is **optional and off by default**. Out of the box GlintMiner runs your card 
 touches clocks, voltages or fans.
 
 - [What it gets you](#what-it-gets-you)
-- [The four modes](#the-four-modes)
+- [The choices](#the-choices)
 - [Before you start](#before-you-start)
 - [Turning it on](#turning-it-on)
 - [While it tunes](#while-it-tunes)
@@ -19,6 +19,7 @@ touches clocks, voltages or fans.
 - [How it keeps your card safe](#how-it-keeps-your-card-safe)
 - [Temperature limits](#temperature-limits)
 - [Tuning again, pausing and turning it off](#tuning-again-pausing-and-turning-it-off)
+- [Gaming and the schedule](#gaming-and-the-schedule)
 - [What the messages mean](#what-the-messages-mean)
 - [The risk, plainly](#the-risk-plainly)
 
@@ -31,30 +32,40 @@ On our RTX 4090, mining live on Kryptex:
 | RTX 4090 | Hashrate | Power | TH/s per watt |
 |---|:-:|:-:|:-:|
 | Stock | 310 TH/s | 443 W | 0.70 |
-| **Speed** | **332 TH/s** (+7%) | 430 W | 0.77 |
-| **Efficiency** | 310 TH/s | **338 W** (−24%) | **0.92** |
+| **Most hashrate** | **332 TH/s** (+7%) | 430 W | 0.77 |
+| **Less power** | 310 TH/s | **338 W** (−24%) | **0.92** |
 
 Your card's result will be different, because every chip is. Many cards find a few percent more hashrate, or the same
-hashrate on a fifth to a quarter less power. A card with little headroom may find nothing worth keeping, and then
+hashrate on a fifth to a third less power. **Coolest and quietest** goes further on power: on an RTX 3070 tuned by hand
+for the least power, a tester got 0.666 TH/s per watt, and this mode looks for that kind of point by itself. A card with little headroom may find nothing worth keeping, and then
 it simply stays at stock (see [No stable gain](#what-the-messages-mean)).
 
-## The four modes
+## The choices
 
-| Mode | What it aims for | Good for |
+You choose by what you want, not how it's done. The name in brackets is the one to use on the command line and in
+HiveOS or MMPOS (`--tune profit`, and so on).
+
+| Choice | What you get | Good for |
 |---|---|---|
 | **Off** (default) | Factory settings | Anyone who doesn't want their card changed |
-| **Speed** | The highest hashrate your card holds with zero errors | Cheap or free electricity; the most Pearl |
-| **Efficiency** | Stock hashrate on as little power as possible | Expensive electricity, heat, noise, a small PSU |
-| **Profit** | The most money after electricity | Letting GlintMiner decide from prices |
+| **Best earnings** (`profit`) | GlintMiner picks what makes the most money at your electricity price. **Recommended** | Most people: it decides for you |
+| **Most hashrate** (`speed`) | The highest hashrate your card holds with zero errors | Cheap or free electricity; the most Pearl |
+| **Less power** (`efficiency`) | Stock hashrate on as little power as possible | Dearer electricity, heat, noise, a small PSU |
+| **Coolest and quietest** (`cool`) | The most hashrate per watt, a little slower than stock (never below 70% of stock speed) | Very expensive electricity, a hot room, a quiet PC |
 
-**Speed** may also raise the card's power limit up to the card's own maximum, while its temperature allows.
+**Most hashrate** may also raise the card's power limit up to the card's own maximum, while its temperature allows.
 
-**Profit** needs your electricity price (Settings → Electricity). It finds both the Speed and the Efficiency result
-first, so its first run takes about twice as long. After that it looks at the coin price and your electricity price
-every half hour and runs whichever result earns more, switching only when the other one earns clearly more (so it
-doesn't flip back and forth on small price moves).
+**Best earnings** needs your electricity price (Settings → Electricity; setup asks for it if you choose this). It
+finds both the Most hashrate and the Less power result first, so its first run takes about twice as long. After that
+it looks at the coin price and your electricity price every half hour and runs whichever result earns more, switching
+only when the other one earns clearly more (so it doesn't flip back and forth on small price moves).
 
-**Cooler days (Speed only).** A card that later runs clearly cooler than when it was tuned (a cold night, a cleaned
+**Coolest and quietest** starts from the card's stock speed and, step by step, lets the card run a little slower on
+a lot less power, for as long as each step gets more hashrate out of every watt. It stops at the card's best point,
+and never goes below 70% of stock speed. Its result reads like *47% less power at 96% of stock speed*. It takes
+longer than the others, up to about two hours.
+
+**Cooler days (Most hashrate only).** A card that later runs clearly cooler than when it was tuned (a cold night, a cleaned
 fan, a better case) can hold a little more. GlintMiner notices, tunes a little further while it mines, at most once a
 day, and keeps the saved result as a fallback if the new one isn't better.
 
@@ -80,7 +91,7 @@ Any one of these:
 
 - **At setup:** the last question asks *Tune your card?* Pick a mode, read the one-line risk, and type **Y**.
 - **On the dashboard:** **Settings → Tuning**, or the **Set up tuning** button on Home.
-- **On the command line:** `glint --tune speed --confirm-tuning` (or `efficiency`, `profit`). `--confirm-tuning` is
+- **On the command line:** `glint --tune profit --confirm-tuning` (or `speed`, `efficiency`, `cool`). `--confirm-tuning` is
   needed once, to confirm you accept the risk; it is saved.
 
 If GlintMiner isn't running as administrator, the card mines at stock and the dashboard says *Tuning can't start
@@ -90,7 +101,8 @@ starts by itself.
 ## While it tunes
 
 - **Your card keeps mining the whole time,** so you keep earning.
-- **It takes about 1 to 1½ hours** on a fast card (Efficiency is quicker, Profit about twice as long). The dashboard
+- **It takes about 1 to 1½ hours** on a fast card (Less power is quicker; Best earnings and Coolest and quietest take up
+  to about two hours). The dashboard
   shows the percentage done and the time left. The time left is an estimate: a card that turns out to have more to
   give takes a little longer.
 - **The hashrate runs a little lower while it tunes.** Every result is double-checked with Pearl's own verifier, and
@@ -108,10 +120,13 @@ starts by itself.
 
 ## When it's done
 
-The dashboard shows the outcome in plain words, for example **Tuned +7.4%** (Speed) or **−24% power** (Efficiency),
+The dashboard shows the outcome in plain words, for example **Tuned +7.4%** (Most hashrate), **−24% power** (Less
+power) or **−47% power at 96% of stock speed** (Coolest and quietest),
 with the hashrate and power against stock.
 
-- **The result is saved** and applied at every start, without tuning again.
+- **The result is saved, for each mode.** It is applied at every start without tuning again, and a card keeps a tune
+  for every mode it has tuned in: switch to another mode and back later, and the tune for that mode goes straight
+  back on.
 - **It keeps checking itself.** Over each quarter of an hour of normal mining, what the card actually mines is
   compared with the figure shown. If the card mines clearly faster or slower than the figure, it is measured again
   (at most once an hour), so the figure stays honest.
@@ -126,10 +141,11 @@ with the hashrate and power against stock.
 - **One card tunes at a time,** from its stock measurement to its result, so no card is measured while another is
   being tested. The others keep mining, with their own tunes if they have them. A card waiting its turn says
   *Waiting for another card to finish tuning*, and its time left includes the cards ahead of it.
-- **Each card can have its own mode.** For example Speed on one card, Efficiency on another, and another at stock.
+- **Each card can have its own mode.** For example Most hashrate on one card, Less power on another, and another at
+  stock.
   Cards you don't set follow the rig's mode. Set it in **Settings → Tuning** (the card list under the rig's mode) or
   on each card in **Rigs**, where you can also tune one card again, or pause it while the others keep their tunes.
-- On the command line: `glint --tune-card 0=speed,1=efficiency,2=off --confirm-tuning`. Cards not listed follow
+- On the command line: `glint --tune-card 0=speed,1=cool,2=off --confirm-tuning`. Cards not listed follow
   `--tune`. `--tune-exclude 0,2` keeps those cards at stock.
 - **A card keeps its mode and its tune when the cards are renumbered**: they are stored by the card's slot. Switching
   a card back to a mode it was already tuned in re-uses that result.
@@ -139,7 +155,7 @@ with the hashrate and power against stock.
 
 - **Error-free or nothing.** A setting is kept only if every result it produces passes Pearl's own verifier, over a
   long hold, and then with a safety margin on top.
-- **Never memory overclocks, never above the card's own power maximum.** Speed can raise the power limit, but only up
+- **Never memory overclocks, never above the card's own power maximum.** Most hashrate can raise the power limit, but only up
   to the maximum the card itself allows.
 - **Everything is put back** when GlintMiner closes, and on the next start after a crash or a power cut. If
   GlintMiner is killed (Task Manager), the next start restores the card before doing anything else, and doesn't show
@@ -173,6 +189,52 @@ GlintMiner watches every card's temperature all the time, tuned or not.
 | Forget everything tuning saved | — | `--tune-reset` |
 
 Turning tuning off, pausing, or closing GlintMiner always puts the card straight back to factory settings.
+
+**Gaming on the same PC?** Leave GlintMiner running: it pauses by itself while you play (next section). If you'd
+rather close it first, close it normally (its window's X, or Ctrl+C). Ending it from Task Manager leaves the tune on the
+card until GlintMiner runs again or the PC restarts, and a game running on a mining tune can crash.
+
+## Gaming and the schedule
+
+### Pause while you game (Windows)
+
+On by default. When a game, or any other program, uses the card heavily, mining stops within about 10 seconds and
+the cards go back to factory settings, so the game gets the whole card and never runs on a mining tune. A minute after
+the game stops using the card (you quit it, or it sits minimised), mining carries on and the tune goes straight back
+on. Home says **Paused while you play** and names the program.
+
+- It looks at how much each program uses the card's graphics engine: the same figures Task Manager shows. The
+  desktop, a browser or a video use far too little to count.
+- If a program you keep open pauses mining when you don't want it to (an animated wallpaper, a video editor), press
+  **Don't pause for it** on Home, or edit the list in **Settings → Gaming and schedule**. Wallpaper Engine is on the
+  list from the start.
+- Turn it off in the same place, or start GlintMiner with `--no-game-pause`.
+- A game started while a card is tuning pauses the tune as well; it carries on from where it was afterwards.
+- It works while GlintMiner runs. After ending GlintMiner from Task Manager, see the note above.
+
+### The schedule
+
+Choose times of day for another mode, or for a pause. For example:
+
+| From | To | Mode | Why |
+|---|---|---|---|
+| 23:00 | 07:00 | Coolest and quietest | A quiet room at night |
+| 17:00 | 21:00 | Pause mining | Your electricity's peak hours |
+
+Set it in **Settings → Gaming and schedule**. The times are this PC's local time, every day; outside them the rig runs
+its own mode, and where two times overlap the first in the list wins.
+
+- **A schedule never starts a tune.** A card switches only to a mode it has a saved tune for (Settings lists them).
+  To add one, choose that mode as your mode once, let it tune, then switch back: both tunes are kept.
+- **Switching is instant:** the saved tune goes straight on, with no new search. Factory settings and a pause are
+  always available.
+- **A tune in progress finishes first.** A card that is tuning when a scheduled time starts finishes, then switches.
+- Cards with a mode of their own (Rigs → the card → Mode) keep it; the schedule moves the cards that follow the rig's
+  mode. With tuning off, only the schedule's pauses apply.
+- *Best earnings* isn't offered in the schedule: it already chooses between your Most hashrate and Less power tunes
+  at your electricity price.
+- Command line: `--schedule 23:00-07:00=cool,17:00-21:00=pause` (modes: `off`, `speed`, `efficiency`, `cool`,
+  `pause`), and `--schedule off`. Add `--save` to keep it.
 
 ## What the messages mean
 

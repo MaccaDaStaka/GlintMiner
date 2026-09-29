@@ -82,7 +82,7 @@ GlintMiner никогда не трогает частоты. Он только 
 возвращает его при остановке.
 
 **Как включить автотюнинг?**
-Добавьте `--tune speed --confirm-tuning` (или `efficiency`, или `profit` вместе с `--kwh-price`) в строку `START`.
+Добавьте `--tune speed --confirm-tuning` (или `efficiency`, или `cool`, или `profit` вместе с `--kwh-price`) в строку `START`.
 Сначала прочитайте [Автотюнинг](auto-tune.ru.md). Карту, на которой вы хотите оставить свой разгон MMPOS, можно
 исключить с помощью `--tune-card 01:00.0=off` (по адресу шины PCI, который показывает `./glint --gpu-info`).
 

@@ -112,7 +112,7 @@ Then GlintMiner never touches clocks, and your HiveOS overclock works as it alwa
 change is the power limit, lowered when a card runs hot and put back when GlintMiner stops.
 
 **How do I turn auto-tune on for a HiveOS rig?**
-Add `--tune speed --confirm-tuning` to **Extra config arguments** (or `efficiency`, or `profit` together with
+Add `--tune speed --confirm-tuning` to **Extra config arguments** (or `efficiency`, `cool`, or `profit` together with
 `--kwh-price`). `--confirm-tuning` says you accept the risk; read [The risk, plainly](auto-tune.md#the-risk-plainly)
 first. Because it is in the flight sheet, that mode applies at every start. You can also turn it on from GlintMiner's
 dashboard on another computer, if you allow changes from there (see

@@ -106,7 +106,7 @@ and clocks depends on how your host is set up. If it refuses, GlintMiner says so
 …*, or *the power limit cannot be changed*) and the card mines at stock. Mining itself is not affected.
 
 **How do I turn auto-tune on?**
-Add `--tune speed --confirm-tuning` (or `efficiency`, or `profit` with `--kwh-price`) after the image name. Read
+Add `--tune speed --confirm-tuning` (or `efficiency`, `cool`, or `profit` with `--kwh-price`) after the image name. Read
 [Auto-tune](auto-tune.md) first. Because saved tunes are lost with the container, a new container tunes again from
 stock.
 

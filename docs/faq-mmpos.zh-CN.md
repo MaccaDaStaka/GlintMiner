@@ -48,7 +48,7 @@ MMPOS 会用你配置中的钱包和矿工名替换 `%WALLET%` 和 `%WORKER%`。
 
 **如果自动调校是关闭的呢？** GlintMiner 从不改动频率。它只会在显卡过热时调低功耗上限，并在停止时恢复。
 
-**如何开启自动调校？** 在 `START` 行中加上 `--tune speed --confirm-tuning`（也可用 `efficiency`，或 `profit` 加上 `--kwh-price`）。请先阅读[自动调校](auto-tune.zh-CN.md)。想继续使用 MMPOS 超频的显卡可以用 `--tune-card 01:00.0=off` 排除（按 PCI 总线地址，`./glint --gpu-info` 会显示）。
+**如何开启自动调校？** 在 `START` 行中加上 `--tune speed --confirm-tuning`（也可用 `efficiency`、`cool`，或 `profit` 加上 `--kwh-price`）。请先阅读[自动调校](auto-tune.zh-CN.md)。想继续使用 MMPOS 超频的显卡可以用 `--tune-card 01:00.0=off` 排除（按 PCI 总线地址，`./glint --gpu-info` 会显示）。
 
 **GlintMiner 在 MMPOS 上有调校所需的权限吗？** 它会自己检查。没有权限时，显卡会以出厂设置挖矿，日志会显示 *Tuning needs administrator rights: … (on Linux, with sudo). Until then this card mines at stock.*（调校需要管理员权限：…（Linux 上使用 sudo）。在此之前这张显卡以出厂设置挖矿。）
 

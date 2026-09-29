@@ -80,7 +80,7 @@ GlintMiner never touches clocks. It only eases a card's power limit down when th
 when it stops.
 
 **How do I turn auto-tune on?**
-Add `--tune speed --confirm-tuning` (or `efficiency`, or `profit` with `--kwh-price`) to the `START` line. Read
+Add `--tune speed --confirm-tuning` (or `efficiency`, `cool`, or `profit` with `--kwh-price`) to the `START` line. Read
 [Auto-tune](auto-tune.md) first. A card you want to keep on your MMPOS overclock can be left out with
 `--tune-card 01:00.0=off` (by its PCI bus address, which `./glint --gpu-info` shows).
 

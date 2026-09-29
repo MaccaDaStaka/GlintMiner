@@ -2,6 +2,63 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.6] - 2026-09-30
+
+### Fixed
+- **A card that goes dark while it tunes comes back by itself.** When a card's driver fell over during tuning (an RTX
+  3070 reported *out of memory*, then an unknown error), GlintMiner retried five times in the same process and gave
+  up, and the screens stayed black until the PC was restarted. Any GPU error while a card tunes now restarts
+  GlintMiner fresh, which recovers the card, and says the card hit a GPU error.
+- **Tuning starts with its gentlest change on its own.** The first thing tuning does now changes nothing but the one
+  setting that saves power without touching the clocks, so a card that can't take it is found out on a step that
+  changes nothing else. Such a card then tunes without it, and GlintMiner remembers that for the card (tuning it again
+  won't try it again); a PC that froze on that step never gets it a second time.
+- **"Next payout in …" counts every rig on your wallet.** The time to your next payout assumed only this rig was
+  filling the balance; with other rigs mining to the same address (any miner), it came out too long, about twice as
+  long with two similar rigs. It now uses this rig's live rate plus every other rig the pool lists on the address.
+- A tiny leftover in the pool's balance (its rounding) shows as 0, not as *2.14e-9 PRL*.
+
+- **A tuned card gets its tune back after a pause.** After the temperature guard had stopped a tuned card, or you
+  paused and resumed tuning, the card mined on at factory settings until GlintMiner was restarted.
+- After a pause or a wait for work in the middle of a tuning step, the step's stability checks no longer flood the
+  checker for a few seconds (*hit checker is far behind*): the rate they're sized by counts mining time only.
+- **Paused time no longer counts against a tune.** A card's tuned figure is checked against what it mines over each
+  quarter of an hour; a stretch that included a pause (yours, the temperature guard's, a game's) read as a slow card
+  and had it measured again for nothing.
+- Profit mode's power-limit sweep waits while mining is paused, and leaves out a limit that was measured while it was.
+
+### Added
+- **Coolest and quietest, a new tuning choice: the most hashrate per watt.** From the stock clock it steps the card
+  down a level at a time, finds the lowest voltage each level runs at, and keeps going while every watt earns more,
+  never below 70% of stock speed; it settles where the card is quietest for what it mines and checks that as the other
+  choices do. On our RTX 4090: 302.8 TH/s at 328 W as mined, 26% less power at 98% of stock speed. On a tester's
+  RTX 3070: 66 TH/s at 95 W, half the power at 87% of the speed, better than his own hand tune.
+- **Setup asks what you want, not how to tune:** Off (the default), Best earnings (asks for your electricity price if
+  it's missing), Most hashrate, Less power, or Coolest and quietest. The dashboard, `--tune` and the docs use the same
+  names (`profit`, `speed`, `efficiency`, `cool`).
+- **Pause while you game (Windows, on by default).** When a game, or any other program, uses the card heavily, mining
+  stops within about 10 seconds and the cards go back to factory settings, so the game has the whole card and never
+  runs on a mining tune. A minute after the game stops using the card, mining carries on and the tune goes straight
+  back on. GlintMiner tells a game from everyday use by how much of the card's graphics engine each program uses (what
+  Task Manager shows), so the desktop, a browser or a video don't count. Home says *Paused while you play* with the
+  program's name and a *Don't pause for it* button; Settings → Gaming and schedule has the list of programs that never
+  pause mining (animated wallpapers are on it from the start) and the switch. `--no-game-pause` turns it off.
+- **A schedule.** Times of day for another tuning mode (factory settings, Most hashrate, Less power, Coolest and
+  quietest) or a pause, every day in the PC's local time: a quiet card overnight, no mining in your peak electricity
+  hours. A card switches only to a mode it already has a saved tune for, at once and with no new search, so a schedule
+  never starts a tune; a tune in progress finishes first. Settings → Gaming and schedule, or
+  `--schedule 23:00-07:00=cool,17:00-21:00=pause`.
+- The stats API says why mining is paused: `status.state` is `held` and `hold` names the game or the schedule's end.
+- **Your wallet's total hashrate.** With more than one rig on the address, the payout card on Home and the wallet's
+  rig list on Earnings show *All rigs on HeroMiners: 222 TH/s (2 rigs)* (or Kryptex): this rig at its live rate plus
+  the others as the pool sees them, whatever miner they run.
+
+### Docs
+- The Windows FAQ and the auto-tune guide say what ending GlintMiner from Task Manager leaves behind (the tune stays on
+  the card until GlintMiner runs again or the PC restarts, and a game on a mining tune can crash), and that the pause
+  while you game makes closing it before gaming unnecessary. New sections: *Gaming and the schedule*, in every
+  language.
+
 ## [1.2.5] - 2026-09-29
 
 ### Added

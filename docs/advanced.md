@@ -50,13 +50,15 @@ Options given on the command line are used for that run. Add `--save` to write t
 | `--devices 0,1` | Mine on these GPUs only (numbered as in `glint --gpu-info`); default: all |
 | `--kwh-price 0.12`, `--currency EUR` | Your electricity price and currency, for profit after power |
 | `--profit-mode` | Find the power limit that earns the most, once a day (needs `--kwh-price` and administrator rights) |
-| `--tune MODE` | Auto-tune: `speed`, `efficiency`, `profit` or `off` (administrator rights; `--confirm-tuning` the first time) |
+| `--tune MODE` | Auto-tune: `profit` (best earnings), `speed` (most hashrate), `efficiency` (less power), `cool` (coolest and quietest) or `off` (administrator rights; `--confirm-tuning` the first time) |
 | `--confirm-tuning` | Confirms you accept auto-tune's risk (saved) |
-| `--tune-card 0=speed,1=efficiency,2=off` | A mode for each card (`default` follows `--tune`); cards not listed follow `--tune` |
+| `--tune-card 0=speed,1=cool,2=off` | A mode for each card (`default` follows `--tune`); cards not listed follow `--tune` |
 | `--tune-exclude 0,2` | Keep these cards at stock while the others tune |
 | `--retune` | Forget the saved tunes and tune every card again from stock |
 | `--tune-reset` | Forget saved tunes, per-card modes and exclusions, and turn tuning off |
 | `--tune-ignore-tools` | Tune even while MSI Afterburner or a similar tool is running (it may change clocks mid-tune) |
+| `--schedule 23:00-07:00=cool,17:00-21:00=pause` | Times of day for another mode (`off`, `speed`, `efficiency`, `cool`) or `pause`; `--schedule off` turns it off. See [the schedule](auto-tune.md#the-schedule) |
+| `--game-pause`, `--no-game-pause` | Windows: pause mining while a game uses the card (on by default) |
 | `--share-diff N` | Kryptex only: the share difficulty to ask for (0 = automatic) |
 | `--api-port 4078` | The dashboard's port |
 | `--api-bind 0.0.0.0` | Open the dashboard to your network (view-only from other devices) |
@@ -125,7 +127,9 @@ The full list is always in `glint --help`. Auto-tune in depth: [Auto-tune](auto-
 GlintMiner serves JSON on the dashboard's port, for your own monitoring and for rig OSes:
 
 - `GET http://127.0.0.1:4078/api/stats`: total and per-card hashrate (H/s), temperatures, fans, power, shares
-  (accepted, rejected, stale), uptime, version, the earnings estimate and the pool's wallet figures.
+  (accepted, rejected, stale), uptime, version, the earnings estimate and the pool's wallet figures. `status.state`
+  is `held` while mining is paused for a game or by the schedule, and `hold` says which (`{"kind": "game",
+  "program": "…"}` or `{"kind": "schedule", "until": "07:00"}`).
 
 It answers on `127.0.0.1` only, unless you start GlintMiner with `--api-bind 0.0.0.0`. Hashrate is in H/s, where 1 H
 is one Pearl multiply-accumulate.
@@ -136,7 +140,7 @@ All next to the program (or next to the file given with `--config`):
 
 | File | What's in it |
 |---|---|
-| `glint.json` | Your settings and saved tunes. Keep it when you update; delete it to start the setup again |
+| `glint.json` | Your settings and saved tunes (one per card and mode), the schedule and the programs that never pause mining. Keep it when you update; delete it to start the setup again |
 | `glint.log` | The log: what happened and when, with the technical detail of any error. Include the relevant lines in bug reports |
 | `glint-history.jsonl` | A minute-by-minute record of hashrate, power and earnings, for the dashboard's charts and totals |
 | `glint-benchmarks.json` | Results of `--bench` |

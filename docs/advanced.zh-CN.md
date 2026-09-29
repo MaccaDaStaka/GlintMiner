@@ -48,13 +48,15 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 | `--devices 0,1` | 只用这些显卡挖矿（编号与 `glint --gpu-info` 一致）；默认：全部 |
 | `--kwh-price 0.12`, `--currency EUR` | 你的电价和货币，用于计算扣除电费后的利润 |
 | `--profit-mode` | 每天一次寻找收益最高的功耗上限（需要 `--kwh-price` 和管理员权限） |
-| `--tune MODE` | 自动调校：`speed`、`efficiency`、`profit` 或 `off`（需要管理员权限；第一次需加 `--confirm-tuning`） |
+| `--tune MODE` | 自动调校：`profit`（收益最高）、`speed`（算力最高）、`efficiency`（更省电）、`cool`（最凉最静）或 `off`（需要管理员权限；第一次需加 `--confirm-tuning`） |
 | `--confirm-tuning` | 确认你接受自动调校的风险（会被保存） |
-| `--tune-card 0=speed,1=efficiency,2=off` | 为每张显卡设置模式（`default` 跟随 `--tune`）；未列出的显卡跟随 `--tune` |
+| `--tune-card 0=speed,1=cool,2=off` | 为每张显卡设置模式（`default` 跟随 `--tune`）；未列出的显卡跟随 `--tune` |
 | `--tune-exclude 0,2` | 其他显卡调校时，让这几张显卡保持出厂设置 |
 | `--retune` | 清除已保存的调校结果，所有显卡从出厂设置重新调校 |
 | `--tune-reset` | 清除已保存的调校结果、各卡模式和排除列表，并关闭调校 |
 | `--tune-ignore-tools` | 即使 MSI Afterburner 或类似工具正在运行也进行调校（它可能在调校途中改动频率） |
+| `--schedule 23:00-07:00=cool,17:00-21:00=pause` | 为某些时段选择另一种模式（`off`、`speed`、`efficiency`、`cool`）或暂停（`pause`）；`--schedule off` 关闭。见[计划](auto-tune.zh-CN.md#计划) |
+| `--game-pause`、`--no-game-pause` | Windows：游戏使用显卡时暂停挖矿（默认开启） |
 | `--share-diff N` | 仅限 Kryptex：向矿池申请的份额难度（0 = 自动） |
 | `--api-port 4078` | 面板端口 |
 | `--api-bind 0.0.0.0` | 向你的网络开放面板（其他设备仅可查看） |
@@ -107,7 +109,7 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 
 GlintMiner 在面板端口上提供 JSON，供你自己的监控和矿机系统使用：
 
-- `GET http://127.0.0.1:4078/api/stats`：总算力和每张显卡的算力（H/s）、温度、风扇、功耗、份额（已接受、拒绝、过期）、运行时间、版本、收益估算以及矿池的钱包数据。
+- `GET http://127.0.0.1:4078/api/stats`：总算力和每张显卡的算力（H/s）、温度、风扇、功耗、份额（已接受、拒绝、过期）、运行时间、版本、收益估算以及矿池的钱包数据。因游戏或计划暂停挖矿时，`status.state` 为 `held`，`hold` 说明原因（`{"kind": "game", "program": "…"}` 或 `{"kind": "schedule", "until": "07:00"}`）。
 
 它只在 `127.0.0.1` 上响应，除非你用 `--api-bind 0.0.0.0` 启动 GlintMiner。算力单位为 H/s，其中 1 H 表示一次 Pearl 乘加运算。
 
@@ -117,7 +119,7 @@ GlintMiner 在面板端口上提供 JSON，供你自己的监控和矿机系统�
 
 | 文件 | 内容 |
 |---|---|
-| `glint.json` | 你的设置和已保存的调校结果。更新时请保留；删除它可以重新进行设置 |
+| `glint.json` | 你的设置、已保存的调校结果（每张显卡每种模式一份）、计划以及不会触发暂停的程序。更新时请保留；删除它可以重新进行设置 |
 | `glint.log` | 日志：发生了什么、什么时候发生，以及任何错误的技术细节。提交 bug 报告时请附上相关内容 |
 | `glint-history.jsonl` | 每分钟一条的算力、功耗和收益记录，用于面板的图表和统计 |
 | `glint-benchmarks.json` | `--bench` 的结果 |

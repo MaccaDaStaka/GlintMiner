@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ Download GlintMiner 1.2.5](../../releases/latest)
+### [⬇ Download GlintMiner 1.2.6](../../releases/latest)
 Windows · Linux · HiveOS · free to use, 1% dev fee
 
 **English** · [Русский](README.ru.md) · [简体中文](README.zh-CN.md)
@@ -26,11 +26,11 @@ GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pea
 easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
 and where to send it, then shows you, live, what your card is making in real money.
 
-**New in 1.2.5:** auto-tune reliably reaches your card's best setting (on our RTX 4090: **332 TH/s as mined, +7.4%**
-against stock) and checks its own figure while you mine · it starts from a true stock card and waits while MSI
-Afterburner or a similar tool is open · safer when things go wrong: a tune that crashes the PC is backed off, and
-after the miner is killed the next start puts the card back first · a calmer dashboard with a new look, the latest payouts with the full history a
-tap away, and only the events that matter. [All changes](CHANGELOG.md)
+**New in 1.2.6:** **Coolest and quietest**, a new tuning choice for the most hashrate per watt (a tester's RTX 3070:
+half the power at 87% of the speed) · **pause while you game**: on Windows, mining stops when a game uses the card and
+carries on a minute after · **a schedule**: another mode, or a pause, at the times of day you choose · setup asks what
+you want (best earnings, most hashrate, less power, coolest and quietest) · a card whose driver fails while it tunes
+recovers by itself · the next payout counts every rig on your wallet. [All changes](CHANGELOG.md)
 
 ## Why miners choose GlintMiner
 
@@ -51,8 +51,8 @@ by card, driver and settings.</sub>
 | RTX 4090 | Hashrate | Power | TH/s per watt |
 |---|:-:|:-:|:-:|
 | Stock | 310 TH/s | 443 W | 0.70 |
-| **Auto-tune: Speed** | **332 TH/s** (+7%) | 430 W | 0.77 |
-| **Auto-tune: Efficiency** | 310 TH/s | **338 W** (−24%) | **0.92** |
+| **Auto-tune: Most hashrate** | **332 TH/s** (+7%) | 430 W | 0.77 |
+| **Auto-tune: Less power** | 310 TH/s | **338 W** (−24%) | **0.92** |
 
 <sub>GlintMiner mining live on Kryptex, September 2026, one RTX 4090. Every chip is a little different, so your card's
 result will be too.</sub>
@@ -67,6 +67,9 @@ result will be too.</sub>
   A card that runs hot has its power eased down; one near its limit pauses until it cools.
 - **Get more from your card, if you want it.** Optional [auto-tune](docs/auto-tune.md) finds your card's best stable
   setting while it mines: more hashrate, or the same hashrate on much less power.
+- **Games come first.** On Windows, mining pauses by itself while you play and carries on a minute after, with your
+  card at factory settings for the game. A [schedule](docs/auto-tune.md#the-schedule) can run a quieter mode at night
+  or pause at your peak electricity hours.
 - **Set it and forget it.** Watchdog, automatic pool failover, encrypted pool connections, and plain-language messages
   when something needs you. Watch it from [your phone](docs/phone-access.md), anywhere.
 
@@ -112,7 +115,7 @@ get paid. The full walkthrough, with every setup question and how payouts work, 
 |---|---|
 | **[Getting started](docs/getting-started.md)** | Choosing how you're paid, the setup step by step, when you get paid, updating and uninstalling |
 | **[The dashboard](docs/dashboard.md)** | Every screen explained: Home, Earnings, Rigs and Settings |
-| **[Auto-tune](docs/auto-tune.md)** | The four modes, how to tune for the best result, what happens while it tunes, how it keeps your card safe |
+| **[Auto-tune](docs/auto-tune.md)** | The five choices, how to tune for the best result, what happens while it tunes, how it keeps your card safe |
 | **[Phone access](docs/phone-access.md)** | Watching your miner from your phone, at home or anywhere with Tailscale |
 | **[For rig owners and power users](docs/advanced.md)** | Every command-line option, several GPUs and rigs, pools, HiveOS, MMPOS, Docker, systemd, the stats API |
 | **[FAQ and troubleshooting](docs/faq.md)** | Common questions, fixes for common problems, verifying your download, getting help |

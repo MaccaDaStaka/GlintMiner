@@ -67,7 +67,7 @@
 
 **如果自动调校是关闭的呢？** 那么 GlintMiner 从不改动频率，你的 HiveOS 超频和以前一样工作。GlintMiner 唯一可能改动的是功耗上限：显卡过热时调低，GlintMiner 停止时恢复。
 
-**如何为 HiveOS 矿机开启自动调校？** 在 **Extra config arguments** 中加上 `--tune speed --confirm-tuning`（也可用 `efficiency`，或 `profit` 加上 `--kwh-price`）。`--confirm-tuning` 表示你接受风险；请先阅读[坦白说明风险](auto-tune.zh-CN.md#坦白说明风险)。因为它写在飞行表中，这个模式在每次启动时都会生效。如果你允许从其他电脑更改，也可以在其他电脑上通过 GlintMiner 的面板开启它（见下面的[面板](#glintminer-自己的面板)）。
+**如何为 HiveOS 矿机开启自动调校？** 在 **Extra config arguments** 中加上 `--tune speed --confirm-tuning`（也可用 `efficiency`、`cool`，或 `profit` 加上 `--kwh-price`）。`--confirm-tuning` 表示你接受风险；请先阅读[坦白说明风险](auto-tune.zh-CN.md#坦白说明风险)。因为它写在飞行表中，这个模式在每次启动时都会生效。如果你允许从其他电脑更改，也可以在其他电脑上通过 GlintMiner 的面板开启它（见下面的[面板](#glintminer-自己的面板)）。
 
 **能调校一些显卡、另一些保留 HiveOS 超频吗？** 可以。模式为 **关闭** 的显卡会完全保持 HiveOS 设置的样子。例如 `--tune speed --confirm-tuning --tune-card 01:00.0=off` 会调校除 PCI 总线 `01:00.0` 上那张以外的所有显卡。用总线地址指定显卡可以避免混淆，因为 GlintMiner 的显卡编号可能与 HiveOS 的不同（见[多张显卡](#多张显卡)）。
 

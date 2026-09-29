@@ -58,7 +58,7 @@
 | **显卡被暂停：“接近关机温度”** | 显卡温度非常高 | 改善通风、清理风扇，或设置更低的温度上限；降温后会自动恢复 |
 | **手机上打不开面板** | 还没有允许，或被防火墙阻止 | 见[手机查看](phone-access.zh-CN.md#打不开时) |
 | **矿池显示本机为 0** | 矿池滞后 10–30 分钟 | 等一等；见上面的问题 |
-| **调校后黑屏或电脑死机** | 对这张显卡来说，这天的调校结果太激进了 | GlintMiner 下次启动时会自动回退调校结果。如果再次发生，请关闭调校或选择能效模式 |
+| **调校后黑屏或电脑死机** | 对这张显卡来说，这天的调校结果太激进了 | GlintMiner 下次启动时会自动回退调校结果。如果再次发生，请关闭调校或选择更省电模式 |
 
 还是解决不了？运行 `glint --self-test`，并查看[获取帮助](#获取帮助)。
 
@@ -66,8 +66,8 @@
 
 每个版本在发布页面的 `SHA256SUMS.txt` 中列出了每个文件的 SHA-256 校验值。校验方法：
 
-- **Windows**（在 PowerShell 或命令提示符中，在文件所在的文件夹里）：`certutil -hashfile glint-1.2.5-windows.zip SHA256`（或 `glint.exe`）
-- **Linux：** `sha256sum glint-1.2.5-linux.tar.gz`（或 `glint`）
+- **Windows**（在 PowerShell 或命令提示符中，在文件所在的文件夹里）：`certutil -hashfile glint-1.2.6-windows.zip SHA256`（或 `glint.exe`）
+- **Linux：** `sha256sum glint-1.2.6-linux.tar.gz`（或 `glint`）
 
 结果必须与 `SHA256SUMS.txt` 中该文件那一行一致。如果不一致，不要运行它：请从 [Releases 页面](https://github.com/MaccaDaStaka/GlintMiner/releases)重新下载。请只从本仓库下载 GlintMiner。
 

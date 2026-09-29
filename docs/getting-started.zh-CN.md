@@ -115,11 +115,12 @@ cd glint
 
   Tune your card? (you can change this any time)
   Tuning needs administrator rights: if you turn it on, setup can restart GlintMiner as administrator.
-    1) Off, stock clocks (default)
-    2) Speed: more hashrate
-    3) Efficiency: less power
-    4) Profit: the most profit after power
-  Type 1-4 and press Enter [1]: 1
+    1) Off: factory settings (default)
+    2) Best earnings: GlintMiner picks what makes the most money at your electricity price (recommended)
+    3) Most hashrate: as fast as your card safely goes
+    4) Less power: same speed, much less power
+    5) Coolest and quietest: lowest power, a little slower
+  Type 1-5 and press Enter [1]: 1
 
   Open the dashboard (charts, earnings, settings) in your browser at start?
     1) Yes
@@ -135,7 +136,7 @@ cd glint
 - **你的地址。** 如果你在启动前复制了地址，GlintMiner 会在剪贴板里找到它，不用再粘贴。使用前它会先检查地址。
 - **矿机名称。** 这台电脑在矿池网站上显示的名称。如果你有多台电脑，每台请用不同的名称。
 - **电价。** 可选。填写后，GlintMiner 会显示扣除电费后的利润，而不只是收入。电费单上有每 kWh 的价格。所选货币也决定收益的显示方式。
-- **要调校显卡吗？** 可选，默认关闭。如果选择了某个模式，设置程序会用一句话说明风险，只有你输入 **Y** 才会开启调校。在 Windows 上，它会提出以管理员身份重新启动 GlintMiner，因为调校需要管理员权限。如果选择不重启，显卡以出厂设置挖矿。请先阅读[自动调校](auto-tune.zh-CN.md)。
+- **要调校显卡吗？** 可选，默认关闭。你按想要的结果来选：收益最高（推荐；如果你跳过了电价，设置程序会询问）、算力最高、速度不变但更省电，或让显卡最凉最静。选择其中一项后，设置程序会用一句话说明风险，只有你输入 **Y** 才会开启调校。在 Windows 上，它会提出以管理员身份重新启动 GlintMiner，因为调校需要管理员权限。如果选择不重启，显卡以出厂设置挖矿。请先阅读[自动调校](auto-tune.zh-CN.md)。
 - **启动时打开面板？** 面板是 GlintMiner 在你自己电脑上提供的网页，包含图表、收益和设置。
 
 GlintMiner 会把你的回答保存在程序旁边的 `glint.json` 中，下次启动直接开始挖矿。之后你可以在面板的 **设置** 中更改任何一项。
@@ -182,4 +183,5 @@ GlintMiner 运行时，在浏览器中打开 **http://127.0.0.1:4078** 即可看
 ## 停止与卸载
 
 - **停止：** 关闭窗口或按 **Ctrl+C**。GlintMiner 对显卡所做的一切更改（功耗上限，以及使用自动调校时的频率）都会在关闭时恢复。
+- **在这台电脑上玩游戏？** 在 Windows 上不需要停止它：游戏使用显卡时 GlintMiner 会自动暂停挖矿，退出游戏一分钟后继续（见[游戏与计划](auto-tune.zh-CN.md#游戏与计划)）。如果要停止，请正常关闭，不要用任务管理器。
 - **卸载：** 先停止它，然后删除文件夹。GlintMiner 不会安装其他任何东西：没有服务、没有注册表项、没有后台程序。（如果你把它设置成了 Linux 服务或在矿机系统上运行，也要在那里删除。）

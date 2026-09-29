@@ -129,7 +129,7 @@ The full guide is [Auto-tune](auto-tune.md). These are the Linux-specific parts.
 
 **How do I turn it on?**
 At setup, on the dashboard (**Settings → Tuning**), or with `sudo ./glint --tune speed --confirm-tuning` (or
-`efficiency`, or `profit` with `--kwh-price`). `--confirm-tuning` confirms you accept the risk; it is saved.
+`efficiency`, `cool`, or `profit` with `--kwh-price`). `--confirm-tuning` confirms you accept the risk; it is saved.
 
 **Does auto-tune need a desktop, X or nvidia-settings?**
 No. GlintMiner makes its changes through the NVIDIA driver's management library, so it works on a headless machine.

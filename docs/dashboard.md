@@ -25,7 +25,9 @@ Home answers four questions, most urgent first:
 
 1. **Is it working?** A single status line at the top. **Green** when all is well (for example *Mining · on Kryptex ·
    RTX 4090 · 331 TH/s · 49 of 49 shares accepted*). **Amber** or **red** when something needs you, with the reason in
-   one sentence and the one thing to do. While a card tunes it says so, with the progress.
+   one sentence and the one thing to do. While a card tunes it says so, with the progress. **Paused while you play**
+   names the game that paused mining (with **Don't pause for it**, if that program isn't a game), and **Paused by
+   your schedule** says when mining carries on.
 2. **What am I earning?** Profit per day after electricity (or income per day if you haven't entered an electricity
    price), in your currency and in Pearl, with *today so far* and *the last 7 days*. It's an estimate for this rig,
    worked out from your live hashrate, the network and today's Pearl price; *How this is worked out* shows every
@@ -68,7 +70,8 @@ today, the hottest card and its temperature limit, and your shares (accepted, re
 |---|---|
 | **Wallet and payout** | Your address or Kryptex account, and how your earnings reach you |
 | **Electricity** | Price per kWh and currency, for power cost and profit after power |
-| **Tuning** | Auto-tune on or off, the rig's mode, and a mode for each card (see [Auto-tune](auto-tune.md)) |
+| **Tuning** | Auto-tune on or off and the rig's choice (Best earnings, Most hashrate, Less power, Coolest and quietest), and a choice for each card (see [Auto-tune](auto-tune.md)) |
+| **Gaming and schedule** | Pause while you game (Windows) and the programs that never pause it; times of day for another mode or a pause (see [Gaming and the schedule](auto-tune.md#gaming-and-the-schedule)) |
 | **Temperature and power** | The temperature limit (automatic from your card, or your own), the hard stop, and profit mode for power limits |
 | **Dashboard** | Who can open it (this computer only, or other devices view-only), the port, and opening it at start |
 | **Appearance and language** | Light, dark or automatic theme, and the language |

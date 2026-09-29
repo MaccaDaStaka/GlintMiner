@@ -84,7 +84,7 @@ cd glint
 
 完整指南见[自动调校](auto-tune.zh-CN.md)。以下是 Linux 特有的部分。
 
-**如何开启？** 在设置时、在面板上（**设置 → 调优**），或用 `sudo ./glint --tune speed --confirm-tuning`（也可用 `efficiency`，或 `profit` 加上 `--kwh-price`）。`--confirm-tuning` 用来确认你接受风险；它会被保存。
+**如何开启？** 在设置时、在面板上（**设置 → 调优**），或用 `sudo ./glint --tune speed --confirm-tuning`（也可用 `efficiency`、`cool`，或 `profit` 加上 `--kwh-price`）。`--confirm-tuning` 用来确认你接受风险；它会被保存。
 
 **自动调校需要桌面、X 或 nvidia-settings 吗？** 不需要。GlintMiner 通过 NVIDIA 驱动的管理库进行更改，所以在无显示器的机器上也能工作。它需要 root，以及提供这些控制功能的驱动；驱动较旧时，显卡会显示 *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again. Until then this card mines at stock.*（调校需要更新的 NVIDIA 驱动：请更新后重新启动 GlintMiner。在此之前这张显卡以出厂设置挖矿。）
 

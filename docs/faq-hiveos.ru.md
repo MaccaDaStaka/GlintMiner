@@ -117,7 +117,7 @@ GlintMiner возвращает карте её собственный разг�
 останавливается.
 
 **Как включить автотюнинг на риге с HiveOS?**
-Добавьте `--tune speed --confirm-tuning` в **Extra config arguments** (или `efficiency`, или `profit` вместе с
+Добавьте `--tune speed --confirm-tuning` в **Extra config arguments** (или `efficiency`, или `cool`, или `profit` вместе с
 `--kwh-price`). `--confirm-tuning` означает, что вы принимаете риск; сначала прочитайте
 [Риск, честно](auto-tune.ru.md#риск-честно). Поскольку это задано в полётном листе, режим применяется при каждом
 запуске. Включить его можно и с панели GlintMiner на другом компьютере, если вы разрешили оттуда изменения (см.

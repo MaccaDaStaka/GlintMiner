@@ -85,7 +85,7 @@ and a price site.
 | **The card is paused: "close to its shutdown point"** | The card is very hot | Improve airflow, clean the fans, or set a lower temperature limit; it resumes when cooler |
 | **The dashboard won't open from my phone** | Not allowed yet, or the firewall | See [Phone access](phone-access.md#if-it-doesnt-open) |
 | **The pool shows my rig at 0** | The pool lags 10–30 minutes | Wait; see the question above |
-| **The screen goes black or the PC freezes while tuned** | The tune is too tight for this card on this day | GlintMiner backs the tune off by itself at the next start. If it happens again, turn tuning off or choose Efficiency |
+| **The screen goes black or the PC freezes while tuned** | The tune is too tight for this card on this day | GlintMiner backs the tune off by itself at the next start. If it happens again, turn tuning off or choose Less power |
 
 Still stuck? Run `glint --self-test` and see [Getting help](#getting-help).
 
@@ -94,8 +94,8 @@ Still stuck? Run `glint --self-test` and see [Getting help](#getting-help).
 Every release lists a SHA-256 checksum for each file in `SHA256SUMS.txt` on the release page. To check yours:
 
 - **Windows** (in PowerShell or Command Prompt, in the folder with the file):
-  `certutil -hashfile glint-1.2.5-windows.zip SHA256` (or `glint.exe`)
-- **Linux:** `sha256sum glint-1.2.5-linux.tar.gz` (or `glint`)
+  `certutil -hashfile glint-1.2.6-windows.zip SHA256` (or `glint.exe`)
+- **Linux:** `sha256sum glint-1.2.6-linux.tar.gz` (or `glint`)
 
 The result must match the line for that file in `SHA256SUMS.txt`. If it doesn't, don't run it: download it again from
 the [Releases page](https://github.com/MaccaDaStaka/GlintMiner/releases). Only download GlintMiner from this

@@ -132,11 +132,12 @@ its own picks the first choice, shown in brackets).
 
   Tune your card? (you can change this any time)
   Tuning needs administrator rights: if you turn it on, setup can restart GlintMiner as administrator.
-    1) Off, stock clocks (default)
-    2) Speed: more hashrate
-    3) Efficiency: less power
-    4) Profit: the most profit after power
-  Type 1-4 and press Enter [1]: 1
+    1) Off: factory settings (default)
+    2) Best earnings: GlintMiner picks what makes the most money at your electricity price (recommended)
+    3) Most hashrate: as fast as your card safely goes
+    4) Less power: same speed, much less power
+    5) Coolest and quietest: lowest power, a little slower
+  Type 1-5 and press Enter [1]: 1
 
   Open the dashboard (charts, earnings, settings) in your browser at start?
     1) Yes
@@ -154,7 +155,9 @@ What each question is for:
 - **Rig name.** How this PC appears on the pool's website. Use a different name on each PC if you have several.
 - **Electricity price.** Optional. With it, GlintMiner shows profit after power, not just income. Your bill shows the
   price per kWh. The currency also sets how your earnings are shown.
-- **Tune your card?** Optional and off by default. If you pick a mode, setup shows the risk in one sentence and turns
+- **Tune your card?** Optional and off by default. You choose by what you want: best earnings (recommended; setup asks
+  for your electricity price if you skipped it), the most hashrate, less power at the same speed, or the coolest and
+  quietest card. If you pick one, setup shows the risk in one sentence and turns
   tuning on only if you type **Y**. On Windows it offers to restart GlintMiner as administrator, which tuning needs.
   Say no and the card mines at stock. Read [Auto-tune](auto-tune.md) first.
 - **Open the dashboard at start?** The dashboard is a web page served by GlintMiner on your own PC, with charts,
@@ -218,5 +221,8 @@ On Linux, replace `glint`. On HiveOS, point the custom miner's installation URL 
 
 - **To stop,** close the window or press **Ctrl+C**. Everything GlintMiner changed on your cards (power limits, and
   clocks if you use auto-tune) is put back as it closes.
+- **Gaming on this PC?** On Windows you don't need to stop it: GlintMiner pauses mining by itself while a game uses
+  the card and carries on a minute after you quit (see [Gaming and the schedule](auto-tune.md#gaming-and-the-schedule)).
+  If you do stop it, close it normally, not from Task Manager.
 - **To uninstall,** stop it and delete the folder. GlintMiner installs nothing else: no services, no registry
   entries, no background programs. (If you set it up as a Linux service or on a rig OS, remove it there too.)

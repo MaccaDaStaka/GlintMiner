@@ -66,6 +66,27 @@ changed are put back, and the log says *auto-tune: GlintMiner didn't close clean
 stock*. A power limit that only the temperature guard had lowered isn't part of that record, so it may not return to
 what it was until the PC restarts. Closing the window normally avoids both.
 
+**Until then, the tune stays on the card.** Don't play games or run other GPU-heavy programs after ending GlintMiner
+from Task Manager: a setting tuned for mining (above all *Coolest and quietest*, which runs the card at its lowest
+voltage) can make a game crash or the screen go black. Start GlintMiner again and close it normally, or restart the
+PC, first. **To game, leave GlintMiner running (it pauses by itself, below) or close it with its window's X or
+Ctrl+C.**
+
+**Can I game while GlintMiner runs?**
+Yes. With **Pause while I game** (on by default), when a game uses the card mining stops within about 10 seconds
+and the cards go back to factory settings, so the game has the whole card and never runs on a mining tune. A minute
+after you quit the game (or while it sits minimised), mining carries on and the tune goes back on. Home shows
+**Paused while you play** with the game's name. GlintMiner tells a game from everyday use by how much of the card's
+graphics engine a program uses (the figures Task Manager shows), so the desktop, a browser or a video don't pause it.
+Other heavy programs count too (a 3D editor, another miner): press **Don't pause for it** on Home to let one be, or
+edit the list, or turn the pause off, in **Settings → Gaming and schedule**. `--no-game-pause` turns it off from the
+command line. It needs the GPU usage counters Windows 10 (1709 or later) and 11 have.
+
+**Can it mine differently at night, or not at all at peak times?**
+Yes: **Settings → Gaming and schedule → Use a schedule**. Pick times of day and a mode for each (Coolest and
+quietest overnight, a pause during your peak electricity hours, and so on). A card only switches to a mode it has
+already tuned in, so the schedule never starts a tune. See [the schedule](auto-tune.md#the-schedule).
+
 **Can GlintMiner start by itself when Windows starts?**
 GlintMiner has no autostart setting and installs nothing, so you set it up in Windows:
 

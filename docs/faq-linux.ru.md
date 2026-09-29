@@ -135,7 +135,7 @@ put back to stock* (в прошлый раз GlintMiner закрылся нек�
 
 **Как его включить?**
 При настройке, на панели (**Настройки → Тюнинг**) или командой `sudo ./glint --tune speed --confirm-tuning` (либо
-`efficiency`, либо `profit` вместе с `--kwh-price`). `--confirm-tuning` подтверждает, что вы принимаете риск; это
+`efficiency`, либо `cool`, либо `profit` вместе с `--kwh-price`). `--confirm-tuning` подтверждает, что вы принимаете риск; это
 сохраняется.
 
 **Нужны ли автотюнингу рабочий стол, X или nvidia-settings?**

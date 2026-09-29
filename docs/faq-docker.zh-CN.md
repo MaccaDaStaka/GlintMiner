@@ -66,7 +66,7 @@ docker run -d --restart unless-stopped --gpus all -p 127.0.0.1:4078:4078 glint -
 
 **GlintMiner 能在容器中调校或更改功耗上限吗？** 它在容器内以 root 身份运行，所以会尝试。NVIDIA 驱动是否允许容器更改功耗上限和频率，取决于你的宿主机是如何设置的。如果被拒绝，GlintMiner 会提示（*Tuning needs administrator rights: …* 或 *the power limit cannot be changed*），显卡以出厂设置挖矿。挖矿本身不受影响。
 
-**如何开启自动调校？** 在镜像名后面加上 `--tune speed --confirm-tuning`（也可用 `efficiency`，或 `profit` 加上 `--kwh-price`）。请先阅读[自动调校](auto-tune.zh-CN.md)。因为已保存的调校结果会随容器一起丢失，新容器会从出厂设置重新调校。
+**如何开启自动调校？** 在镜像名后面加上 `--tune speed --confirm-tuning`（也可用 `efficiency`、`cool`，或 `profit` 加上 `--kwh-price`）。请先阅读[自动调校](auto-tune.zh-CN.md)。因为已保存的调校结果会随容器一起丢失，新容器会从出厂设置重新调校。
 
 ## 日志与更新
 
