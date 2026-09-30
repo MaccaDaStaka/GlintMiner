@@ -68,7 +68,7 @@ GlintMiner майнит **Pearl (PRL)**. Вы выбираете, в каком 
 |---|---|
 | Windows 10 / 11 | `glint-…-windows.zip` |
 | Linux | `glint-…-linux.tar.gz` |
-| Риг на HiveOS | `glint-…-hiveos.tar.gz` (см. [HiveOS](../hiveos/README.md)) |
+| Риг на HiveOS | `glint-….tar.gz` (см. [HiveOS](../hiveos/README.md)) |
 | Риг на MMPOS | файл для Linux (см. [MMPOS](../mmpos/README.md)) |
 | Docker | файл для Linux (см. [Docker](../docker/README.md)) |
 

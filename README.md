@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ Download GlintMiner 1.2.6](../../releases/latest)
+### [⬇ Download GlintMiner 1.2.7](../../releases/latest)
 Windows · Linux · HiveOS · free to use, 1% dev fee
 
 **English** · [Русский](README.ru.md) · [简体中文](README.zh-CN.md)
@@ -26,7 +26,7 @@ GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pea
 easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
 and where to send it, then shows you, live, what your card is making in real money.
 
-**New in 1.2.6:** **Coolest and quietest**, a new tuning choice for the most hashrate per watt (a tester's RTX 3070:
+**New in 1.2.7:** HiveOS installs work (use the `glint-1.2.7.tar.gz` link, Miner name `glint`). **New in 1.2.6:** **Coolest and quietest**, a new tuning choice for the most hashrate per watt (a tester's RTX 3070:
 half the power at 87% of the speed) · **pause while you game**: on Windows, mining stops when a game uses the card and
 carries on a minute after · **a schedule**: another mode, or a pause, at the times of day you choose · setup asks what
 you want (best earnings, most hashrate, less power, coolest and quietest) · a card whose driver fails while it tunes
@@ -94,7 +94,7 @@ You need an **NVIDIA RTX 30, 40 or 50-series card** with a recent driver, and **
 | An address for **another coin** (BTC, LTC, DOGE, SOL, …) | That coin, through unMineable | 1% |
 
 **1. Download** the file for your computer from the [latest release](../../releases/latest): `…-windows.zip`,
-`…-linux.tar.gz`, or `…-hiveos.tar.gz` for a HiveOS rig.
+`…-linux.tar.gz`, or `glint-….tar.gz` for a HiveOS rig.
 
 **2. Unzip and run** `glint.exe` (Linux: `./glint`). If Windows says *"Windows protected your PC"*, click **More info →
 Run anyway**; it does this for new programs that haven't been downloaded widely yet.

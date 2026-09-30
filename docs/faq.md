@@ -94,8 +94,8 @@ Still stuck? Run `glint --self-test` and see [Getting help](#getting-help).
 Every release lists a SHA-256 checksum for each file in `SHA256SUMS.txt` on the release page. To check yours:
 
 - **Windows** (in PowerShell or Command Prompt, in the folder with the file):
-  `certutil -hashfile glint-1.2.6-windows.zip SHA256` (or `glint.exe`)
-- **Linux:** `sha256sum glint-1.2.6-linux.tar.gz` (or `glint`)
+  `certutil -hashfile glint-1.2.7-windows.zip SHA256` (or `glint.exe`)
+- **Linux:** `sha256sum glint-1.2.7-linux.tar.gz` (or `glint`)
 
 The result must match the line for that file in `SHA256SUMS.txt`. If it doesn't, don't run it: download it again from
 the [Releases page](https://github.com/MaccaDaStaka/GlintMiner/releases). Only download GlintMiner from this

@@ -19,13 +19,15 @@
 
 ## 设置
 
-**用哪个文件？** [Releases](https://github.com/MaccaDaStaka/GlintMiner/releases) 页面中的 `glint-…-hiveos.tar.gz`：把它的链接填入自定义矿工的 **Installation URL**。其中包含 `glint` 程序和四个 HiveOS 文件：`h-manifest.conf`、`h-config.sh`（生成命令行）、`h-run.sh`（启动矿工）和 `h-stats.sh`（向 HiveOS 报告统计数据）。
+**用哪个文件？** [Releases](https://github.com/MaccaDaStaka/GlintMiner/releases) 页面中的 `glint-….tar.gz`：把它的链接填入自定义矿工的 **Installation URL**。其中包含 `glint` 程序和四个 HiveOS 文件：`h-manifest.conf`、`h-config.sh`（生成命令行）、`h-run.sh`（启动矿工）和 `h-stats.sh`（向 HiveOS 报告统计数据）。
 
 **飞行表（flight sheet）里填什么？** 矿工名称 `glint`，哈希算法 `pearl`，钱包和矿工模板 `%WAL%`，以及可选的矿池 URL 和额外参数。分步说明见 [HiveOS 指南](../hiveos/README.md)。
 
 **可以用哪种钱包？** Pearl 地址（`prl1…`），在 HeroMiners 上以 PRL 收款；Kryptex 账户（`krx…` 或注册邮箱），通过 Kryptex 以 BTC 收款；或 `COIN:address`（例如 `BTC:bc1q…`），通过 unMineable 以该币种收款。如果想通过 Kryptex 而不是 HeroMiners 以 PRL 收款，把 `stratum+ssl://prl.kryptex.network:8048` 填为矿池 URL。[该选哪个？](getting-started.zh-CN.md#选择收款方式)
 
 **矿工无法启动，提示 “CUSTOM_TEMPLATE (wallet) is empty”。** 飞行表中的钱包和矿工模板是空的。把它设为 `%WAL%`，并确认飞行表所用的钱包里填了地址。
+
+**什么都没发生，`miner` 显示 "There is no screen to be attached matching miner"；或者 HiveOS 提示自定义矿工名称应为 "glint-1.2.6"。** HiveOS 从软件包的文件名中取矿工名称，即版本号之前的部分：`glint-1.2.7.tar.gz` 得到 `glint`，也就是软件包里的文件夹名。1.2.6 及更早的软件包名为 `glint-…-hiveos.tar.gz`，HiveOS 会把它读成名为 `glint-1.2.6` 的矿工，因此无法作为 HiveOS 自定义矿工安装。请使用名为 `glint-<版本>.tar.gz` 的 HiveOS 软件包，并把 **Miner name** 设为 `glint`。另外请确认模板只写 `%WAL%`（GlintMiner 会自己加上矿机名；`%WAL%.%WORKER_NAME%` 会让地址无效），如果填写了 Pool URL，要以 `stratum+ssl://` 开头。`miner log` 会显示启动失败的原因。
 
 **GlintMiner 在 HiveOS 上会问设置问题吗？** 不会。HiveOS 通过命令行把钱包和矿机名传给它，所以它会直接开始挖矿。
 
@@ -101,7 +103,7 @@
 
 ## 更新与移除
 
-**如何在 HiveOS 上更新 GlintMiner？** 把自定义矿工的 **Installation URL** 指向新版本的 `glint-…-hiveos.tar.gz`，然后应用飞行表。我们无法保证 HiveOS 在安装新版本时会保留矿工文件夹中的文件，所以请把重要的内容放在飞行表中：**Extra config arguments** 中的参数每次启动时都会应用，无论 `glint.json` 发生了什么。如果已保存的调校结果丢失了，自动调校会重新调校。
+**如何在 HiveOS 上更新 GlintMiner？** 把自定义矿工的 **Installation URL** 指向新版本的 `glint-….tar.gz`，然后应用飞行表。我们无法保证 HiveOS 在安装新版本时会保留矿工文件夹中的文件，所以请把重要的内容放在飞行表中：**Extra config arguments** 中的参数每次启动时都会应用，无论 `glint.json` 发生了什么。如果已保存的调校结果丢失了，自动调校会重新调校。
 
 **如何停止使用它？** 应用一个使用其他矿工的飞行表。GlintMiner 正常关闭时，会恢复它对显卡所做的一切更改。如果它是被强行结束的，重启矿机即可清除 GlintMiner 所做的更改。
 

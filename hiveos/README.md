@@ -4,7 +4,8 @@
 2. Coin: `PRL` (or the coin you want to be paid in). Wallet: your address.
 3. Miner: **Custom**, then **Setup Miner Config**:
    - **Miner name:** `glint`
-   - **Installation URL:** the `glint-…-hiveos.tar.gz` link from the [Releases](../../../releases) page
+   - **Installation URL:** the link to the HiveOS package, `glint-<version>.tar.gz` (not the `-linux` one), from the
+     [Releases](../../../releases) page
    - **Hash algorithm:** `pearl`
    - **Wallet and worker template:** `%WAL%` (a Pearl `prl1…` address, or `COIN:address` for other coins, e.g. `BTC:bc1q…`)
    - **Pool URL:** leave empty to let GlintMiner choose the nearest server, or enter your own `stratum+ssl://host:port`

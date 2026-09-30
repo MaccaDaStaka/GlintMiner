@@ -21,7 +21,7 @@ package work today. The step-by-step setup is in the [HiveOS guide](../hiveos/RE
 ## Setting it up
 
 **Which file do I use?**
-`glint-…-hiveos.tar.gz` from the [Releases](https://github.com/MaccaDaStaka/GlintMiner/releases) page: its link goes
+`glint-….tar.gz` from the [Releases](https://github.com/MaccaDaStaka/GlintMiner/releases) page: its link goes
 in the custom miner's **Installation URL**. It holds the `glint` program and the four HiveOS files: `h-manifest.conf`,
 `h-config.sh` (builds the command line), `h-run.sh` (starts the miner) and `h-stats.sh` (reports stats to HiveOS).
 
@@ -38,6 +38,14 @@ paid in PRL through Kryptex instead of HeroMiners, add `stratum+ssl://prl.krypte
 **The miner doesn't start and says "CUSTOM_TEMPLATE (wallet) is empty".**
 The flight sheet's wallet and worker template is empty. Set it to `%WAL%` and make sure the flight sheet's wallet has
 an address.
+
+**Nothing happens, and `miner` says "There is no screen to be attached matching miner"; or HiveOS says the custom miner name should be "glint-1.2.6".**
+HiveOS takes the miner's name from the package's file name, everything before the version: `glint-1.2.7.tar.gz` gives
+`glint`, the folder inside the package. Packages up to 1.2.6 were named `glint-…-hiveos.tar.gz`, which HiveOS reads as a
+miner called `glint-1.2.6`, so they can't be installed as a HiveOS custom miner. Use the HiveOS package named
+`glint-<version>.tar.gz` and set the **Miner name** to `glint`. Also check the template is `%WAL%` alone (GlintMiner
+adds the rig name itself; `%WAL%.%WORKER_NAME%` makes the address invalid) and that a Pool URL, if you set one, starts
+with `stratum+ssl://`. `miner log` shows why a start failed.
 
 **Does GlintMiner ask any setup questions on HiveOS?**
 No. HiveOS gives it the wallet and rig name on the command line, so it starts mining straight away.
@@ -178,7 +186,7 @@ They are in UTC.
 ## Updating and removing
 
 **How do I update GlintMiner on HiveOS?**
-Point the custom miner's **Installation URL** at the new version's `glint-…-hiveos.tar.gz` and apply the flight
+Point the custom miner's **Installation URL** at the new version's `glint-….tar.gz` and apply the flight
 sheet. We can't promise that HiveOS keeps the files in the miner's folder when it installs a new version, so keep
 what matters in the flight sheet: options in **Extra config arguments** are applied at every start whatever happens to
 `glint.json`. If saved tunes are lost, auto-tune simply tunes again.

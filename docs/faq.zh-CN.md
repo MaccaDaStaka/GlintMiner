@@ -66,8 +66,8 @@
 
 每个版本在发布页面的 `SHA256SUMS.txt` 中列出了每个文件的 SHA-256 校验值。校验方法：
 
-- **Windows**（在 PowerShell 或命令提示符中，在文件所在的文件夹里）：`certutil -hashfile glint-1.2.6-windows.zip SHA256`（或 `glint.exe`）
-- **Linux：** `sha256sum glint-1.2.6-linux.tar.gz`（或 `glint`）
+- **Windows**（在 PowerShell 或命令提示符中，在文件所在的文件夹里）：`certutil -hashfile glint-1.2.7-windows.zip SHA256`（或 `glint.exe`）
+- **Linux：** `sha256sum glint-1.2.7-linux.tar.gz`（或 `glint`）
 
 结果必须与 `SHA256SUMS.txt` 中该文件那一行一致。如果不一致，不要运行它：请从 [Releases 页面](https://github.com/MaccaDaStaka/GlintMiner/releases)重新下载。请只从本仓库下载 GlintMiner。
 

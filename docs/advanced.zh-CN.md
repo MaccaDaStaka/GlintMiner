@@ -99,7 +99,7 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 
 ## HiveOS、MMPOS、Docker 与 Linux 服务
 
-- **HiveOS：** 使用 Releases 中 `glint-…-hiveos.tar.gz` 的链接添加自定义矿工。包括统计数据和从其他电脑打开面板在内的分步说明：[HiveOS](../hiveos/README.md)。
+- **HiveOS：** 使用 Releases 中 `glint-….tar.gz` 的链接添加自定义矿工。包括统计数据和从其他电脑打开面板在内的分步说明：[HiveOS](../hiveos/README.md)。
 - **MMPOS：** [MMPOS](../mmpos/README.md)。
 - **Docker：** [Docker](../docker/README.md)。宿主机上需要安装 NVIDIA Container Toolkit。
 - **Linux 服务（systemd）：** 把 [`glint.service`](../glint.service) 复制到 `/etc/systemd/system/`，在其中填入你的钱包，然后运行 `systemctl enable --now glint`。之后 GlintMiner 会开机启动，意外停止时也会自动重启。系统服务请使用 `--plain`，这样在 `journalctl -u glint` 中查看的日志更清晰。

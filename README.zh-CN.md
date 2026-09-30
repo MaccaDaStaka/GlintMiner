@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ 下载 GlintMiner 1.2.6](../../releases/latest)
+### [⬇ 下载 GlintMiner 1.2.7](../../releases/latest)
 Windows · Linux · HiveOS · 免费使用，开发者抽水 1%
 
 [English](README.md) · [Русский](README.ru.md) · **简体中文**
@@ -24,7 +24,7 @@ Windows · Linux · HiveOS · 免费使用，开发者抽水 1%
 
 GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。它的目标是让每一瓦电挖出尽可能多的 Pearl，同时也是上手最简单的矿工软件：不用改配置文件，不用写 bat 脚本，也不用学命令行。它会问你想用什么方式收款、收益发到哪里，然后实时显示你的显卡实际能赚多少钱。
 
-**1.2.6 新功能：** **最凉最静**：新的调校选项，追求每瓦最高算力（测试者的 RTX 3070：功耗减半，速度保持 87%）· **玩游戏时暂停**：在 Windows 上，游戏使用显卡时挖矿停止，结束一分钟后继续 · **计划**：在你选择的时段换用另一种模式或暂停 · 设置向导按你的目标提问（收益最高、算力最高、更省电、最凉最静）· 调校时显卡驱动出错也能自行恢复 · 距下次支付的时间会计入你钱包上的所有矿机。[全部更新内容](CHANGELOG.md)
+**1.2.7 新功能：** HiveOS 可以正常安装了（使用 `glint-1.2.7.tar.gz` 链接，Miner name 填 `glint`）。**1.2.6 新功能：** **最凉最静**：新的调校选项，追求每瓦最高算力（测试者的 RTX 3070：功耗减半，速度保持 87%）· **玩游戏时暂停**：在 Windows 上，游戏使用显卡时挖矿停止，结束一分钟后继续 · **计划**：在你选择的时段换用另一种模式或暂停 · 设置向导按你的目标提问（收益最高、算力最高、更省电、最凉最静）· 调校时显卡驱动出错也能自行恢复 · 距下次支付的时间会计入你钱包上的所有矿机。[全部更新内容](CHANGELOG.md)
 
 ## 为什么选择 GlintMiner
 
@@ -77,7 +77,7 @@ GlintMiner 是一款在 NVIDIA 显卡上挖 **Pearl (PRL)** 的矿工软件。�
 | **Kryptex 账户**（`krx…`，在 pool.kryptex.com 免费注册） | BTC，可提现为 BTC、USDT 或 USDC | 2% |
 | **其他币**的地址（BTC、LTC、DOGE、SOL 等） | 该币种，通过 unMineable | 1% |
 
-**1. 下载**：从[最新版本](../../releases/latest)页面下载适合你电脑的文件：`…-windows.zip`、`…-linux.tar.gz`，HiveOS 矿机则下载 `…-hiveos.tar.gz`。
+**1. 下载**：从[最新版本](../../releases/latest)页面下载适合你电脑的文件：`…-windows.zip`、`…-linux.tar.gz`，HiveOS 矿机则下载 `glint-….tar.gz`。
 
 **2. 解压并运行** `glint.exe`（Linux：`./glint`）。如果 Windows 提示 *“Windows 已保护你的电脑”*，点击 **更多信息 → 仍要运行**；对于下载量还不多的新程序，Windows 都会这样提示。
 

@@ -113,7 +113,7 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 
 ## HiveOS, MMPOS, Docker и службы Linux
 
-- **HiveOS:** добавьте кастомный майнер по ссылке на `glint-…-hiveos.tar.gz` из Releases. Пошагово, включая статистику
+- **HiveOS:** добавьте кастомный майнер по ссылке на `glint-….tar.gz` из Releases. Пошагово, включая статистику
   и открытие панели с другого компьютера: [HiveOS](../hiveos/README.md).
 - **MMPOS:** [MMPOS](../mmpos/README.md).
 - **Docker:** [Docker](../docker/README.md). На хосте нужен NVIDIA Container Toolkit.

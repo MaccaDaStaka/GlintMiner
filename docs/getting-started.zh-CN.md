@@ -54,7 +54,7 @@ GlintMiner 挖的是 **Pearl (PRL)**。你可以选择收款方式：
 |---|---|
 | Windows 10 / 11 | `glint-…-windows.zip` |
 | Linux | `glint-…-linux.tar.gz` |
-| HiveOS 矿机 | `glint-…-hiveos.tar.gz`（见 [HiveOS](../hiveos/README.md)） |
+| HiveOS 矿机 | `glint-….tar.gz`（见 [HiveOS](../hiveos/README.md)） |
 | MMPOS 矿机 | Linux 文件（见 [MMPOS](../mmpos/README.md)） |
 | Docker | Linux 文件（见 [Docker](../docker/README.md)） |
 

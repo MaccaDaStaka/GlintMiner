@@ -2,6 +2,26 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.7] - 2026-09-30
+
+HiveOS fixes only; the miner itself is unchanged from 1.2.6. **On HiveOS:** in the flight sheet's custom miner, set
+Miner name `glint` and Installation URL the link to `glint-1.2.7.tar.gz`, then apply. On Windows and Linux there is
+nothing new beyond the version number.
+
+### Fixed
+- **The HiveOS package installs.** HiveOS takes a custom miner's name from the package's file name (everything before
+  the version), and `glint-1.2.6-hiveos.tar.gz` read as a miner called `glint-1.2.6` while the package holds `glint`:
+  HiveOS either refused the name or installed a miner it then couldn't find ("no screen matching miner"). The HiveOS
+  package is now `glint-<version>.tar.gz`; the Miner name stays `glint`.
+- HiveOS: the start script loads the package's own settings (config and log paths) and makes its log folder, instead
+  of relying on HiveOS to pass them on.
+- The HiveOS package says its own version to HiveOS (1.2.6's `h-manifest.conf` still said 1.2.5); the packaging now
+  writes it from the release number.
+
+### Docs
+- HiveOS FAQ: what "There is no screen to be attached matching miner" means (the Miner name must be exactly `glint`),
+  with the template and Pool URL mistakes that stop a start.
+
 ## [1.2.6] - 2026-09-30
 
 ### Fixed

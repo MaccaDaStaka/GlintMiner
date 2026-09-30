@@ -113,7 +113,7 @@ The full list is always in `glint --help`. Auto-tune in depth: [Auto-tune](auto-
 
 ## HiveOS, MMPOS, Docker and Linux services
 
-- **HiveOS:** add a custom miner with the `glint-…-hiveos.tar.gz` link from Releases. Step by step, including stats and
+- **HiveOS:** add a custom miner with the `glint-….tar.gz` link from Releases. Step by step, including stats and
   opening the dashboard from another computer: [HiveOS](../hiveos/README.md).
 - **MMPOS:** [MMPOS](../mmpos/README.md).
 - **Docker:** [Docker](../docker/README.md). Needs the NVIDIA Container Toolkit on the host.

@@ -96,8 +96,8 @@
 свой файл:
 
 - **Windows** (в PowerShell или командной строке, в папке с файлом):
-  `certutil -hashfile glint-1.2.6-windows.zip SHA256` (или `glint.exe`)
-- **Linux:** `sha256sum glint-1.2.6-linux.tar.gz` (или `glint`)
+  `certutil -hashfile glint-1.2.7-windows.zip SHA256` (или `glint.exe`)
+- **Linux:** `sha256sum glint-1.2.7-linux.tar.gz` (или `glint`)
 
 Результат должен совпасть со строкой для этого файла в `SHA256SUMS.txt`. Если не совпадает, не запускайте файл:
 скачайте его заново со [страницы Releases](https://github.com/MaccaDaStaka/GlintMiner/releases). Скачивайте GlintMiner

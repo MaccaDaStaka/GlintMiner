@@ -67,7 +67,7 @@ computer:
 |---|---|
 | Windows 10 / 11 | `glint-…-windows.zip` |
 | Linux | `glint-…-linux.tar.gz` |
-| HiveOS rig | `glint-…-hiveos.tar.gz` (see [HiveOS](../hiveos/README.md)) |
+| HiveOS rig | `glint-….tar.gz` (see [HiveOS](../hiveos/README.md)) |
 | MMPOS rig | the Linux file (see [MMPOS](../mmpos/README.md)) |
 | Docker | the Linux file (see [Docker](../docker/README.md)) |
 
