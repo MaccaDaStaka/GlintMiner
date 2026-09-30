@@ -131,6 +131,15 @@ Yes. A card whose mode is **Off** is left exactly as HiveOS set it. For example 
 --tune-card 01:00.0=off` tunes every card except the one at PCI bus `01:00.0`. Naming the card by its bus address
 avoids confusion, because GlintMiner's card numbers can differ from HiveOS's (see [Several cards](#several-cards)).
 
+**How do I tune just one card, or a few?**
+List them after one `--tune-card`, by bus address, separated by commas with no spaces, for example
+`--tune-card 0b:00.0=cool,11:00.0=cool --confirm-tuning`. Cards not listed keep your HiveOS overclock. Put `--tune-card`
+only once (a second one, or a space inside the list, isn't read as part of it). The bus address is the grey number
+under each GPU in HiveOS (`0b:00.0`, `11:00.0`, …). Before you apply it, set those cards' overclock in HiveOS to stock:
+`0` for them in Core, Core lock, Memory and Power limit (one value per GPU, in HiveOS's order), so HiveOS and
+GlintMiner never set the same card's clocks. Later you can tune the rest the same way, or the whole rig with
+`--tune cool --confirm-tuning`: a card already tuned in that mode keeps its tune and isn't tuned again.
+
 **Does GlintMiner have the rights it needs to tune?**
 It checks for itself. If it can't change the card's settings, the card mines at stock, the log says *Tuning needs
 administrator rights: … (on Linux, with sudo). Until then this card mines at stock.*, and the dashboard says

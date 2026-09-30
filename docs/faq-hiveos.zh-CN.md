@@ -73,6 +73,8 @@
 
 **能调校一些显卡、另一些保留 HiveOS 超频吗？** 可以。模式为 **关闭** 的显卡会完全保持 HiveOS 设置的样子。例如 `--tune speed --confirm-tuning --tune-card 01:00.0=off` 会调校除 PCI 总线 `01:00.0` 上那张以外的所有显卡。用总线地址指定显卡可以避免混淆，因为 GlintMiner 的显卡编号可能与 HiveOS 的不同（见[多张显卡](#多张显卡)）。
 
+**如何只调校一张或几张显卡？** 在一个 `--tune-card` 后面用总线地址列出它们，用逗号分隔、不要空格，例如 `--tune-card 0b:00.0=cool,11:00.0=cool --confirm-tuning`。未列出的显卡保留 HiveOS 超频。`--tune-card` 只写一次（第二个同名参数或列表中间的空格都不会被读作它的一部分）。总线地址就是 HiveOS 中每张显卡下方的灰色数字（`0b:00.0`、`11:00.0` 等）。应用之前，先在 HiveOS 中把这些显卡的超频恢复为默认：Core、Core lock、Memory 和 Power limit 中对应位置填 `0`（每张显卡一个值，按 HiveOS 的顺序），这样 HiveOS 和 GlintMiner 不会同时设置同一张卡的频率。之后可以用同样的方法调校其余显卡，或用 `--tune cool --confirm-tuning` 调校整台矿机：已在该模式下调校过的显卡会保留结果，不会重新调校。
+
 **GlintMiner 有调校所需的权限吗？** 它会自己检查。如果无法更改显卡的设置，显卡会以出厂设置挖矿，日志会显示 *Tuning needs administrator rights: … (on Linux, with sudo). Until then this card mines at stock.*（调校需要管理员权限：…（Linux 上使用 sudo）。在此之前这张显卡以出厂设置挖矿。），面板会显示“调优还无法开始”。
 
 **调校在 HiveOS 中是什么样子？** 显卡全程都在挖矿，调校期间会稍慢一些；在快的显卡上，调校大约需要 1 到 1.5 小时。在 GlintMiner 的面板上查看进度和结果。详见[调校期间](auto-tune.zh-CN.md#调校期间)。
