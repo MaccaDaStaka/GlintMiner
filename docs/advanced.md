@@ -50,19 +50,28 @@ Options given on the command line are used for that run. Add `--save` to write t
 | `--devices 0,1` | Mine on these GPUs only (numbered as in `glint --gpu-info`); default: all |
 | `--kwh-price 0.12`, `--currency EUR` | Your electricity price and currency, for profit after power |
 | `--profit-mode` | Find the power limit that earns the most, once a day (needs `--kwh-price` and administrator rights) |
-| `--tune MODE` | Auto-tune: `profit` (best earnings), `speed` (most hashrate), `efficiency` (less power), `cool` (coolest and quietest) or `off` (administrator rights; `--confirm-tuning` the first time) |
+| `--tune MODE` | Auto-tune: `profit` (best earnings), `speed` (most hashrate), `efficiency` (less power), `cool` (cool and quiet, at `--cool-strength`; or `cool:cool`, `cool:cooler`, `cool:coolest`) or `off` (administrator rights; `--confirm-tuning` the first time) |
+| `--cool-strength cooler` | How far Cool and quiet goes: `cool` (about a quarter less power than stock), `cooler` (about a third, the default) or `coolest` (about 45%); never below 70% of stock speed. Saved as `cool_strength`. Each strength keeps its own tune. See [Cool and quiet](auto-tune.md#the-choices) |
 | `--confirm-tuning` | Confirms you accept auto-tune's risk (saved) |
-| `--tune-card 0=speed,1=cool,2=off` | A mode for each card (`default` follows `--tune`); cards not listed follow `--tune` |
+| `--tune-card 0=speed,1=cool:coolest,2=off` | A mode for each card (`default` follows `--tune`; plain `cool` is the rig's strength); cards not listed follow `--tune` |
 | `--tune-exclude 0,2` | Keep these cards at stock while the others tune |
 | `--retune` | Forget the saved tunes and tune every card again from stock |
 | `--tune-reset` | Forget saved tunes, per-card modes and exclusions, and turn tuning off |
+| `--tune-at-once N` | Tune up to N cards at the same time (default 1). **Every card tuning runs at factory settings, hotter and louder than your own overclock, for 1–2 hours**: N at once means N cards at stock together. Set fixed fan speeds (70%+) and make sure cooling and power can take it; a crash is harder to pin on the card that caused it. Cards waiting keep their own settings, or run at reduced power |
+| `--tune-power-budget WATTS` | While cards tune, keep the whole rig under this many watts (0 or `off`: none, the default). Waiting cards are held lower first; a card starts tuning only when it fits. Also in Settings |
+| `--speed-power-raise max` | How much power Most hashrate may add to each card, safer to riskier: `none` (never above stock), `low` (up to 10% more), `medium` (up to 25% more) or `max` (up to the card's own maximum, the default); or the most watts to add per card, like `50`. Also in Settings. See [Rigs with several cards](auto-tune.md#rigs-with-several-cards) |
+| `--speed-power-raise-card 0=none,1=50` | The same for one card (by number or PCI bus id) in place of `--speed-power-raise`; `rig` follows the rig's again. Saved as `speed_power_raise_cards` |
+| `--temp-limit auto` | The temperature GlintMiner keeps every card under by lowering its power (administrator rights): `auto` (the default, from each card's own safe maximum), a number from 60 to 95 (°C; never above a card's own maximum) or `off`. Also in Settings |
+| `--temp-limit-card 0=75,2=70` | A temperature limit for each card (by number or PCI bus id) in place of `--temp-limit`, 60 to 95 °C and never above the card's own maximum; `auto` follows the rig's again. For a card in a hot spot, such as between two others. Auto-tune keeps to it too. Saved as `temp_limits` |
 | `--tune-ignore-tools` | Tune even while MSI Afterburner or a similar tool is running (it may change clocks mid-tune) |
-| `--schedule 23:00-07:00=cool,17:00-21:00=pause` | Times of day for another mode (`off`, `speed`, `efficiency`, `cool`) or `pause`; `--schedule off` turns it off. See [the schedule](auto-tune.md#the-schedule) |
+| `--schedule 23:00-07:00=cool:coolest,17:00-21:00=pause` | Times of day for another mode (`off`, `speed`, `efficiency`, `cool:cool`, `cool:cooler`, `cool:coolest`; plain `cool` is the rig's strength) or `pause`; `--schedule off` turns it off. See [the schedule](auto-tune.md#the-schedule) |
 | `--game-pause`, `--no-game-pause` | Windows: pause mining while a game uses the card (on by default) |
 | `--share-diff N` | Kryptex only: the share difficulty to ask for (0 = automatic) |
+| `--auto-update ask` | Updates: `ask` (default: you choose Update now, Later or Skip), `auto` (install at a moment no card is mid-tune, then restart) or `off` (no checks). See [Updates](../README.md#updates) |
+| `--affiliate CODE` | The affiliate code of whoever referred you (`off` removes it; kept in `glint.json` as `"affiliate"`). You still pay 1%: a quarter of it goes to the affiliate. See [the FAQ](faq.md#questions) |
 | `--api-port 4078` | The dashboard's port |
 | `--api-bind 0.0.0.0` | Open the dashboard to your network (view-only from other devices) |
-| `--api-allow-remote-control` | Also allow changes from those devices (only on a network you trust) |
+| `--api-allow-remote-control` | Also allow changes from those devices, with the remote-control code shown at start and on this PC's dashboard (only on a network you trust) |
 | `--open-dashboard`, `--no-open-dashboard` | Open the dashboard in your browser at start, or don't |
 | `--telegram-token TOKEN`, `--telegram-chat ID` | Alerts on Telegram when a card stops or the pool is lost |
 | `--plain` | Plain log lines instead of the live table (services, rig OSes, screen readers) |
@@ -82,6 +91,8 @@ The full list is always in `glint --help`. Auto-tune in depth: [Auto-tune](auto-
 | `glint --benchmarks` | Shows saved benchmark results |
 | `glint --pools ADDRESS` | Shows which pool and route an address would use |
 | `glint --net-test host:port` | Tests the connection to a pool server |
+| `glint --update [VERSION]` | Checks for a new version, verifies its signature and installs it, then starts it (a GlintMiner running on this PC updates itself instead); `VERSION` picks a release, an older one too; `--no-start` installs only |
+| `glint --become-affiliate` | Sign up as an affiliate on a rig without a screen: shows exactly what is sent and sends it only after you type `yes`; run it again to see the status (pending, approved with your code, rejected or revoked) |
 
 ## Several GPUs and several rigs
 
@@ -92,7 +103,17 @@ The full list is always in `glint --help`. Auto-tune in depth: [Auto-tune](auto-
 - **One card failing doesn't stop the rest.** If a card can't start, the others mine on and the console says why. If
   a card stops responding, GlintMiner restarts itself and carries on.
 - **Every card is looked after on its own:** the temperature guard and auto-tune treat each card separately. See
-  [Rigs with several cards](auto-tune.md#rigs-with-several-cards).
+  [Rigs with several cards](auto-tune.md#rigs-with-several-cards). A card that runs hotter than the rest (in the
+  middle of a stack, near the power supply) can have a lower limit of its own: `--temp-limit-card 1=72`.
+- **Hot memory:** RTX 3080, 3090, 3090 Ti and 4070 Ti and up have memory that can reach its own limit while the card's
+  temperature reads fine (the driver doesn't report the memory's temperature on these cards). When the card slows
+  itself for heat like this, GlintMiner lowers its power until it no longer has to, and the log says so. Good airflow
+  over the back of the card helps most.
+- **Power supply:** cards waiting their turn to tune run at reduced power, and `--tune-power-budget` keeps the whole
+  rig under a number of watts while it tunes. Most hashrate may give a card more power than stock where that gains
+  (up to the card's own maximum by default), and a rig only draws all of it once every card runs its tune: on a rig
+  near its power supply's limit, choose less with `--speed-power-raise none|low|medium` (Settings → Temperature and
+  power → Extra power for Most hashrate), set a budget, or tune for Less power.
 - **Several PCs:** run GlintMiner on each with its own worker name (`--worker rig2`), all to the same wallet. Your
   pool lists each PC separately, and the dashboard's Earnings page shows every rig on the wallet.
 - **Memory:** allow about 1.5 GB of system memory (RAM) per GPU.
@@ -130,6 +151,9 @@ GlintMiner serves JSON on the dashboard's port, for your own monitoring and for 
   (accepted, rejected, stale), uptime, version, the earnings estimate and the pool's wallet figures. `status.state`
   is `held` while mining is paused for a game or by the schedule, and `hold` says which (`{"kind": "game",
   "program": "…"}` or `{"kind": "schedule", "until": "07:00"}`).
+  `work.late` is true while the cards mine a job the pool has replaced because the processor is too busy to prepare
+  new work in time, with `work.job_lag_s` (how long ago the pool sent a newer job) and `work.trees_s` (the last
+  job's preparation time); each card has its own `job_lag_s`.
 
 It answers on `127.0.0.1` only, unless you start GlintMiner with `--api-bind 0.0.0.0`. Hashrate is in H/s, where 1 H
 is one Pearl multiply-accumulate.
@@ -144,6 +168,8 @@ All next to the program (or next to the file given with `--config`):
 | `glint.log` | The log: what happened and when, with the technical detail of any error. Include the relevant lines in bug reports |
 | `glint-history.jsonl` | A minute-by-minute record of hashrate, power and earnings, for the dashboard's charts and totals |
 | `glint-benchmarks.json` | Results of `--bench` |
+| `glint-update.json` | What you chose about updates (skipped versions, Later) and a new version's first minutes, for the rollback |
+| `glint.prev.exe` / `glint.prev` | The previous program, kept by an update (put back if the new one doesn't run properly) |
 
 None of these contain passwords. `glint.json` contains your payout address and, if you set them, your Telegram bot
 token and chat id.

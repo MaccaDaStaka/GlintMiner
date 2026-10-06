@@ -24,7 +24,7 @@
 
 **需要什么 NVIDIA 驱动？** NVIDIA 官方驱动（来自 nvidia.com 或你的发行版提供的 NVIDIA 软件包），版本 550 或更新，RTX 50 显卡需要 580 或更新。GlintMiner 会加载驱动自带的两个库：挖矿用的 `libcuda.so.1`，以及读取温度、功耗和进行调校用的 `libnvidia-ml.so.1`。开源的 nouveau 驱动无法挖矿。
 
-**支持哪些显卡？** NVIDIA RTX 30、40 和 50 系列（计算能力 8.0 或更新）。`glint --gpu-info` 会列出 GlintMiner 看到的显卡。
+**支持哪些显卡？** NVIDIA RTX 20、30、40 和 50 系列（计算能力 7.5 且带 Tensor Core，或 8.0 及更新），以及 CMP 40HX 矿卡。GTX 16 系列和 CMP 30HX 没有 Tensor Core，无法挖矿。`glint --gpu-info` 会列出 GlintMiner 看到的显卡。
 
 **需要多少内存？** 每张显卡约需 1.5 GB 系统内存（RAM）。
 
@@ -86,7 +86,7 @@ cd glint
 
 **如何开启？** 在设置时、在面板上（**设置 → 调优**），或用 `sudo ./glint --tune speed --confirm-tuning`（也可用 `efficiency`、`cool`，或 `profit` 加上 `--kwh-price`）。`--confirm-tuning` 用来确认你接受风险；它会被保存。
 
-**自动调校需要桌面、X 或 nvidia-settings 吗？** 不需要。GlintMiner 通过 NVIDIA 驱动的管理库进行更改，所以在无显示器的机器上也能工作。它需要 root，以及提供这些控制功能的驱动；驱动较旧时，显卡会显示 *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again. Until then this card mines at stock.*（调校需要更新的 NVIDIA 驱动：请更新后重新启动 GlintMiner。在此之前这张显卡以出厂设置挖矿。）
+**自动调校需要桌面、X 或 nvidia-settings 吗？** 不需要。GlintMiner 通过 NVIDIA 驱动的管理库进行更改，所以在无显示器的机器上也能工作。它需要 root，以及 470 或更新的 NVIDIA 驱动（低于 555 时，GlintMiner 使用驱动较旧的频率控制功能；从 1.2.8 起）；驱动较旧时，显卡会显示 *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again. Until then this card mines at stock.*（调校需要更新的 NVIDIA 驱动：请更新后重新启动 GlintMiner。在此之前这张显卡以出厂设置挖矿。）
 
 **GlintMiner 在 Linux 上能察觉其他超频工具吗？** 它只在 Windows 上检查正在运行的调校程序。在 Linux 上，显卡上已有的超频（来自 nvidia-settings、脚本或其他工具）会在调校开始时被察觉：GlintMiner 先把显卡恢复为出厂设置，记录 *Your card had its own overclock; tuning starts from factory settings and puts yours back when GlintMiner closes.*（你的显卡有自己的超频设置；调校从出厂设置开始，GlintMiner 关闭时会恢复你的设置。），并在关闭时恢复你的设置。在调校*期间*改动显卡频率的东西不会被察觉，并且会破坏结果，所以调校时不要运行这类脚本或工具。
 
@@ -126,7 +126,7 @@ cd glint
 
 **我怎么知道有新版本？** GlintMiner 在启动时和每天一次检查 GitHub，并在日志和面板上提示 *A newer GlintMiner (…) is available at https://github.com/MaccaDaStaka/GlintMiner/releases*。它绝不会自行下载或安装任何东西。
 
-**如何更新？** 停止 GlintMiner，用新的 `glint-…-linux.tar.gz` 中的 `glint` 程序替换旧的，然后重新启动（作为服务运行时：`systemctl restart glint`）。保留 `glint.json` 和其他文件：你的设置、已保存的调校结果和历史记录都会延续。
+**如何更新？** 在面板上点击**立即更新**，或运行 `glint --update`（GlintMiner 需要对自己的文件夹有写入权限；位于 `/opt/glint` 的服务有此权限）。它会校验发布签名、替换程序并重启。手动更新：停止 GlintMiner，用新的 `glint-…-linux.tar.gz` 中的 `glint` 程序替换旧的，然后重新启动（作为服务运行时：`systemctl restart glint`）。保留 `glint.json` 和其他文件：你的设置、已保存的调校结果和历史记录都会延续。
 
 **如何卸载？** 停止它，然后删除它的文件夹。如果你把它设置成了服务，先运行 `systemctl disable --now glint`，并删除 `/etc/systemd/system/glint.service`。GlintMiner 不会安装其他任何东西。
 
@@ -141,9 +141,10 @@ cd glint
 | 你看到的提示 | 含义 | 该怎么做 |
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | 无法加载 `libcuda.so.1` | 安装 NVIDIA 官方驱动（不是 nouveau） |
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | 驱动找不到 GlintMiner 能用的显卡 | 检查 `nvidia-smi` 和 `glint --gpu-info` |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | 驱动找不到 GlintMiner 能用的显卡 | 检查 `nvidia-smi` 和 `glint --gpu-info` |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | 驱动比你的显卡或 GlintMiner 更旧 | 更新驱动 |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | 这张显卡太旧 | 跳过这张显卡；其他显卡照常挖矿 |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | 这张显卡太旧（GTX 10 系列或更早） | 跳过这张显卡；其他显卡照常挖矿 |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | 这张显卡没有 Tensor Core（GTX 16 系列或类似显卡） | 跳过这张显卡；其他显卡照常挖矿 |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | 有其他程序在占用显卡的显存 | 关闭它，然后重新启动 |
 | *no wallet configured: run glint in a terminal for the setup, or pass --wallet ADDRESS* | 在没有终端、也没有设置的情况下启动 | 在终端中运行一次，或加上 `--wallet` |
 | *reading …/glint.json: Permission denied* | 文件属于 root（见上文） | 每次都用同样的方式运行，或用 `chown` 更改文件所有者 |

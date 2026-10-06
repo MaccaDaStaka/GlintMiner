@@ -32,8 +32,8 @@ everything next to `glint.exe`: your settings (`glint.json`), the log (`glint.lo
 started normally can't write there.
 
 **Do I need to install CUDA or anything else?**
-No. GlintMiner uses the NVIDIA driver you already have. You need Windows 10 or 11 (64-bit), an RTX 30, 40 or
-50-series card and a recent driver: 550 or newer, and 580 or newer for RTX 50 cards.
+No. GlintMiner uses the NVIDIA driver you already have. You need Windows 10 or 11 (64-bit), an RTX 20, 30,
+40 or 50-series card and a recent driver: 550 or newer, and 580 or newer for RTX 50 cards.
 
 **Windows says "Windows protected your PC". Is that a problem?**
 No. Windows SmartScreen shows this for new programs that haven't been downloaded widely yet. Click **More info**,
@@ -67,8 +67,8 @@ stock*. A power limit that only the temperature guard had lowered isn't part of 
 what it was until the PC restarts. Closing the window normally avoids both.
 
 **Until then, the tune stays on the card.** Don't play games or run other GPU-heavy programs after ending GlintMiner
-from Task Manager: a setting tuned for mining (above all *Coolest and quietest*, which runs the card at its lowest
-voltage) can make a game crash or the screen go black. Start GlintMiner again and close it normally, or restart the
+from Task Manager: a setting tuned for mining (above all *Cool and quiet*, which runs the card on the least
+power) can make a game crash or the screen go black. Start GlintMiner again and close it normally, or restart the
 PC, first. **To game, leave GlintMiner running (it pauses by itself, below) or close it with its window's X or
 Ctrl+C.**
 
@@ -83,8 +83,8 @@ edit the list, or turn the pause off, in **Settings → Gaming and schedule**. `
 command line. It needs the GPU usage counters Windows 10 (1709 or later) and 11 have.
 
 **Can it mine differently at night, or not at all at peak times?**
-Yes: **Settings → Gaming and schedule → Use a schedule**. Pick times of day and a mode for each (Coolest and
-quietest overnight, a pause during your peak electricity hours, and so on). A card only switches to a mode it has
+Yes: **Settings → Gaming and schedule → Use a schedule**. Pick times of day and a mode for each (Cool and
+quiet overnight, a pause during your peak electricity hours, and so on). A card only switches to a mode it has
 already tuned in, so the schedule never starts a tune. See [the schedule](auto-tune.md#the-schedule).
 
 **Can GlintMiner start by itself when Windows starts?**
@@ -238,7 +238,8 @@ in the words *A newer GlintMiner (…) is available at https://github.com/MaccaD
 downloads or installs anything by itself.
 
 **How do I update?**
-Close GlintMiner, unzip the new `glint-…-windows.zip` into the same folder (replace the files) and start `glint.exe`
+Click **Update now** on the dashboard when it says a new version is out (or run `glint --update`): GlintMiner
+downloads it, checks its signature, swaps it in and restarts. To do it by hand: close GlintMiner, unzip the new `glint-…-windows.zip` into the same folder (replace the files) and start `glint.exe`
 again. Your settings, saved tunes and history aren't in the zip, so they stay. Details in
 [Updating](getting-started.md#updating).
 
@@ -260,20 +261,29 @@ different cards the numbers can differ from those other tools show, so check the
 **How much memory does it need?**
 About 1.5 GB of system memory (RAM) per card.
 
+**Why does a card run at lower power while another card tunes?**
+A rig tunes one card at a time, which can take hours. Leaving the waiting cards at full stock power that whole time
+wastes electricity and heats the rig — including the card being tuned, which can make its result less accurate. So
+they run cooler until their turn: they mine a little less meanwhile (about a tenth less), and each gets its full
+power back before its own turn. A card with its own core overclock or power limit keeps it. To cap the whole rig's
+power while tuning, set a rig power budget. More in [Rigs with several cards](auto-tune.md#rigs-with-several-cards).
+
 ## Messages and what they mean
 
 | What you see | What it means | What to do |
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | The NVIDIA driver is missing | Install the current driver |
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | Windows sees no NVIDIA card GlintMiner can use | Check the card and driver; run `glint --gpu-info` |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Windows sees no NVIDIA card GlintMiner can use | Check the card and driver; run `glint --gpu-info` |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | The driver predates your card or GlintMiner | Update the driver |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | That card is too old (GTX, RTX 20) | That card is skipped; the others mine |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | That card is too old (GTX 10-series or older) | That card is skipped; the others mine |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | That card has no tensor cores (a GTX 16-series or similar) | That card is skipped; the others mine |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Something else is using the card's memory | Close it and start again |
 | *Can't look up … — check this PC's internet or DNS settings.* | The pool's name can't be looked up | Check the PC's internet connection |
 | *Couldn't set up a secure connection to …; check this PC's date and time, and any antivirus or firewall that inspects traffic.* | The encrypted connection was refused on this PC | Correct the clock; allow GlintMiner in software that scans connections |
 | *The pool is not accepting our work (…). Pearl's rules may have changed (a network upgrade): this version needs an update.* | GlintMiner stopped rather than send work that would be rejected | [Update](#updating-and-uninstalling) |
 | *…glint.json is not valid (delete it to run the setup again)* | The settings file is damaged | Delete `glint.json` and run setup again |
-| *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again.* | The driver doesn't offer the controls tuning needs | Update the driver; the card mines at stock meanwhile |
+| *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again.* | The driver is older than 555 and doesn't offer the controls tuning needs | Update the driver; the card mines at stock meanwhile |
+| *The processor is too busy to prepare new work in time; some shares may arrive late.* | Another program (a virus scan, a game, unpacking a big download) keeps every processor core busy, so new jobs from the pool wait before the cards can mine them and some shares come back stale | Nothing, usually: it clears when that program finishes. GlintMiner gives its job preparation normal priority while this lasts. If it shows often, schedule full virus scans for when you don't mine, or exclude GlintMiner's folder from real-time scanning |
 
 More, including every auto-tune message, in [What the messages mean](auto-tune.md#what-the-messages-mean) and the
 [troubleshooting table](faq.md#troubleshooting).

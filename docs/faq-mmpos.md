@@ -51,6 +51,7 @@ Add them to the `START` line, for example `--kwh-price 0.12 --currency EUR`. The
 [All options](advanced.md#all-options). Options on the command line win over `glint.json` at every start, so a
 setting you also change on the dashboard goes back to the command line's value at the next start. On MMPOS that is
 the wallet, the worker name, the port, the plain console and no log file.
+An affiliate code goes on the `START` line too: `--affiliate CODE` ([what it is](faq.md#questions)). To become an affiliate from the rig's shell, run `glint --become-affiliate --wallet <your mining wallet>` in the miner's folder (the wallet is only for the anonymous install id; nothing is sent until you type yes).
 
 **Can I change the port?**
 Keep it at 4078. Both the `START` line and `mmp-stats.sh` use 4078, and a port changed on the dashboard is replaced by
@@ -101,8 +102,8 @@ with the technical detail of an error in square brackets after the plain sentenc
 
 **How do I update?**
 Replace the `glint` program with the one from the new Linux release, the same way you installed it, and keep
-`glint.json` next to it: your settings and saved tunes carry on. GlintMiner tells you in its output when a new version
-is out (*A newer GlintMiner (…) is available at …*); it never updates itself.
+`glint.json` next to it: your settings and saved tunes carry on. When a new version is out, GlintMiner's output and
+dashboard show the link to its Linux package; it never replaces itself on mmpOS.
 
 **Is there anything MMPOS-specific about temperatures or fans?**
 GlintMiner never changes fan speeds, so MMPOS stays in charge of them. Its temperature guard works as everywhere

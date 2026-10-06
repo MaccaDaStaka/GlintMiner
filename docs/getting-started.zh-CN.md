@@ -18,7 +18,7 @@
 
 ## 你需要准备
 
-1. **一张 RTX 30、40 或 50 系列的 NVIDIA 显卡**，例如 RTX 3060、3080、4070、4090、5060 或 5090。如果你用它玩近几年的游戏，那几乎肯定没问题。较老的显卡（GTX、RTX 20）以及 AMD 或 Intel 显卡不受支持。
+1. **一张 RTX 20、30、40 或 50 系列的 NVIDIA 显卡**，例如 RTX 2060、2070、3060、3080、4070、4090、5060 或 5090。如果你用它玩近几年的游戏，那几乎肯定没问题。较老的显卡（GTX 10 和 GTX 16 系列）以及 AMD 或 Intel 显卡不受支持。
 2. **较新的 NVIDIA 驱动。** 如果你的驱动已经超过一年，请先从 nvidia.com 或 NVIDIA App 更新。
 3. **Windows 10/11（64 位）或 Linux。** 也可以是运行 HiveOS 或 MMPOS 的矿机。
 4. **每张显卡约 1.5 GB 可用内存（RAM）。**
@@ -89,7 +89,7 @@ cd glint
   Type 1-4 and press Enter [1]: 1
 
   Found a Pearl address on your clipboard:
-    prl1pn0q...4syvu78w
+    prl1qxy7...3k9de4m2
     1) Use it
     2) Paste a different one
   Type 1 or 2 and press Enter [1]: 1
@@ -119,7 +119,7 @@ cd glint
     2) Best earnings: GlintMiner picks what makes the most money at your electricity price (recommended)
     3) Most hashrate: as fast as your card safely goes
     4) Less power: same speed, much less power
-    5) Coolest and quietest: lowest power, a little slower
+    5) Cool and quiet: about a third less power, clearly cooler and quieter, somewhat slower
   Type 1-5 and press Enter [1]: 1
 
   Open the dashboard (charts, earnings, settings) in your browser at start?
@@ -136,7 +136,7 @@ cd glint
 - **你的地址。** 如果你在启动前复制了地址，GlintMiner 会在剪贴板里找到它，不用再粘贴。使用前它会先检查地址。
 - **矿机名称。** 这台电脑在矿池网站上显示的名称。如果你有多台电脑，每台请用不同的名称。
 - **电价。** 可选。填写后，GlintMiner 会显示扣除电费后的利润，而不只是收入。电费单上有每 kWh 的价格。所选货币也决定收益的显示方式。
-- **要调校显卡吗？** 可选，默认关闭。你按想要的结果来选：收益最高（推荐；如果你跳过了电价，设置程序会询问）、算力最高、速度不变但更省电，或让显卡最凉最静。选择其中一项后，设置程序会用一句话说明风险，只有你输入 **Y** 才会开启调校。在 Windows 上，它会提出以管理员身份重新启动 GlintMiner，因为调校需要管理员权限。如果选择不重启，显卡以出厂设置挖矿。请先阅读[自动调校](auto-tune.zh-CN.md)。
+- **要调校显卡吗？** 可选，默认关闭。你按想要的结果来选：收益最高（推荐；如果你跳过了电价，设置程序会询问）、算力最高、速度不变但更省电，或让显卡明显更凉、更安静（凉爽安静，程度为“更凉爽”；“凉爽”和“最凉爽”在面板中选择）。选择其中一项后，设置程序会用一句话说明风险，只有你输入 **Y** 才会开启调校。在 Windows 上，它会提出以管理员身份重新启动 GlintMiner，因为调校需要管理员权限。如果选择不重启，显卡以出厂设置挖矿。请先阅读[自动调校](auto-tune.zh-CN.md)。
 - **启动时打开面板？** 面板是 GlintMiner 在你自己电脑上提供的网页，包含图表、收益和设置。
 
 GlintMiner 会把你的回答保存在程序旁边的 `glint.json` 中，下次启动直接开始挖矿。之后你可以在面板的 **设置** 中更改任何一项。
@@ -171,14 +171,16 @@ GlintMiner 运行时，在浏览器中打开 **http://127.0.0.1:4078** 即可看
 
 ## 更新
 
-有新版本时 GlintMiner 会提醒你（在控制台和面板上）。它绝不会自行下载或安装任何东西。更新方法：
+GlintMiner 每天检查一次新版本，默认会询问你：在面板上点击**立即更新**（或**稍后**、**跳过此版本**）。它会下载新版本，用 GlintMiner 的发布签名校验，替换程序并在约一分钟内按你的设置重启。若希望自动安装更新，请在 设置 → 更新 中选择**自动安装**。详见[更新](../README.zh-CN.md#更新)。在命令行中，`glint --update` 也能完成同样的操作。
+
+手动更新的方法：
 
 1. 关闭 GlintMiner。
 2. 从[最新版本](https://github.com/MaccaDaStaka/GlintMiner/releases/latest)页面下载新文件。
 3. 解压到同一个文件夹并替换文件。你的设置（`glint.json`）、历史记录和基准测试数据不在压缩包里，所以会保留。
 4. 重新运行 `glint.exe`，它会按你的设置继续挖矿。
 
-在 Linux 上替换 `glint`。在 HiveOS 上，把自定义矿工的安装链接改为新版本。
+在 Linux 上替换 `glint`。在 HiveOS 上，把自定义矿工的安装链接改为新版本（有新版本时面板会显示该链接）。
 
 ## 停止与卸载
 

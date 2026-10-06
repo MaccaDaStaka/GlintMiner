@@ -32,7 +32,9 @@ for RTX 50 cards. GlintMiner loads two libraries that come with it: `libcuda.so.
 for temperatures, power and tuning. The open-source nouveau driver can't mine.
 
 **Which cards?**
-NVIDIA RTX 30, 40 and 50-series (compute capability 8.0 or newer). `glint --gpu-info` lists what GlintMiner sees.
+NVIDIA RTX 20, 30, 40 and 50-series (compute capability 7.5 with tensor cores, or 8.0 and newer), and the CMP 40HX
+mining card. GTX 16-series cards and the CMP 30HX have no tensor cores and can't mine. `glint --gpu-info` lists what
+GlintMiner sees.
 
 **How much memory?**
 About 1.5 GB of system memory (RAM) per card.
@@ -133,8 +135,9 @@ At setup, on the dashboard (**Settings → Tuning**), or with `sudo ./glint --tu
 
 **Does auto-tune need a desktop, X or nvidia-settings?**
 No. GlintMiner makes its changes through the NVIDIA driver's management library, so it works on a headless machine.
-It needs root and a driver that offers the controls; with an older driver the card says *Tuning needs a newer NVIDIA
-driver: update it and start GlintMiner again. Until then this card mines at stock.*
+It needs root and NVIDIA driver 470 or newer (older than 555, GlintMiner uses the driver's older clock controls; from
+1.2.8); with an older driver the card says *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again.
+Until then this card mines at stock.*
 
 **Does GlintMiner notice other overclocking tools on Linux?**
 It looks for running tuning programs only on Windows. On Linux, an overclock already on the card (from
@@ -216,7 +219,9 @@ https://github.com/MaccaDaStaka/GlintMiner/releases* in the log and on the dashb
 anything by itself.
 
 **How do I update?**
-Stop GlintMiner, replace the `glint` program with the one from the new `glint-…-linux.tar.gz`, and start it again
+Click **Update now** on the dashboard, or run `glint --update` (GlintMiner needs to be able to write to its own folder;
+the service in `/opt/glint` can). It checks the release's signature, swaps the program and restarts. By hand: stop
+GlintMiner, replace the `glint` program with the one from the new `glint-…-linux.tar.gz`, and start it again
 (as a service: `systemctl restart glint`). Keep `glint.json` and the other files: your settings, saved tunes and
 history carry on.
 
@@ -239,9 +244,10 @@ GlintMiner numbers cards in CUDA's order, which on a machine with different card
 | What you see | What it means | What to do |
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | `libcuda.so.1` couldn't be loaded | Install NVIDIA's driver (not nouveau) |
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | The driver sees no card GlintMiner can use | Check `nvidia-smi` and `glint --gpu-info` |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | The driver sees no card GlintMiner can use | Check `nvidia-smi` and `glint --gpu-info` |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | The driver predates your card or GlintMiner | Update the driver |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | That card is too old | That card is skipped; the others mine |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | That card is too old (GTX 10-series or older) | That card is skipped; the others mine |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | That card has no tensor cores (a GTX 16-series or similar) | That card is skipped; the others mine |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Something else is using the card's memory | Close it and start again |
 | *no wallet configured: run glint in a terminal for the setup, or pass --wallet ADDRESS* | Started without a terminal and without settings | Run it once in a terminal, or add `--wallet` |
 | *reading …/glint.json: Permission denied* | The file belongs to root (see above) | Run it the same way each time, or `chown` the file |

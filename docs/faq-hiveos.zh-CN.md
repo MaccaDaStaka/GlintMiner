@@ -47,7 +47,7 @@
 
 **GlintMiner 的设置保存在矿机上的哪里？** 在 `/hive/miners/custom/glint/glint.json` 中。已保存的调校结果、面板图表所用的历史记录和基准测试结果也保存在同一个文件夹中。
 
-**如何添加其他参数？** 把任何 GlintMiner 参数填入 **Extra config arguments**，例如 `--kwh-price 0.12 --currency EUR`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。
+**如何添加其他参数？** 把任何 GlintMiner 参数填入 **Extra config arguments**，例如 `--kwh-price 0.12 --currency EUR`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。推荐码也填在这里：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。要在矿机的命令行中申请成为推荐人，请在矿工程序目录中运行 `glint --become-affiliate --wallet <你的挖矿钱包>`（钱包仅用于生成匿名安装 ID；在你输入 yes 之前不会发送任何内容）。
 
 ## HiveOS 中的统计数据
 
@@ -63,9 +63,11 @@
 
 **应该同时使用 HiveOS 超频和 GlintMiner 的自动调校吗？** 不应该，每张显卡选择其一。开启自动调校时，如果显卡有自己的超频（例如 HiveOS 为矿机设置的超频），GlintMiner 会在调校之前把它恢复为出厂设置，之后每次启动并重新应用已保存的调校结果时也会这样做。所以 GlintMiner 运行期间，显卡使用的是 GlintMiner 的调校结果，而不是你的 HiveOS 超频。日志会说明这一点：*Your card had its own overclock; tuning starts from factory settings and puts yours back when GlintMiner closes.*（你的显卡有自己的超频设置；调校从出厂设置开始，GlintMiner 关闭时会恢复你的设置。）
 
+**如果我降低了显存频率呢？** 降低显存频率（HiveOS 中的显存负值，例如很多人为 Pearl 设置的 -2000）不算超频。从 1.2.8 起，GlintMiner 会保留它：显卡带着它调校和挖矿，每次恢复到默认设置时也会回到它。日志会显示：*Your card's own memory underclock stays on while it tunes and mines.*（你的显存降频在调校和挖矿期间保持开启。）显存超频（正值）在调校时会像其他超频一样恢复为出厂设置。
+
 **GlintMiner 停止后，我的 HiveOS 超频会怎样？** GlintMiner 关闭时（崩溃后则在下次启动时）会恢复显卡原来的超频和功耗上限。如果你的超频把显卡锁定在某个固定频率，这一部分会为调校而解除，GlintMiner 不会恢复它。
 
-**如果 HiveOS 在调校期间应用超频，GlintMiner 会察觉吗？** 不会。GlintMiner 只在 Windows 上检查其他调校程序，所以调校期间应用的超频不会被察觉，并且会破坏结果。有显卡在调校时，不要更改矿机的超频。
+**如果 HiveOS 在 GlintMiner 运行时应用超频，GlintMiner 会察觉吗？** 会（从 1.2.8 起）。在 HiveOS 中应用超频（哪怕只是改风扇）会重写每张显卡的频率和功耗上限。GlintMiner 每 30 秒检查一次自己的显卡：正在进行调校测试的显卡会恢复该测试的设置并重新测试，已调校的显卡会恢复其调校结果，日志中会有一行说明。如果一小时内已调校显卡的设置再次被更改，GlintMiner 会认为这是有意为之，不再改动；仪表板上会注明，重启矿工（`miner restart`）即可恢复调校结果。最好还是在开始调校前设置好风扇。GlintMiner 无法读取显存温度（大多数显卡的 NVIDIA 驱动不提供），HiveOS 会显示它。
 
 **如果自动调校是关闭的呢？** 那么 GlintMiner 从不改动频率，你的 HiveOS 超频和以前一样工作。GlintMiner 唯一可能改动的是功耗上限：显卡过热时调低，GlintMiner 停止时恢复。
 
@@ -73,7 +75,9 @@
 
 **能调校一些显卡、另一些保留 HiveOS 超频吗？** 可以。模式为 **关闭** 的显卡会完全保持 HiveOS 设置的样子。例如 `--tune speed --confirm-tuning --tune-card 01:00.0=off` 会调校除 PCI 总线 `01:00.0` 上那张以外的所有显卡。用总线地址指定显卡可以避免混淆，因为 GlintMiner 的显卡编号可能与 HiveOS 的不同（见[多张显卡](#多张显卡)）。
 
-**如何只调校一张或几张显卡？** 在一个 `--tune-card` 后面用总线地址列出它们，用逗号分隔、不要空格，例如 `--tune-card 0b:00.0=cool,11:00.0=cool --confirm-tuning`。未列出的显卡保留 HiveOS 超频。`--tune-card` 只写一次（第二个同名参数或列表中间的空格都不会被读作它的一部分）。总线地址就是 HiveOS 中每张显卡下方的灰色数字（`0b:00.0`、`11:00.0` 等）。应用之前，先在 HiveOS 中把这些显卡的超频恢复为默认：Core、Core lock、Memory 和 Power limit 中对应位置填 `0`（每张显卡一个值，按 HiveOS 的顺序），这样 HiveOS 和 GlintMiner 不会同时设置同一张卡的频率。之后可以用同样的方法调校其余显卡，或用 `--tune cool --confirm-tuning` 调校整台矿机：已在该模式下调校过的显卡会保留结果，不会重新调校。
+**如何只调校一张或几张显卡？** 在一个 `--tune-card` 后面用总线地址列出它们，用逗号分隔、不要空格，例如 `--tune-card 0b:00.0=cool,11:00.0=cool:coolest --confirm-tuning`（只写 `cool` 表示矿机的凉爽安静程度，即 `--cool-strength`，默认“更凉爽”）。未列出的显卡保留 HiveOS 超频。`--tune-card` 只写一次（第二个同名参数或列表中间的空格都不会被读作它的一部分）。总线地址就是 HiveOS 中每张显卡下方的灰色数字（`0b:00.0`、`11:00.0` 等）。应用之前，先在 HiveOS 中把这些显卡的超频恢复为默认：Core、Core lock、Memory 和 Power limit 中对应位置填 `0`（每张显卡一个值，按 HiveOS 的顺序），这样 HiveOS 和 GlintMiner 不会同时设置同一张卡的频率。**风扇（Fan）保持不变：**那里填 `0` 表示显卡自己的自动风扇，在默认设置下显卡可能热到被 GlintMiner 的温度保护停下（调校也就无法完成）。调校期间，固定 70% 或更高的风扇转速最稳妥。之后可以用同样的方法调校其余显卡，或用 `--tune cool --confirm-tuning` 调校整台矿机：已在该模式下调校过的显卡会保留结果，不会重新调校。
+
+**调校需要哪个 NVIDIA 驱动？** 470 或更新。更旧的驱动也能挖矿。HiveOS 矿机常用 535 或 550：从 1.2.8 起，GlintMiner 会通过驱动较旧的频率控制功能在这些驱动上调校（1.2.7 及更早版本需要 555 或更新）。驱动太旧时，显卡会显示 *Tuning needs a newer NVIDIA driver* 并以出厂设置挖矿；`nvidia-driver-update --list` 会列出 HiveOS 提供的驱动，例如 `nvidia-driver-update 570.211.01`，然后重启。
 
 **GlintMiner 有调校所需的权限吗？** 它会自己检查。如果无法更改显卡的设置，显卡会以出厂设置挖矿，日志会显示 *Tuning needs administrator rights: … (on Linux, with sudo). Until then this card mines at stock.*（调校需要管理员权限：…（Linux 上使用 sudo）。在此之前这张显卡以出厂设置挖矿。），面板会显示“调优还无法开始”。
 
@@ -97,7 +101,9 @@
 
 ## 日志
 
-**GlintMiner 在 HiveOS 上的日志在哪里？** 在 `/var/log/miner/glint/glint.log` 中。GlintMiner 打印的所有内容都会写到那里。每次矿工启动时它都会重新开始。矿工文件夹中没有 `glint.log`（飞行表传入了 `--no-log-file`）。
+**GlintMiner 在 HiveOS 上的日志在哪里？** 在 `/var/log/miner/glint/glint.log` 中。GlintMiner 打印的所有内容都会写到那里。每次矿工启动时，前两次运行的日志会保存为 `glint.log.1` 和 `glint.log.2`，所以重启之后，原因仍然留在 `glint.log.1` 中。矿工文件夹中没有 `glint.log`（飞行表传入了 `--no-log-file`）。
+
+**如何向你们发送诊断信息？** 在 Hive Shell 中运行 `/hive/miners/custom/glint/glint --diag`。它会生成一个文件 `/home/user/glint-diag-….txt.gz`，包含最近几次运行的日志、你的显卡、设置以及 GPU 驱动的错误日志。钱包和 Telegram 信息已被隐藏，而且不会发送到任何地方。下载该文件（例如用 WinSCP：用户名 `user`，矿机的 IP），然后附在消息里。
 
 **错误的技术细节在哪里？** 在 HiveOS 上，它在同一行中，放在那句简短说明后面的方括号里，例如 *No answer from … in time*（…未及时响应）背后的操作系统错误。
 
@@ -105,23 +111,26 @@
 
 ## 更新与移除
 
-**如何在 HiveOS 上更新 GlintMiner？** 把自定义矿工的 **Installation URL** 指向新版本的 `glint-….tar.gz`，然后应用飞行表。我们无法保证 HiveOS 在安装新版本时会保留矿工文件夹中的文件，所以请把重要的内容放在飞行表中：**Extra config arguments** 中的参数每次启动时都会应用，无论 `glint.json` 发生了什么。如果已保存的调校结果丢失了，自动调校会重新调校。
+**如何在 HiveOS 上更新 GlintMiner？** 有新版本时，面板和控制台会显示其安装包的确切链接；在 HiveOS 上 GlintMiner 绝不会自行替换。把自定义矿工的 **Installation URL** 指向新版本的 `glint-….tar.gz`，然后应用飞行表。我们无法保证 HiveOS 在安装新版本时会保留矿工文件夹中的文件，所以请把重要的内容放在飞行表中：**Extra config arguments** 中的参数每次启动时都会应用，无论 `glint.json` 发生了什么。如果已保存的调校结果丢失了，自动调校会重新调校。
 
 **如何停止使用它？** 应用一个使用其他矿工的飞行表。GlintMiner 正常关闭时，会恢复它对显卡所做的一切更改。如果它是被强行结束的，重启矿机即可清除 GlintMiner 所做的更改。
 
 ## 多张显卡
 
-**它会使用矿机中的每张显卡吗？** 会，所有受支持的 NVIDIA 显卡（RTX 30 系列或更新）都会使用。要排除一些显卡，在 **Extra config arguments** 中加上 `--devices 0,2`。每张显卡请预留约 1.5 GB 系统内存。
+**它会使用矿机中的每张显卡吗？** 会，所有受支持的 NVIDIA 显卡（RTX 20 系列或更新）都会使用。要排除一些显卡，在 **Extra config arguments** 中加上 `--devices 0,2`。每张显卡请预留约 1.5 GB 系统内存。
 
 **GlintMiner 的 GPU 编号和 HiveOS 的对不上。** GlintMiner 按 CUDA 的顺序给显卡编号，在装有不同显卡的矿机上，这个顺序可能与 HiveOS 显示的不同。要确认哪张是哪张，在矿机上运行 `/hive/miners/custom/glint/glint --gpu-info`：它会列出每张显卡的编号、名称和 PCI 总线地址。`--tune-card` 也接受总线地址。
+
+**为什么另一张显卡调校时，这张显卡以较低功耗运行？** 矿机每次只调校一张显卡，这可能要花几个小时。如果这段时间里让等待的显卡一直保持满额出厂功耗，会浪费电并让矿机发热——包括正在调校的那张显卡，从而让它的结果不够准确。所以它们会降温运行，直到轮到自己：这段时间挖矿会略少（大约少一成），并且在轮到自己之前都会恢复满功耗。拥有自己核心超频或功耗上限的显卡会保留这些设置。要在调校期间限制整台矿机的功耗，可设置矿机功耗预算。详见[多显卡矿机](auto-tune.zh-CN.md#多显卡矿机)。
 
 ## 提示信息及其含义
 
 | 你在日志中看到的提示 | 含义 | 该怎么做 |
 |---|---|---|
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | 没有 GlintMiner 能用的显卡 | 检查矿机的显卡和驱动 |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | 没有 GlintMiner 能用的显卡 | 检查矿机的显卡和驱动 |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | 矿机的驱动太旧 | 更新矿机上的 NVIDIA 驱动 |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | 这张显卡太旧 | 跳过它；其他显卡照常挖矿 |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | 这张显卡太旧（GTX 10 系列或更早） | 跳过它；其他显卡照常挖矿 |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | 这张显卡没有 Tensor Core（GTX 16 系列或类似显卡） | 跳过它；其他显卡照常挖矿 |
 | *The dashboard and stats API couldn't start: port 4078 is already in use…* | 有其他程序占用了这个端口 | 停止那个程序，或使用 `--api-port` |
 | *Can't look up … — check this PC's internet or DNS settings.* | 矿机无法解析矿池的域名 | 检查矿机的网络和 DNS |
 | *Your card had its own overclock; tuning starts from factory settings…* | 自动调校已开启，而显卡有超频设置 | 正常现象；见[上文](#自动调校与-hiveos-超频) |

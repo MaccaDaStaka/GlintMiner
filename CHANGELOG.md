@@ -2,6 +2,414 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.8] - 2026-10-06
+
+### Security
+- **Remote control needs a code.** With `--api-allow-remote-control`, another device makes changes only with the
+  remote-control code, printed when GlintMiner starts and shown on the mining PC's dashboard; the page asks for it once.
+  A page opened through a proxy on the mining PC (`tailscale serve`, nginx) counts as another device. The Docker image
+  is view-only unless you add the option yourself.
+- The dev fee's own pool servers at HeroMiners and Kryptex must prove who they are (their certificate must come from
+  their usual certificate authority); one that can't is skipped like a server that's down. Your own pool connections
+  are unchanged. The fee's backup on your own HeroMiners server always connects over TLS (port 1200) with
+  the same check, even when you mine there over plain TCP.
+- The stats are readable by other web pages only from your own network; the dashboard limits connections per device
+  and slow clients; a pool can no longer send endless lines, absurdly easy jobs or leave shares waiting without end.
+- Settings in `glint.json` are held to the dashboard's limits when read (temperature limit, power limits, port), and
+  after a crash a card's settings are put back only within the card's own ranges.
+- `--diag` also hides the rig name (`--diag-keep-worker` keeps it), the remote-control code and Telegram options from
+  HiveOS's extra arguments, and the file is readable by its owner only.
+- HiveOS: extra arguments are passed exactly as typed (a `*` is no longer expanded; "quoted values" stay together).
+- Releases come with a signed `SHA256SUMS.txt`: see *Verify your download* in the README.
+- The anonymous install id in the dev-fee label and the check-in changes with each release, so it can't link a payout
+  address across versions.
+- **Affiliate codes can't change the fee.** The code list is signed with a key of its own, used for nothing else, under
+  its own purpose (`glintminer-affiliates`): GlintMiner trusts only that key for code lists and never for updates, and
+  never takes the release key for a code list. The list is checked with the key built into GlintMiner wherever it
+  comes from (built in, kept beside `glint.json`, or downloaded
+  over HTTPS from GitHub only), and a list is only replaced by a newer one (a withdrawn code can't come back with an
+  older list). With a code the fee is still exactly 1% of the time: the developer's fee connection decides when a fee
+  share is due, a quarter of those go to the affiliate. If the affiliate's connection is down, the pool refuses its
+  wallet or its shares keep being refused, its share goes to the developer: never idle time, never less fee, never
+  more. Idle time and the 24-hour pause follow the developer's fee connection as before. The check-in carries the code
+  only, never the affiliate's wallet.
+
+### Added
+- **Affiliate codes.** Enter the code of whoever referred you in setup (*Affiliate code (optional, press Enter to
+  skip)*), in Settings → Affiliate code, with `--affiliate CODE` (HiveOS and mmpOS: in the extra arguments; `off`
+  removes it) or as `"affiliate"` in `glint.json`. You still pay 1%: a quarter of it (0.25% of the time) mines to the
+  affiliate's PRL wallet instead of the developer's, on the dev fee's own servers, with the worker name `glint`. Codes
+  come from a signed list in a public repository of their own (GlintMiner-affiliates), checked on the rig; GlintMiner looks for a newer list (at start
+  and once a day) only when a code is set. A code that isn't in it is *not recognised*, and the whole fee goes to the
+  developer. The dashboard shows *Affiliate: CODE*, the console *affiliate: CODE*. You can't use your own code: one
+  that pays the wallet the rig mines to gives no split (the whole fee goes to the developer). The list is signed again
+  every few days; if GlintMiner can't get one issued in the last 14 days, it says *the affiliate list is out of date*
+  and the whole fee goes to the developer until it can.
+- **Become an affiliate.** Settings → Become an affiliate, or `glint --become-affiliate` on a rig without a screen:
+  earn a quarter of the fee from every rig that uses your code, paid by the pool to your PRL wallet. It shows exactly
+  what is sent (the PRL payout wallet you give, your Discord username if you give it, the install's anonymous id and the
+  version) and sends it only after you tick the confirmation (or type `yes`). The developer checks each request by
+  hand; the dashboard (or `--become-affiliate` again) shows whether it is waiting, approved (with your code) or not.
+- A link to GlintMiner's Discord in the dashboard's footer, the README and the FAQ.
+- **Faster RTX 50 cards held by the driver's power cap.** An RTX 50 card now has a second way of mining that leans
+  on the card's memory instead of its cores. At start (and when a card first goes to Most hashrate) GlintMiner mines
+  a minute or so each way, shows the card as starting meanwhile, and keeps the faster: on an RTX 5090 that the driver
+  holds well under its power limit that is +2.5% verified at stock and about +3% with Most hashrate's tune; on a
+  card with no such cap (an RTX 5060) or one held by its power limit it keeps the usual way. Less power and Cool always
+  mine the usual way (it uses the least energy per hash); Best earnings uses the way of the tune it runs.
+- **RTX 50 cards: three more ways of mining, and each card keeps its fastest.** In the same comparison at start (and
+  when a card first goes to Most hashrate), every RTX 50 card (compute capability 12.0: every RTX 50 card sold so far)
+  now also measures these, at its own power limit and settings, and keeps the one that does the most work, if it is at
+  least 1% faster than the usual way:
+  - a third way for cards held by the driver's power cap (an RTX 5090: 395.5 TH/s at stock against 383.0 the usual
+    way), with a leaner version of it for cards at their top clock or their power limit (kept only when 1% faster than
+    the third way too). It suits a lowered power limit best: about 397 TH/s on an RTX 5090 set to 500 W;
+  - a wide way that works on bigger blocks, so the card moves less data per hash: 402-408 TH/s on an RTX 5090 at stock;
+  - a way shaped for the biggest cards: 423-426 TH/s on an RTX 5090 at stock (a 600 W card), every share valid at
+    the pool (0 invalid in two checks of 10 and 12 minutes). It needs 3 GB of free video memory; a card short of it
+    mines on without it.
+  A card where they're all close (an RTX 5060) keeps the usual way. Most hashrate tunes on whichever way wins; Less
+  power and Cool mine the usual way.
+- **Compare modes.** Next to each card's mode on Rigs, and in Settings → Tuning for the whole rig, *Compare modes*
+  shows every mode side by side (stock, Most hashrate, Less power, Cool, Cooler, Coolest and your settings now): TH/s,
+  W, TH/s per W, earned, electricity and profit per day at today's coin price and your electricity price, the most
+  profitable highlighted (and which of Most hashrate and Less power Best earnings would run). Each figure says whether
+  it was measured on the card or is an estimate (from the card's own stock, else our measurements and simulations of
+  its model, else, for a model we have no figures for, the shares of stock only). View-only pages can see it; it
+  changes nothing. In EN/RU/ZH, as stacked rows on a phone, and in /api/stats as `mode_guide` (per card) and
+  `mode_guide_total`, outcomes only. The auto-tune guide explains how Cool picks its power, with an RTX 3060 Ti example.
+- **Updates from the dashboard, checked against the release signature.** When a new version is out, the dashboard
+  and console say so with a few lines from its release notes: *Update now*, *Later* (asked again in about a day) or
+  *Skip this version*. Settings → Updates (or `--auto-update`) chooses *Ask* (the default), *Install automatically*
+  (at a moment no card is in the middle of a tune, then a restart) or *Don't check*, with *Check for updates now*;
+  `glint --update [VERSION]` does it from the command line. Nothing is installed unless `SHA256SUMS.txt` carries a
+  valid signature from the release key built into GlintMiner, the package and its program match it, the version is
+  newer (an older one only when picked by hand) and the new program starts and reports that version; otherwise
+  nothing changes. The previous program is kept (`glint.prev.exe` / `glint.prev`) and put back automatically if the
+  new version fails at start or keeps stopping in its first 15 minutes ("Update to X didn't run properly on this
+  rig, so GlintMiner went back to Y"). Settings, wallet and saved tunes stay. On HiveOS and mmpOS GlintMiner shows
+  the package link for the flight sheet instead, and in Docker the version to rebuild with.
+- **When a card finishes tuning, the dashboard asks what to do with it**: "GPU 0 tuned: +6.9% hashrate at 433 W
+  (stock was 309.6 TH/s at 444 W)" (or the power saved, in Efficiency and Cool, with Cool's strength and "as far as
+  this card goes" when it stopped short), with *Keep it* (the default: the tune
+  stays on), *Back to stock* (the card's mode off; its tune is kept for later) and *Tune again*. Asked once per result;
+  the console says it once too. Not shown on a view-only device's page. The API has it as each card's
+  `tune.just_tuned`, answered with `{"action":"dismiss","gpu":N}` on `/api/tuning`. A Cool tune from an older version
+  replaced by one for its strength is asked about too.
+- **RTX 20-series cards mine.** RTX 2060, 2070 and 2080 cards (SUPER and Ti included) and the CMP 40HX mining card
+  now mine Pearl, with a search kernel of their own whose instruction schedule is written out by hand for these
+  cards. At stock settings a rented RTX 2070 SUPER mined 63.6 TH/s of work verified share by share on a pool, 3.3%
+  more than the other miner tested side by side on that card, and a CMP 40HX 45.8 TH/s at its 135 W limit (the search
+  runs in short launches that keep the card's units reading the same operands together: the memory controller is busy
+  30% of the time instead of 37-40%, 2% more than the 44.8 TH/s of one long launch). Every hit is checked on the CPU before it is sent, as on every card. GTX 16-series cards and others
+  without tensor cores are skipped with a plain message. Auto-tune is new on these cards: one whose driver doesn't
+  offer the clock controls tuning needs mines at stock and says so.
+- **Anonymous check-in, disclosed and easy to turn off.** About 2 minutes after the start and then every 15 minutes,
+  GlintMiner tells the developer anonymously that a rig runs: the install id from the fee label, a random id for the
+  run, the version, OS and platform, card models and counts, total hashrate and board power, payout type, uptime;
+  per card its model, hashrate, power, temperature, fan and time waiting for the CPU; share counts, GPU errors and
+  self-recoveries, how the previous run ended and why in one word (a GPU that stopped responding while tuning or
+  otherwise, with its GPU number; an update, rollback, new settings, a stop, a crash), self-restarts in the last 24 h
+  (a crash's place in the code as `file.rs:line`, never its text);
+  auto-tune's outcome (off, tuning, tuned or partly, the mode, cards tuned/tuning/waiting/stock); per card tuning,
+  its stage in outcome words, share done, time left and so far, the watts its Cool strength aims for and how many steps
+  it backed off (the rig's longest time left and share done); the dev fee's state
+  (paying through its pool or yours, idle with its servers unreachable, reconnecting); the update setting and any
+  rollback; the NVIDIA driver version. Never the wallet, worker name, pool, Telegram, host name, folders, IP address
+  or any tuning setting (clocks, offsets, limits, voltages, steps); the start-up log lists what is sent. It shows how
+  many rigs run which versions and cards, whether they run well, and whether the dev fee arrives. `--no-telemetry` (or `"telemetry": false` in
+  `glint.json`) turns it off; a failed check-in is never shown and never slows mining. See the README.
+- **`--tune-at-once N`: tune several cards at the same time** (default 1, one at a time as before). A whole rig tunes
+  in fewer hours, with a clear warning: every card tuning runs at factory settings (stock clocks and power, often much
+  hotter and louder than your own overclock) until its tune is found, so N at once means N cards at stock together.
+  Set fixed fan speeds (70% or more) and make sure the rig's cooling and power supply can take it. GlintMiner logs this
+  warning at every start while it's set. If a crash takes down cards that were testing settings together, each
+  setting counts against its card, so the same crash can't restart GlintMiner over and over; a card that has found its
+  tune finishes its last check while the others still tune.
+- **Big rigs tune without running hot for hours.** Cards tune one at a time, an hour or two each, so on a rig of six
+  or twelve cards the last one waits most of a day, and until now every card waiting its turn mined at stock: the most
+  power it draws, often well above your usual power-limited or HiveOS setup. Now a card waiting its turn keeps your own
+  core overclock or power limit if it has one, and otherwise mines at three quarters of its default power limit (never
+  under its minimum) until its turn, shown as *Waiting (reduced power)*. A memory offset alone (HiveOS's usual memory
+  underclock, or a memory overclock) stays on and doesn't keep the card at full power, and a card is looked at again
+  while it waits, so an overclock cleared in HiveOS meanwhile doesn't leave it at full power for hours (in testing an
+  RTX 2070 waited at its full 175 W, shown as on its own settings). It gets its full limit back a few minutes
+  before its turn, so its stock is measured as it really is, and the rig takes no longer to tune. In the simulation,
+  a rig of six RTX 3090s and a 4070 Ti drew 1,880 W instead of 2,380 W while its first card tuned (2,170 W instead of
+  2,410 W averaged over the whole 6-hour tune), and twelve RTX 5060 Ti 1,660 W instead of 2,150 W. When a tune starts
+  on a rig, the dashboard and the console say how long it takes and how the waiting cards run (*Tuning 6 cards one at
+  a time, about 9 hours. Cards waiting their turn run at reduced power until then.*). Cards with a saved tune just run
+  it; cards you keep at stock or set to off are never touched. The limits are put back when GlintMiner closes, and
+  after a crash or a kill at the next start. With `--tune-at-once`, cards waiting for a slot do the same.
+- **Heat on a rig slows the waiting cards first.** When any card gets near its temperature limit while cards tune,
+  the cards waiting their turn are held lower (down to their minimum) before the card being tuned is slowed; they go
+  back up once the rig has been cool for a few minutes.
+- **A power budget for the rig while it tunes (optional).** `--tune-power-budget 1800`, or **Settings → Temperature
+  and power**: the whole rig's board power stays under that many watts while cards tune. Waiting cards are held lower
+  first; a card starts tuning only when the rig fits the budget with that card at full power (with `--tune-at-once`,
+  every card tuning counts), and a card tuning waits again if the rig stays over the budget for minutes anyway. When
+  the cards already tuned draw too much for the next card to tune, that card says so with the watts missing. Under a
+  budget, *Most hashrate* doesn't raise a power limit above the card's default. Off by default.
+- **A tune changed from outside GlintMiner is put back.** Applying an overclock in HiveOS (even just to change the
+  fans) rewrites every card's clocks, memory clock and power limit, and a tuned card went back to its full default
+  power (a tester's 3090: 390 W instead of about 220). GlintMiner now checks every 30 seconds: a tuned card gets its
+  tune back, and a card in the middle of a tuning test runs that test again with its settings back (the test would
+  otherwise measure the wrong settings). Changed again within the hour, a tuned card's settings are taken as meant and
+  left, and the card says so; restarting GlintMiner puts the tune back. A line in the log each time.
+- **Tuning on older Linux drivers (470 to 550).** Auto-tune used the clock controls NVIDIA added in driver 555, so a
+  HiveOS rig on 535 or 550 (still common) mined at stock and said "Tuning needs a newer NVIDIA driver". On Linux
+  GlintMiner now falls back to the driver's older clock controls. Windows still needs 555 or newer.
+- **`glint --diag`: one file to send for support.** It holds the last runs' logs, the cards as the driver reports
+  them, the settings with the wallet and Telegram details hidden, and the GPU driver's error log (Linux), all written
+  locally (on HiveOS to `/home/user`) and sent nowhere.
+- **Kryptex account (paid in BTC): this week's PRL price range next to the estimate.** Kryptex converts PRL to BTC at
+  the price of the moment and doesn't publish its rate, so what it credits swings with PRL's price (−17% to +34% in a
+  recent week). The dashboard shows the day's BTC across the week's lowest and highest price, and the console how far
+  the price moved, from Kryptex's own price feed.
+- **Each start says how the previous run ended:** closed normally, restarted itself because a named GPU stopped
+  responding, or stopped from outside (a watchdog, Task Manager, a power cut), with the time.
+- **A tuned card that backed off earns its setting back.** A card that moved to a safer setting after an error used
+  to stay there until you tuned it again. Now, after three days of stable mining at the safer setting, running no
+  hotter than when it erred, it tries its tuned setting once more under the same long check as the original tune
+  (never in GlintMiner's first hour, during a game pause, or while another card tunes). If it holds, the tune is back
+  and the dashboard says *Regained its tuned setting after 3 days of stable mining*; if not, the card goes straight
+  back to the safer setting and waits twice as long before the next try (6 days, then 12), and after the third try
+  keeps the safer setting until you re-tune. A setting that stopped the card twice is never tried again; a tune the PC
+  crashed at keeps its safer setting for good. The back-off note now says it will try again by itself. In every mode,
+  Best earnings' two tunes included.
+- **Cooler days in every mode.** A card tuned for *Less power* or *Cool and quiet* that later runs clearly
+  cooler than when it was tuned tries a little less voltage at the same speed, at most once a day and with the same
+  long check: less power at the same hashrate, never faster or hotter. (*Most hashrate* already looked for more speed
+  on cooler days.)
+
+### Changed
+- **Hot memory counts as heat.** RTX 3080, 3090, 3090 Ti and 4070 Ti and up can reach their memory's own temperature
+  limit while the card's temperature reads fine. When the card slows itself for heat like this, the temperature guard
+  now lowers its power until it no longer has to (as for any card over its limit; administrator rights needed), and
+  gives it back once the card has run cool for a few minutes. The log says why. While a rig tunes, it also holds the
+  waiting cards lower first.
+- **Temperature limits on the command line, and per card.** `--temp-limit auto|off|78` for every card, and
+  `--temp-limit-card 1=72,3=75` for a card of its own (one between two others, or by the power supply), by number or
+  PCI bus id, 60 to 95 °C and never above the card's own maximum. The temperature guard and auto-tune keep to it, and
+  the dashboard shows each card's limit. Saved as `temp_limits` in `glint.json`.
+- **You choose how much power Most hashrate may add.** **Settings → Temperature and power → Extra power for Most
+  hashrate**, or `--speed-power-raise`: *none* (never above stock), *low* (up to 10% more per card), *medium* (up to
+  25%) or *max* (up to each card's own maximum, the default, as before), each shown with what your rig's power limits
+  come to; or a number of watts per card. One card can have its own with `--speed-power-raise-card 0=none,1=50`. A rig
+  only draws all its cards' extra power together once every card runs its tune, so when two or more cards tune in Most
+  hashrate the console and the dashboard say what the rig's power limits may total by then (at each choice, so you can
+  pick one your power supply carries with headroom), and the console says what they total once tuning is done. A
+  tune made with more power than you now allow runs at the most you allow from then on, without tuning again. A rig
+  power budget still wins: under one, no limit is raised.
+- **Cool and quiet (was *Coolest and quietest*) now saves a set share of power, at a strength you choose.** It looked
+  for the most hashrate per watt, and on many cards that ended next to *Less power*. It now uses about a quarter
+  (*Cool*), a third (*Cooler*, the default) or 45% (*Coolest*) less power than stock, always clearly less than *Less
+  power* on the same card, and gives up some hashrate for it. It never goes below 70% of stock speed: a card that gets
+  there first stays at 70% and its result says *as far as this card goes*. Choose the strength next to the mode on the
+  dashboard (the rig's mode, each card's, the tuning panel and the schedule), with `--cool-strength
+  cool|cooler|coolest` (saved as `cool_strength` in `glint.json`; files without it get Cooler), or in a mode:
+  `--tune cool:coolest`, `--tune-card 0=cool:coolest`, `--schedule 23:00-07:00=cool:coolest` (plain `cool` is the
+  rig's strength). Each strength keeps its own saved tune, and a schedule switches only to a strength a card has a
+  tune for. Setup's Cool and quiet choice is Cooler. A Cool tune saved by 1.2.6 or 1.2.7 is replaced once: the first
+  time a card runs Cool and quiet on 1.2.8 it tunes again for its strength (the log says so).
+- **The tuning choices say what you get, and Cool and quiet shows its watts for your card.** Each mode and strength
+  now reads as speed and power against stock, and who it suits: *Cool* about 90% of stock speed on about 25–50% less
+  power, *Cooler* about 80% on 35–55% less (recommended), *Coolest* 70–75% on 45–60% less; *Less power* keeps full
+  stock speed on under 10% to nearly half less, depending on the card; *Most hashrate* usually 4–9% more (ranges from
+  our calibrated simulations of RTX 20 to 50 cards). Once a card's stock power is measured, the picker shows what each
+  strength aims for on it, e.g. *Cool ~137 W · Cooler ~118 W · Coolest ~100 W (stock 182 W)* (a range across a rig's
+  cards; *up to* until the card's least power at stock speed is known), a card tuning for Cool and quiet says *aiming
+  for about 118 W (stock 182 W)*, and the log names the aim once. The same words in `--help` and setup; `targets_w` in
+  `/api/stats` for each card.
+- **Dev fee: if its pools can't be reached, it's paid through your own pool; if that fails too, 1% of the time is left
+  idle instead (never more than 1%).** Blocking the fee's servers used to leave the fee unpaid while mining went on.
+  The fee now has backups on the server you mine on (HeroMiners, Kryptex or unMineable), logged in with the fee's
+  address; your own shares and login are untouched. If no fee server answers for 10 minutes, the fee's 1% of the time
+  is left idle instead of mined for you. The console and dashboard say which (*fee pool reconnecting*, *fee pools
+  unreachable: 1% of time left idle*), and after a day without a fee share they show a lasting notice to check the
+  network or firewall.
+- **Dev fee blocked for a day: mining pauses until it can connect.** If the fee has had no working connection for 24
+  hours (neither its own servers nor its backup on your pool) while your own pool worked, mining pauses on every card
+  and the console, log, dashboard and check-in say why (*The developer fee hasn't been able to connect for 24 hours
+  ... mining is paused until it can*). The fee keeps trying in the background and mining carries on by itself as soon
+  as it connects through any route. Restarting GlintMiner doesn't start the 24 hours over; the fee connecting once
+  does. Time when your own pool can't be reached either (the internet down) never counts, and mining is never paused
+  for the fee then; a PC asleep or a clock change doesn't count either. The FAQ explains what to allow, and the secure
+  DNS settings (`--dns-over-https`, `glint --net-test`) for networks that block it.
+- **A wrong PC clock is named as such.** When the fee can't connect because the PC's date is far off (the fee servers'
+  certificates then read as expired or not yet valid), the console, log, dashboard and check-in say so, with the date
+  the clock reads (*The developer fee can't connect because this PC's clock is wrong (it reads ...). Set the correct
+  date and time; mining carries on once it connects.*), instead of a blocked network. The pause still applies.
+- **The dev fee's connection is labelled as such in the log and only reports changes.** Its lines start with
+  *dev fee (1%)* (they read like a second pool); connected, reconnecting and left idle show once, a run of reconnects
+  as one count every 15 minutes, and the routine detail goes to `glint.log`.
+- **A new tune is watched more closely for its first day.** A setting can pass its 5-minute test and still fail once
+  later, as temperatures drift; for 24 hours after a tune GlintMiner checks the card's results twice as often (about
+  0.25% of hashrate, that day only), so a rare error is caught sooner. While other cards on the rig are still tuning,
+  their tests come first.
+- **A slightly faster kernel:** on the RTX 4090, +0.9% at the same clock and +1.3% on a speed tune; the same at stock,
+  where the card is limited by its power. RTX 30 cards run the same code; RTX 50 cards too, with one more change of
+  their own (+0.2% on an RTX 5080 at stock).
+- **A saved tune is checked again when the mining code changes.** A new kernel can move the setting a card holds, so
+  the first start of a version with new mining code checks each saved tune once (about 20 minutes per tune; the card
+  mines meanwhile): the tune is kept if it still holds, and tuned again if it doesn't. The dashboard says *the mining
+  code changed* while it runs. Expect this once after updating to 1.2.8.
+- **Saved tunes are stored in a new protected format.** Tunes saved by 1.2.5 to 1.2.7 load as before and are
+  rewritten in the new format; a saved tune that has been edited by hand is ignored and that card tunes again.
+
+### Fixed
+- **Dev fee and pools reachable on networks that poison DNS (e.g. mainland China) via secure DNS.** On a rig in
+  mainland China the dev fee couldn't reach any of its servers ("connection refused", "no answer", "connection cut")
+  while the user's own pool worked, so the fee's time was spent idle. Now:
+  - A secure connection that the network cuts because it names the pool (HeroMiners, Kryptex) is made again without
+    the name; the pool's servers answer the same either way, and the dev fee still checks the pool's certificate.
+  - When every address the network's DNS gives for a pool fails, or it gives none, the name is looked up by secure DNS
+    (DNS over HTTPS, at Cloudflare, Google, AdGuard, OpenDNS, AliDNS and DNSPod, reached by IP address and checked by
+    certificate), and as a last resort the dev fee's servers' known addresses are used. The log says once when this
+    was needed.
+  - A server your pool connection already reaches is reached at the same address by the dev fee's backup on it.
+  - Your own pool can use secure DNS too: `--dns-over-https auto` (when the usual addresses fail) or `on` (first), or
+    `"dns_over_https"` in `glint.json`; off unless you set it. `--net-test host:port` also shows what each secure DNS
+    resolver answers.
+- **Most hashrate no longer reports a gain that isn't one.** On an RTX 5090 on the second way of mining, a finished tune
+  said "+0.8% hashrate" while the pool showed it mining the same as stock (it only saved 8-14 W). A gain under 1% is
+  inside what a measurement can tell from stock: it is now said as "same hashrate" (with the power it saves, where
+  that is 1% or more), and a card whose best setting gains under 1% and saves under 5% power stays at stock ("No
+  stable gain over stock; staying at stock.") and isn't searched again at every start. Gains of 1% and more, and
+  the same hashrate on 5% or more less power, are shown as before.
+- **Rigs with several cards: a crash while one card tests a setting no longer costs the other cards their tunes.** A
+  blue screen, power cut or driver reset while one card tested a setting could back off the tunes of the cards already
+  tuned, for good. The setting being tested is now the one blamed, and an error the driver spreads to every card is
+  put on the card being tested, not on a tuned card that reported it first.
+- **A tuned card paused for heat keeps the lower power it was given when it carries on.** With Most hashrate in a hot
+  room, a card paused for heat used to get its full tuned power back as it resumed and was paused again every 20
+  minutes or so. It now carries on at the power its cooling holds and gets the rest back once the room cools.
+- Started by Windows Task Scheduler (which runs programs at below-normal priority), GlintMiner could be starved by
+  other busy programs: no shares for minutes, job updates late, the dashboard not answering. It now runs itself at
+  normal priority (`GLINT_KEEP_PRIORITY=1` keeps the priority it was started with); on Linux, started with a raised
+  nice value, it goes back to nice 0 where it is allowed to (as root).
+- **A card whose driver stops responding during tuning.** A rented RTX 5090's driver stopped responding mid-tune
+  (Linux, GPU microcontroller halt): it mined on, but its settings could no longer be changed or reset and its readings
+  froze, while the dashboard said it "mines at stock". GlintMiner now notices at once (the driver answering "not
+  ready", or readings frozen while the card mines), keeps that tuning step and anything bolder out of the tune for
+  good, and says on the card: the driver stopped responding, the card keeps mining, its temperature can't be read and
+  its settings can't be reset until the PC restarts. After the restart tuning carries on from where it was. A second
+  such crash on the same card tunes it without holding its memory clock. Frozen readings are no longer shown or acted
+  on (the temperature guard included), the card's stall isn't blamed on the processor, and the check-in flags that the
+  PC needs a restart. On Windows, a driver that resets itself is picked up and tuning carries on.
+- **A card whose driver has stopped responding for half an hour is paused, not retried.** Until now GlintMiner kept
+  restarting such a card, and could restart itself over and over for it while the other cards lost their mining time
+  too. After 30 minutes without an answer from its driver (counted across GlintMiner's own restarts), the card is
+  paused with *driver stopped responding — restart the PC to bring this card back*, said once in the log, shown on the
+  dashboard (EN/RU/ZH) and in the API, and the check-in reports the card as paused for its driver (and that the PC
+  needs a restart). The other cards keep mining, and GlintMiner no longer restarts itself for that card. If the driver
+  answers again by itself (Windows can reset it), the card mines again; starting GlintMiner again tries it afresh.
+- A tuning error that left a card changed no longer says the card is at stock.
+- A `glint.json` saved by Notepad or PowerShell (with a byte-order mark at the start) loads, instead of being called
+  not valid.
+- **Auto-tune on a card too hot for its full power.** A card that reached its temperature limit at full power while
+  it tuned (a rented RTX 5080 in a case that couldn't cool it: paused at 85 C, mining again, paused again, every couple
+  of minutes) never got past measuring stock. The temperature guard now acts before the card is paused for heat, and a
+  pause for heat also lowers the card's power, so it mines again at a power its cooling holds. The tune then runs within
+  what the card's cooling allows, and says so; a card that keeps getting too hot even so stops tuning and says "This
+  card is too hot to tune: improve its cooling or airflow, or choose Cool and quiet" (it mines at stock meanwhile, kept
+  within its temperature). A room that warms up while a card tunes no longer pauses it at every step: after a passing
+  heat wave the tune carries on; in a room that stays hotter it starts again within what the card's cooling allows. A
+  card the temperature guard has paused no longer gets its power back while it is paused (it read cool only because it
+  had stopped).
+- A card at stock after a tune that found nothing shows why again once a pause (heat, a game, the schedule) is over,
+  instead of "Paused by the temperature guard".
+- The check-in's start-up line in the dashboard's events is no longer marked as an error (it lists "GPU errors" among
+  what it sends).
+- **GlintMiner always recovers by itself when part of it stops answering.** A watchdog of its own restarts it when the
+  main loop or the GPU readings stand still for 2 minutes, or when a stop (Ctrl+C, HiveOS ending the miner) hasn't
+  finished in 30 s: the cards' clocks and power limits are put back first, and the next start says "stopped responding;
+  restarted itself". Before, such a GlintMiner stayed up doing nothing, kept the dashboard port and needed a kill.
+- A lock taken in opposite orders by the auto-tuner (cards waiting their turn) and the dashboard's tuning summary could
+  stop the main loop, the dashboard and the tuner at once while a card tuned. Driver readings and clock changes no longer
+  hold the locks the dashboard needs, and the dashboard and stats always answer within a few seconds.
+- When the dashboard port is taken, GlintMiner waits a few seconds for an earlier copy to let go, then says who holds it:
+  an earlier GlintMiner that stopped responding (with the command that ends it), one still running, or another program.
+  On HiveOS a GlintMiner left behind from the same folder is closed (then ended) before the miner starts.
+- **No more 0 TH/s in silence.** Cards that gave up after their restarts get a fresh start of GlintMiner; when that
+  hasn't helped 3 times within an hour and no card mines, GlintMiner stops and says plainly that the PC needs a restart
+  (the console, Telegram, the next start, and the anonymous check-in). Before, a rig whose cards all failed kept
+  running and mining nothing.
+- When one card's error ends every card's work (the driver does that), it counts as that card's error only: the miner
+  restarts once and the other cards aren't charged a restart, at stock settings too.
+- Connections try every address of a server, IPv4 and IPv6 in turn; IPv6 on a PC without it (HiveOS) is tried last, and
+  the error shown is the one that happened (an address that didn't answer), not "address family not supported".
+- **The tuning bar no longer sits at 99% with time still to go.** The bar never went back, so once a card's last
+  measurement had taken it to 99%, a back-off or a restart that added steps left it there while the time left grew (a
+  tester's RTX 2070: "99% · about 25 min left" after 91 minutes, 78% by the time). It now follows the time left when
+  that grows by more than a little (small revisions still hold it), stops at 98% while over 2 minutes are left, and
+  the rig's bar does the same.
+- **On a big rig, a card's last check waited for hours.** After a card has found its tune, it is measured as it mines
+  while the rest of the processor's stability checks are quiet. On a rig the cards tuned earlier were still in their
+  first day of closer checks, which kept the checker from ever looking quiet: in the simulation a seven-card rig spent
+  20 hours on one card's last check (27.6 hours to tune the rig, now 6 hours). Tuned cards now step their closer checks
+  aside while another card measures, and a rig's normal checks no longer count as a backlog.
+- **Cool's strengths no longer land on the same result.** On some cards Cool could end on the same result as Cooler
+  (an RTX 2070 in testing: both at 108 W). Cool, Cooler and Coolest now always save clearly more power in that order;
+  Coolest may stop at 70% of stock speed, and says so.
+- **A card's own memory underclock stays on while it tunes.** A lower memory clock (HiveOS's memory -2000, common for
+  Pearl, whose mining barely uses the memory) counted as an overclock: tuning put it back to factory settings while
+  GlintMiner ran, so the card drew more than with your own settings. It now stays on: the card tunes and mines with it,
+  goes back to it whenever it goes back to stock (and after a crash), and the log says so once. A memory overclock, a
+  core overclock or a power limit of your own still go to factory settings for tuning and come back when GlintMiner
+  closes.
+- **Backup pools are reached when the first pool's server is blocked.** A connection to a server that drops packets
+  (a firewall) waited about two minutes on Linux, and that wait made the reconnect start over on the same server, so
+  the backups were never tried. A connection now gives up after 10 seconds and the next server is tried.
+- **The live console view no longer leaves old copies of itself above it** (it's drawn on the terminal's alternate
+  screen, as tools like `top` do; the normal screen comes back when GlintMiner stops).
+- **Windows: clicking in GlintMiner's window no longer pauses it.** Windows' QuickEdit mode froze the output, and
+  with it the program's main loop, until a key was pressed; GlintMiner now turns it off for its own window.
+- **HiveOS keeps the previous runs' logs.** Each start used to overwrite `/var/log/miner/glint/glint.log`, so a restart
+  wiped the log that said why it happened. The previous two runs are now kept as `glint.log.1` and `glint.log.2`.
+- At every start the log could say a card's sensors couldn't be read, so it couldn't be tuned, and then the card
+  tuned normally: the sensors were still opening. GlintMiner now gives them up to two minutes before saying so.
+- **Cards that don't offer every clock control no longer end in a tuning error.** A card or driver that refuses one of
+  the controls auto-tune uses (some RTX 20 and mining cards on newer drivers) is told apart from an old driver: it
+  mines at stock with *This card doesn't offer the controls tuning needs*, decided within a minute of the start.
+- `--bench` reports the average power, clock and hashrate per watt, and `--self-test` and `--bench` also write to
+  `glint.log` (to send on from a rig reached over SSH).
+- The dashboard reads a tuned card's saving as *43% less power at 90% of stock speed* (it said *-43% less power*).
+- A card tuned for less power or Cool and quiet is held to its tuned hashrate in "of expected", not to its stock
+  speed (it showed an amber 88%).
+- A power limit set outside GlintMiner (HiveOS, Afterburner) is shown as such on the dashboard, not as one GlintMiner
+  puts back when it closes.
+- **The temperature limit acts from its first step on a card that runs under its power limit.** It lowered the power
+  limit 10 W at a time from the limit itself, so on a card held lower by its own cap (an RTX 5080 draws 339 W of its
+  360 W limit) the first two steps changed nothing. Each step now starts 10 W under what the card draws, and the power
+  comes back to the card's own limit once it cools.
+- **A busy processor no longer leaves the cards mining old work.** Each new job from the pool is prepared on the
+  processor (about 0.1 s) at a lowered priority, so the cards go first on a weak processor. On Windows, while another
+  program kept every core busy (a tester's full Defender scan), that preparation waited minutes: the cards stayed
+  100% busy on jobs the pool had long replaced, and 720 of about 1,700 shares came back stale (in the lab, on a
+  4090 limited to 8 busy processor threads: one job took 164 s to prepare and no share counted for three minutes
+  while the hashrate read 312 TH/s). A job not ready after 1.5 s (or three times this PC's usual time) is now
+  prepared at normal priority, and shares that wait for their check more than 2 s are checked at normal priority
+  too. Once the pool has called a share of a replaced job stale, a card no longer mines a job replaced for longer
+  than that; it waits for the new one instead of making shares the pool won't take. The console and dashboard say
+  *The processor is too busy to prepare new work in time; some shares may arrive late* while it lasts (EN/RU/ZH),
+  the log says how late, and the stats API has `work.late`, `work.job_lag_s` and each card's `job_lag_s`.
+- Auto-tune no longer spends its first step holding the memory clock where it already is. On a card whose driver lists
+  a single memory clock (an RTX 5060), or one that already mines at the clock the hold would pick, that step changed
+  nothing; tuning now skips it there (RTX 30 and 40 cards hold their memory as before).
+- When a pool closes a connection that was working (HeroMiners drops idle workers about every 15 minutes, so the dev
+  fee's connection saw it often), the log no longer says to check this PC's date and time or its antivirus. The dev
+  fee says "the pool closed the connection; reconnected" once it is back; your pool's line says the connection was
+  cut. The date, time and antivirus hint now shows only when a secure connection can't be set up twice in a row.
+- Efficiency's time left now counts down while it tunes. It could sit at about the same figure for twenty minutes
+  or more (an RTX 4090 showed 12 minutes left, then 12 and a half twenty minutes later); it may now start a little
+  longer and end sooner than said.
+- Cool and quiet no longer repeats what an Efficiency tune already found on the same card. After an Efficiency tune
+  from the last week (same card, driver and mining code, and stock reading as it did then), Cool starts from it and
+  only tunes for its own power aim, in about half the time (an RTX 4090 in the tuner's simulation: 26 minutes instead
+  of 47; the acceptance run's took 71).
+  An older Efficiency tune, or a card that reads differently now, gets Cool's whole tune as before.
+
 ## [1.2.7] - 2026-09-30
 
 HiveOS fixes only; the miner itself is unchanged from 1.2.6. **On HiveOS:** in the flight sheet's custom miner, set

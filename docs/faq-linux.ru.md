@@ -32,7 +32,9 @@ RTX 50 — 580 или новее. GlintMiner загружает две библ�
 `libnvidia-ml.so.1` для температур, мощности и тюнинга. Открытый драйвер nouveau майнить не может.
 
 **Какие карты?**
-NVIDIA серий RTX 30, 40 и 50 (compute capability 8.0 или новее). `glint --gpu-info` показывает, что видит GlintMiner.
+NVIDIA серий RTX 20, 30, 40 и 50 (compute capability 7.5 с тензорными ядрами или 8.0 и новее), а также майнинговая
+карта CMP 40HX. У карт GTX 16-й серии и CMP 30HX нет тензорных ядер, майнить они не могут. `glint --gpu-info`
+показывает, что видит GlintMiner.
 
 **Сколько памяти?**
 Около 1,5 ГБ системной памяти (ОЗУ) на карту.
@@ -140,7 +142,8 @@ put back to stock* (в прошлый раз GlintMiner закрылся нек�
 
 **Нужны ли автотюнингу рабочий стол, X или nvidia-settings?**
 Нет. GlintMiner вносит изменения через библиотеку управления драйвера NVIDIA, поэтому он работает и на машине без
-монитора. Ему нужны root и драйвер, который даёт эти средства управления; со старым драйвером карта сообщает *Tuning
+монитора. Ему нужны root и драйвер NVIDIA 470 или новее (до 555 GlintMiner пользуется более старыми средствами управления частотами
+драйвера; начиная с 1.2.8); со старым драйвером карта сообщает *Tuning
 needs a newer NVIDIA driver: update it and start GlintMiner again. Until then this card mines at stock.* (тюнингу
 нужен более новый драйвер NVIDIA; до тех пор карта майнит на стоке).
 
@@ -229,7 +232,9 @@ at https://github.com/MaccaDaStaka/GlintMiner/releases* (доступна бол
 ничего не скачивает и не устанавливает.
 
 **Как обновиться?**
-Остановите GlintMiner, замените программу `glint` той, что из нового `glint-…-linux.tar.gz`, и запустите снова (если
+Нажмите **Обновить сейчас** на панели или выполните `glint --update` (GlintMiner должен иметь право записи в свою
+папку; у службы в `/opt/glint` оно есть). Он проверит подпись выпуска, заменит программу и перезапустится. Вручную:
+остановите GlintMiner, замените программу `glint` той, что из нового `glint-…-linux.tar.gz`, и запустите снова (если
 это служба: `systemctl restart glint`). Сохраните `glint.json` и остальные файлы: ваши настройки, сохранённые
 результаты тюнинга и история останутся.
 
@@ -254,9 +259,10 @@ GlintMiner нумерует карты в порядке CUDA, который н
 | Что вы видите | Что это значит | Что делать |
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | Не удалось загрузить `libcuda.so.1` | Установите драйвер NVIDIA (не nouveau) |
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | Драйвер не видит карту, которую может использовать GlintMiner | Проверьте `nvidia-smi` и `glint --gpu-info` |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Драйвер не видит карту, которую может использовать GlintMiner | Проверьте `nvidia-smi` и `glint --gpu-info` |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | Драйвер старше вашей карты или GlintMiner | Обновите драйвер |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | Эта карта слишком старая | Эта карта пропускается; остальные майнят |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | Эта карта слишком старая (GTX 10-й серии или старше) | Эта карта пропускается; остальные майнят |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | У этой карты нет тензорных ядер (GTX 16-й серии или подобная) | Эта карта пропускается; остальные майнят |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Память карты занята чем-то ещё | Закройте это и запустите снова |
 | *no wallet configured: run glint in a terminal for the setup, or pass --wallet ADDRESS* | Запуск без терминала и без настроек | Запустите его один раз в терминале или добавьте `--wallet` |
 | *reading …/glint.json: Permission denied* | Файл принадлежит root (см. выше) | Запускайте каждый раз одинаково или смените владельца файла через `chown` |

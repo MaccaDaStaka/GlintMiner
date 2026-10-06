@@ -70,13 +70,15 @@ today, the hottest card and its temperature limit, and your shares (accepted, re
 |---|---|
 | **Wallet and payout** | Your address or Kryptex account, and how your earnings reach you |
 | **Electricity** | Price per kWh and currency, for power cost and profit after power |
-| **Tuning** | Auto-tune on or off and the rig's choice (Best earnings, Most hashrate, Less power, Coolest and quietest), and a choice for each card (see [Auto-tune](auto-tune.md)) |
+| **Tuning** | Auto-tune on or off and the rig's choice (Best earnings, Most hashrate, Less power, Cool and quiet with its strength: Cool, Cooler or Coolest), and a choice for each card (see [Auto-tune](auto-tune.md)) |
 | **Gaming and schedule** | Pause while you game (Windows) and the programs that never pause it; times of day for another mode or a pause (see [Gaming and the schedule](auto-tune.md#gaming-and-the-schedule)) |
 | **Temperature and power** | The temperature limit (automatic from your card, or your own), the hard stop, and profit mode for power limits |
 | **Dashboard** | Who can open it (this computer only, or other devices view-only), the port, and opening it at start |
 | **Appearance and language** | Light, dark or automatic theme, and the language |
 | **Telegram alerts** | A message when a card stops or the pool is lost |
 | **Mining** (advanced) | The rig (worker) name, which cards to use, and a pool override |
+| **Affiliate code** | The code of whoever referred you: a quarter of the 1% fee goes to them, never more for you (see the [FAQ](faq.md#questions)) |
+| **Become an affiliate** | Ask to become an affiliate: shows exactly what is sent, sends it only after you confirm, then shows whether it is approved |
 | **Console and logs** | The plain console for services and rig OSes, and whether to write `glint.log` |
 
 Changes are saved to `glint.json`. A few (the port, who can open the dashboard) apply after GlintMiner restarts; the

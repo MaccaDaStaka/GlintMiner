@@ -41,7 +41,7 @@
 
 从挖矿电脑以外的任何设备打开时，面板都**仅可查看**：你能看到所有内容，但不能更改设置，也不能开始或暂停调校。页面顶部会注明。更改需在挖矿电脑上进行。
 
-如果也想允许从其他设备更改，请用 `--api-allow-remote-control` 启动 GlintMiner。只在你信任的网络中这样做（你自己的 Tailscale 网络就是一个）。
+如果也想允许从其他设备更改，请用 `--api-allow-remote-control` 启动 GlintMiner。只在你信任的网络中这样做（你自己的 Tailscale 网络就是一个）。之后其他设备会要求输入一次远程控制码：GlintMiner 启动时会打印它，挖矿电脑控制面板的“设置”中也会显示。要生成新代码，请从 `glint.json` 中删除 `api_remote_code` 并重启。通过挖矿电脑上的代理（`tailscale serve`、nginx）打开的页面也算作其他设备，同样需要代码。
 
 ## 无显示器矿机（HiveOS、MMPOS、Linux）
 

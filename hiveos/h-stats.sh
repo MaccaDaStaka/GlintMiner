@@ -3,8 +3,10 @@
 # bus_numbers are the cards' PCI bus numbers (from pci_bus_id, e.g. 0000:0a:00.0 -> 10), so HiveOS puts each figure
 # on the right card; the CUDA order can differ from it on a mixed rig.
 port=4078
-[[ -f $CUSTOM_CONFIG_FILENAME ]] && p=$(grep -oE -- '--api-port [0-9]+' "$CUSTOM_CONFIG_FILENAME" | awk '{print $2}') && [[ -n $p ]] && port=$p
-stats_raw=$(curl -s -m 5 "http://127.0.0.1:$port/api/stats")
+# glint.conf: one argument per line (or one line, before 1.2.8).
+[[ -f $CUSTOM_CONFIG_FILENAME ]] && p=$(tr '\n' ' ' < "$CUSTOM_CONFIG_FILENAME" | grep -oE -- '--api-port +[0-9]+' | grep -oE '[0-9]+$' | head -1) && [[ -n $p ]] && port=$p
+# -f: a busy answer (503, part of GlintMiner not answering) counts as none.
+stats_raw=$(curl -sf -m 5 "http://127.0.0.1:$port/api/stats")
 if [[ -z $stats_raw ]]; then
   khs=0; stats="null"
 else

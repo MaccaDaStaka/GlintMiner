@@ -78,6 +78,7 @@ results are kept in the same folder.
 **How do I add other options?**
 Put any GlintMiner options in **Extra config arguments**, for example `--kwh-price 0.12 --currency EUR`. The full list
 is in [All options](advanced.md#all-options).
+An affiliate code goes there too: `--affiliate CODE` ([what it is](faq.md#questions)). To become an affiliate from the rig's shell, run `glint --become-affiliate --wallet <your mining wallet>` in the miner's folder (the wallet is only for the anonymous install id; nothing is sent until you type yes).
 
 ## Stats in HiveOS
 
@@ -107,13 +108,24 @@ saved tune back on. So while GlintMiner runs, the card mines with GlintMiner's t
 log says so: *Your card had its own overclock; tuning starts from factory settings and puts yours back when
 GlintMiner closes.*
 
+**And a memory underclock?**
+A lower memory clock (a negative memory value in HiveOS, such as the -2000 many use for Pearl) isn't an overclock.
+From 1.2.8 GlintMiner leaves it on: the card tunes and mines with it, and goes back to it whenever the card goes back
+to stock. The log says *Your card's own memory underclock stays on while it tunes and mines.* A memory overclock
+(a positive value) goes to factory settings for tuning like the rest of an overclock.
+
 **What happens to my HiveOS overclock when GlintMiner stops?**
 GlintMiner puts the card's own overclock and power limit back as it closes (or at its next start, after a crash). If
 your overclock holds the card at a fixed clock, that part is released for tuning and GlintMiner doesn't put it back.
 
-**Will GlintMiner notice if HiveOS applies an overclock while it tunes?**
-No. GlintMiner looks for other tuning programs only on Windows, so an overclock applied during a tune goes
-unnoticed and spoils the result. Don't change the rig's overclock while a card is tuning.
+**Will GlintMiner notice if HiveOS applies an overclock while it runs?**
+Yes (from 1.2.8). Applying an overclock in HiveOS, even just to change the fans, rewrites every card's clocks and
+power limits. GlintMiner checks its cards every 30 seconds: a card in the middle of a tuning test gets the test's
+settings back and runs that test again, and a tuned card gets its tune back, with a line in the log saying so. If a
+tuned card's settings are changed again within the hour, GlintMiner takes it as meant and leaves them; the card says
+so on the dashboard, and restarting the miner (`miner restart`) puts the tune back. It's still best to set fans before
+you start a tune. GlintMiner can't see VRAM temperature (the NVIDIA driver doesn't report it on most cards); HiveOS
+shows it.
 
 **What if auto-tune is off?**
 Then GlintMiner never touches clocks, and your HiveOS overclock works as it always has. The only thing GlintMiner may
@@ -133,12 +145,21 @@ avoids confusion, because GlintMiner's card numbers can differ from HiveOS's (se
 
 **How do I tune just one card, or a few?**
 List them after one `--tune-card`, by bus address, separated by commas with no spaces, for example
-`--tune-card 0b:00.0=cool,11:00.0=cool --confirm-tuning`. Cards not listed keep your HiveOS overclock. Put `--tune-card`
+`--tune-card 0b:00.0=cool,11:00.0=cool:coolest --confirm-tuning` (plain `cool` is the rig's Cool and quiet strength,
+`--cool-strength`, Cooler by default). Cards not listed keep your HiveOS overclock. Put `--tune-card`
 only once (a second one, or a space inside the list, isn't read as part of it). The bus address is the grey number
 under each GPU in HiveOS (`0b:00.0`, `11:00.0`, …). Before you apply it, set those cards' overclock in HiveOS to stock:
 `0` for them in Core, Core lock, Memory and Power limit (one value per GPU, in HiveOS's order), so HiveOS and
-GlintMiner never set the same card's clocks. Later you can tune the rest the same way, or the whole rig with
+GlintMiner never set the same card's clocks. **Leave the Fan as it is:** `0` there means the card's own automatic fan,
+which at stock can let a card get hot enough for GlintMiner's temperature guard to stop it (tuning then can't finish).
+A fixed speed of 70% or more is safest while a card tunes. Later you can tune the rest the same way, or the whole rig with
 `--tune cool --confirm-tuning`: a card already tuned in that mode keeps its tune and isn't tuned again.
+
+**Which NVIDIA driver does tuning need?**
+470 or newer. Mining works on older drivers too. HiveOS rigs often run 535 or 550: from 1.2.8 GlintMiner tunes on
+those with the driver's older clock controls (1.2.7 and earlier needed 555 or newer). With a driver too old, the card
+says *Tuning needs a newer NVIDIA driver* and mines at stock; `nvidia-driver-update --list` shows the drivers HiveOS
+offers, for example `nvidia-driver-update 570.211.01`, then reboot.
 
 **Does GlintMiner have the rights it needs to tune?**
 It checks for itself. If it can't change the card's settings, the card mines at stock, the log says *Tuning needs
@@ -182,8 +203,14 @@ Yes, with Tailscale on the rig and your phone. See [Phone access](phone-access.m
 ## Logs
 
 **Where is GlintMiner's log on HiveOS?**
-In `/var/log/miner/glint/glint.log`. Everything GlintMiner prints goes there. It is started afresh each time the
-miner starts. There is no `glint.log` in the miner's folder (the flight sheet passes `--no-log-file`).
+In `/var/log/miner/glint/glint.log`. Everything GlintMiner prints goes there. Each time the miner starts, the previous
+two runs' logs are kept as `glint.log.1` and `glint.log.2`, so after a restart the reason is still in `glint.log.1`. There is no `glint.log` in the miner's folder (the flight sheet passes `--no-log-file`).
+
+**How do I send you diagnostics?**
+In Hive Shell, run `/hive/miners/custom/glint/glint --diag`. It writes one file, `/home/user/glint-diag-….txt.gz`,
+with the logs of the last runs, your cards, your settings and the GPU driver's error log. Your wallet and Telegram
+details are blanked out, and nothing is sent anywhere. Download the file (for example with WinSCP: user `user`, your
+rig's IP) and attach it to your message.
 
 **Where is the technical detail of an error?**
 On HiveOS it is on the same line, in square brackets after the plain sentence, for example the operating system's
@@ -195,7 +222,8 @@ They are in UTC.
 ## Updating and removing
 
 **How do I update GlintMiner on HiveOS?**
-Point the custom miner's **Installation URL** at the new version's `glint-….tar.gz` and apply the flight
+When a new version is out, the dashboard and the console show its exact package link; GlintMiner never replaces
+itself on HiveOS. Point the custom miner's **Installation URL** at the new version's `glint-….tar.gz` and apply the flight
 sheet. We can't promise that HiveOS keeps the files in the miner's folder when it installs a new version, so keep
 what matters in the flight sheet: options in **Extra config arguments** are applied at every start whatever happens to
 `glint.json`. If saved tunes are lost, auto-tune simply tunes again.
@@ -207,20 +235,28 @@ on the cards. If it was killed instead, restarting the rig clears what GlintMine
 ## Several cards
 
 **Does it use every card in the rig?**
-Yes, every supported NVIDIA card (RTX 30-series or newer). To leave some out, add `--devices 0,2` to **Extra config
+Yes, every supported NVIDIA card (RTX 20-series or newer). To leave some out, add `--devices 0,2` to **Extra config
 arguments**. Allow about 1.5 GB of system memory per card.
 
 **GlintMiner's GPU numbers don't match HiveOS's.**
 GlintMiner numbers cards in CUDA's order, which on a rig with different cards can differ from the order HiveOS shows.
 To see which is which, run `/hive/miners/custom/glint/glint --gpu-info` on the rig: it lists each card's number, name and PCI bus address. `--tune-card` also takes the bus address.
 
+**Why does a card run at lower power while another card tunes?**
+A rig tunes one card at a time, which can take hours. Leaving the waiting cards at full stock power that whole time
+wastes electricity and heats the rig — including the card being tuned, which can make its result less accurate. So
+they run cooler until their turn: they mine a little less meanwhile (about a tenth less), and each gets its full
+power back before its own turn. A card with its own core overclock or power limit keeps it. To cap the whole rig's
+power while tuning, set a rig power budget. More in [Rigs with several cards](auto-tune.md#rigs-with-several-cards).
+
 ## Messages and what they mean
 
 | What you see in the log | What it means | What to do |
 |---|---|---|
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | No card GlintMiner can use | Check the rig's cards and driver |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | No card GlintMiner can use | Check the rig's cards and driver |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | The rig's driver is too old | Update the NVIDIA driver on the rig |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | That card is too old | It is skipped; the others mine |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | That card is too old (GTX 10-series or older) | It is skipped; the others mine |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | That card has no tensor cores (a GTX 16-series or similar) | It is skipped; the others mine |
 | *The dashboard and stats API couldn't start: port 4078 is already in use…* | Another program uses the port | Stop it, or use `--api-port` |
 | *Can't look up … — check this PC's internet or DNS settings.* | The rig can't look up the pool's name | Check the rig's network and DNS |
 | *Your card had its own overclock; tuning starts from factory settings…* | Auto-tune is on and the card had an overclock | Expected; see [above](#auto-tune-and-hiveos-overclocking) |

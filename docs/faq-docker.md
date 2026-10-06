@@ -45,7 +45,7 @@ ADDRESS*.
 The image always starts GlintMiner with:
 
 ```
---plain --no-log-file --config /glint/glint.json --api-bind 0.0.0.0 --api-allow-remote-control
+--plain --no-log-file --config /glint/glint.json --api-bind 0.0.0.0
 ```
 
 Repeating one of these after the image name doesn't change it: GlintMiner uses the first one it finds, and the
@@ -55,6 +55,7 @@ image's come first.
 Everything else, after the image name: `--wallet`, `--worker`, `--pool`, `--devices`, `--kwh-price`, `--currency`,
 `--tune` and the other tuning options, `--telegram-token` and `--telegram-chat`, `--share-diff`. The full list is in
 [All options](advanced.md#all-options).
+An affiliate code goes there too: `--affiliate CODE` after the image name ([what it is](faq.md#questions)).
 
 **Where are my settings kept, and do they survive?**
 In `/glint/glint.json` inside the container, with the saved tunes and the history behind the dashboard's charts next
@@ -86,10 +87,16 @@ image name to mine on some only.
 **Where is the dashboard?**
 At **http://127.0.0.1:4078** on the host. It won't open in a browser by itself from a container.
 
+**Why is the dashboard view-only?**
+Inside the container every request arrives from Docker's network, not from the machine itself, so GlintMiner can't
+tell the host's browser from another device. From 1.2.8 the image no longer allows changes by default. To change
+settings and tuning from the dashboard, add `--api-allow-remote-control` after the image name: the page then asks once
+for the remote-control code, which `docker logs <container>` shows at each start (the code is kept in the container's
+`glint.json`, so a new container makes a new one).
+
 **Why must I keep `127.0.0.1:` in `-p`?**
-Inside the container every request arrives from Docker's network, not from the machine itself, so the image allows
-changes from anywhere (`--api-allow-remote-control`). With `-p 127.0.0.1:4078:4078` only the host can reach the page.
-Publishing the port to your network would let every device on it change your settings and tuning.
+With `-p 127.0.0.1:4078:4078` only the host can reach the page. Publishing the port to your network shows your
+wallet, cards and earnings to every device on it (`-p 4078:4078` also gets past ufw's rules).
 
 **Can I use another port on the host?**
 Yes, change the host side of `-p`, for example `-p 127.0.0.1:5000:4078`, and open `http://127.0.0.1:5000`.
@@ -119,4 +126,5 @@ error is on the same line, in square brackets after the plain sentence. Times ar
 **How do I update?**
 Put the new release's `glint` next to the `Dockerfile`, build the image again, then remove the old container and
 start a new one with the same `docker run` command. Settings that were only on the dashboard don't carry over (see
-[above](#options-and-settings)). GlintMiner says in its log when a new version is out; it never updates itself.
+[above](#options-and-settings)). When a new version is out, GlintMiner says so in its log and on the dashboard, with
+the version to rebuild with; it never replaces itself in a container.

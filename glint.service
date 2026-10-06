@@ -8,8 +8,21 @@ Wants=network-online.target
 [Service]
 ExecStart=/opt/glint/glint --plain --wallet prl1YOURADDRESS --worker rig1
 WorkingDirectory=/opt/glint
+# Restart=always also starts the new version after an update (GlintMiner leaves that restart to systemd).
 Restart=always
 RestartSec=10
+# Root is needed for clock and power limit changes (NVML); the rest of the system stays out of reach.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/glint
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+UMask=0077
 
 [Install]
 WantedBy=multi-user.target

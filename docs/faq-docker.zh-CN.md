@@ -33,12 +33,12 @@ docker run -d --restart unless-stopped --gpus all -p 127.0.0.1:4078:4078 glint -
 **哪些参数在镜像中是固定的？** 镜像总是用以下参数启动 GlintMiner：
 
 ```
---plain --no-log-file --config /glint/glint.json --api-bind 0.0.0.0 --api-allow-remote-control
+--plain --no-log-file --config /glint/glint.json --api-bind 0.0.0.0
 ```
 
 在镜像名后面重复其中某个参数不会改变它：GlintMiner 使用它找到的第一个，而镜像的参数排在前面。
 
-**可以添加哪些参数？** 其他所有参数，写在镜像名后面：`--wallet`、`--worker`、`--pool`、`--devices`、`--kwh-price`、`--currency`、`--tune` 和其他调校参数、`--telegram-token` 和 `--telegram-chat`、`--share-diff`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。
+**可以添加哪些参数？** 其他所有参数，写在镜像名后面：`--wallet`、`--worker`、`--pool`、`--devices`、`--kwh-price`、`--currency`、`--tune` 和其他调校参数、`--telegram-token` 和 `--telegram-chat`、`--share-diff`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。推荐码同样写在镜像名后面：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。
 
 **我的设置保存在哪里，会保留吗？** 在容器内的 `/glint/glint.json` 中，已保存的调校结果和面板图表所用的历史记录也在它旁边。容器停止后再启动，它们都会保留。容器被删除时（例如为了更新到新镜像），它们就会丢失。所以请把想保留的一切都写在 `docker run` 命令行中；在面板上所做的更改只在那个容器存在期间有效。
 
@@ -56,7 +56,9 @@ docker run -d --restart unless-stopped --gpus all -p 127.0.0.1:4078:4078 glint -
 
 **面板在哪里？** 在宿主机上打开 **http://127.0.0.1:4078**。在容器中，它不会自动在浏览器中打开。
 
-**为什么 `-p` 中必须保留 `127.0.0.1:`？** 在容器内部，每个请求都来自 Docker 的网络，而不是来自机器本身，所以镜像允许从任何地方更改（`--api-allow-remote-control`）。使用 `-p 127.0.0.1:4078:4078` 时，只有宿主机能访问这个页面。把端口发布到你的网络，会让网络中的每台设备都能更改你的设置和调校。
+**为什么面板只能查看？** 在容器内部，每个请求都来自 Docker 的网络，而不是来自机器本身，所以 GlintMiner 无法区分宿主机的浏览器和其他设备。从 1.2.8 起，镜像默认不再允许更改。要在面板中更改设置和调校，请在镜像名之后加上 `--api-allow-remote-control`：页面会要求输入一次远程控制码，`docker logs <容器>` 在每次启动时都会显示它（代码保存在容器的 `glint.json` 中，所以新容器会生成新代码）。
+
+**为什么 `-p` 中必须保留 `127.0.0.1:`？** 使用 `-p 127.0.0.1:4078:4078` 时，只有宿主机能访问这个页面。把端口发布到你的网络，会让网络中的每台设备都能看到你的钱包、显卡和收益（`-p 4078:4078` 还会绕过 ufw 的规则）。
 
 **宿主机上可以用其他端口吗？** 可以，更改 `-p` 中宿主机一侧的端口，例如 `-p 127.0.0.1:5000:4078`，然后打开 `http://127.0.0.1:5000`。
 
@@ -72,4 +74,4 @@ docker run -d --restart unless-stopped --gpus all -p 127.0.0.1:4078:4078 glint -
 
 **日志在哪里？** `docker logs <container>`。镜像传入了 `--no-log-file`，所以没有 `glint.log`；错误的技术细节在同一行中，放在那句简短说明后面的方括号里。时间为 UTC 时间。
 
-**如何更新？** 把新版本的 `glint` 放到 `Dockerfile` 旁边，重新构建镜像，然后删除旧容器，用同样的 `docker run` 命令启动一个新容器。只在面板上设置过的内容不会保留（见[上文](#参数与设置)）。有新版本时 GlintMiner 会在日志中提示；它绝不会自行更新。
+**如何更新？** 把新版本的 `glint` 放到 `Dockerfile` 旁边，重新构建镜像，然后删除旧容器，用同样的 `docker run` 命令启动一个新容器。只在面板上设置过的内容不会保留（见[上文](#参数与设置)）。有新版本时，GlintMiner 会在日志和面板上提示，并给出用于重新构建的版本；在容器中它绝不会自行替换。

@@ -24,7 +24,7 @@
 
 **应该解压到哪里？** 解压到一个单独的、你的 Windows 账户有写入权限的文件夹，例如 `C:\GlintMiner`。GlintMiner 把所有东西都放在 `glint.exe` 旁边：你的设置（`glint.json`）、日志（`glint.log`）、图表所用的历史记录（`glint-history.jsonl`）和基准测试结果。`C:\Program Files` 这样的文件夹不合适，因为正常启动的程序无法在那里写入。
 
-**需要安装 CUDA 或其他东西吗？** 不需要。GlintMiner 使用你已经安装的 NVIDIA 驱动。你需要 Windows 10 或 11（64 位）、一张 RTX 30、40 或 50 系列显卡，以及较新的驱动：550 或更新，RTX 50 显卡需要 580 或更新。
+**需要安装 CUDA 或其他东西吗？** 不需要。GlintMiner 使用你已经安装的 NVIDIA 驱动。你需要 Windows 10 或 11（64 位）、一张 RTX 20、30、40 或 50 系列显卡，以及较新的驱动：550 或更新，RTX 50 显卡需要 580 或更新。
 
 **Windows 提示“Windows 已保护你的电脑”，有问题吗？** 没有问题。Windows SmartScreen 会对还没有被广泛下载的新程序显示这个提示。点击 **更多信息**，然后点击 **仍要运行**。只需操作一次。
 
@@ -40,11 +40,11 @@
 
 **如果在任务管理器中（或用 `taskkill /F`）结束它会怎样？** 它没有机会收尾，所以下次启动时会先处理：在任何显卡开始挖矿之前，被自动调校改动过的显卡会被恢复，日志会显示 *auto-tune: GlintMiner didn't close cleanly last time; 1 card(s) put back to stock*（上次没有正常关闭，已将 1 张显卡恢复为出厂设置）。仅由温度保护调低的功耗上限不在这份记录中，所以可能要到电脑重启后才会恢复原值。正常关闭窗口可以避免这两种情况。
 
-**在那之前，调校设置会一直留在显卡上。** 用任务管理器结束 GlintMiner 后，不要玩游戏或运行其他高负载的显卡程序：为挖矿调校的设置（尤其是让显卡以最低电压运行的*最凉最静*）可能导致游戏崩溃或黑屏。请先重新启动 GlintMiner 再正常关闭它，或者重启电脑。**要玩游戏，可以让 GlintMiner 继续运行（它会自动暂停，见下文），或用窗口的 X 或 Ctrl+C 关闭它。**
+**在那之前，调校设置会一直留在显卡上。** 用任务管理器结束 GlintMiner 后，不要玩游戏或运行其他高负载的显卡程序：为挖矿调校的设置（尤其是让显卡以最低功耗运行的*凉爽安静*）可能导致游戏崩溃或黑屏。请先重新启动 GlintMiner 再正常关闭它，或者重启电脑。**要玩游戏，可以让 GlintMiner 继续运行（它会自动暂停，见下文），或用窗口的 X 或 Ctrl+C 关闭它。**
 
 **GlintMiner 运行时可以玩游戏吗？** 可以。开启 **玩游戏时暂停**（默认开启）后，游戏使用显卡时挖矿会在约 10 秒内停止，显卡恢复出厂设置：游戏可以使用整张显卡，也绝不会在挖矿调校下运行。退出游戏一分钟后（或游戏最小化期间），挖矿继续，调校结果恢复。首页会显示 **游戏中，挖矿已暂停** 以及游戏名称。GlintMiner 根据程序对显卡图形引擎的使用程度（即任务管理器显示的那些数字）区分游戏和日常使用，所以桌面、浏览器或视频不会触发暂停。其他高负载程序也会触发（3D 编辑软件、其他挖矿程序）：在首页点 **不因 … 暂停** 放过某个程序，或在 **设置 → 游戏与计划** 中编辑列表或关闭此功能。命令行用 `--no-game-pause` 关闭。需要 Windows 10（1709 或更新）和 11 自带的 GPU 使用计数器。
 
-**能在夜里换一种方式挖矿，或在用电高峰不挖吗？** 可以：**设置 → 游戏与计划 → 使用计划**。选择时段和每个时段的模式（夜里「最凉最静」、电价高峰暂停等）。显卡只会切换到已经调校过的模式，所以计划绝不会启动调校。见[计划](auto-tune.zh-CN.md#计划)。
+**能在夜里换一种方式挖矿，或在用电高峰不挖吗？** 可以：**设置 → 游戏与计划 → 使用计划**。选择时段和每个时段的模式（夜里「凉爽安静」、电价高峰暂停等）。显卡只会切换到已经调校过的模式，所以计划绝不会启动调校。见[计划](auto-tune.zh-CN.md#计划)。
 
 **GlintMiner 能在 Windows 启动时自动运行吗？** GlintMiner 没有开机自启设置，也不会安装任何东西，所以需要你在 Windows 中设置：
 
@@ -123,7 +123,7 @@
 
 **我怎么知道有新版本？** GlintMiner 在启动时和每天一次检查 GitHub。有更新的版本时，控制台和面板会提示你，原文为 *A newer GlintMiner (…) is available at https://github.com/MaccaDaStaka/GlintMiner/releases*。它绝不会自行下载或安装任何东西。
 
-**如何更新？** 关闭 GlintMiner，把新的 `glint-…-windows.zip` 解压到同一个文件夹（替换文件），然后重新启动 `glint.exe`。你的设置、已保存的调校结果和历史记录不在压缩包里，所以会保留。详见[更新](getting-started.zh-CN.md#更新)。
+**如何更新？** 面板提示有新版本时点击**立即更新**（或运行 `glint --update`）：GlintMiner 会下载新版本、校验签名、替换程序并重启。手动更新：关闭 GlintMiner，把新的 `glint-…-windows.zip` 解压到同一个文件夹（替换文件），然后重新启动 `glint.exe`。你的设置、已保存的调校结果和历史记录不在压缩包里，所以会保留。详见[更新](getting-started.zh-CN.md#更新)。
 
 **如何卸载？** 关闭它，然后删除它的文件夹。GlintMiner 不会创建服务、注册表项或后台程序。如果你为它创建过启动快捷方式、任务计划程序任务或防火墙规则，也请一并删除。
 
@@ -135,20 +135,24 @@
 
 **需要多少内存？** 每张显卡约需 1.5 GB 系统内存（RAM）。
 
+**为什么另一张显卡调校时，这张显卡以较低功耗运行？** 矿机每次只调校一张显卡，这可能要花几个小时。如果这段时间里让等待的显卡一直保持满额出厂功耗，会浪费电并让矿机发热——包括正在调校的那张显卡，从而让它的结果不够准确。所以它们会降温运行，直到轮到自己：这段时间挖矿会略少（大约少一成），并且在轮到自己之前都会恢复满功耗。拥有自己核心超频或功耗上限的显卡会保留这些设置。要在调校期间限制整台矿机的功耗，可设置矿机功耗预算。详见[多显卡矿机](auto-tune.zh-CN.md#多显卡矿机)。
+
 ## 提示信息及其含义
 
 | 你看到的提示 | 含义 | 该怎么做 |
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | 缺少 NVIDIA 驱动 | 安装最新驱动 |
-| *No NVIDIA GPU was found. GlintMiner needs an RTX 30-series or newer card.* | Windows 找不到 GlintMiner 能用的 NVIDIA 显卡 | 检查显卡和驱动；运行 `glint --gpu-info` |
+| *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Windows 找不到 GlintMiner 能用的 NVIDIA 显卡 | 检查显卡和驱动；运行 `glint --gpu-info` |
 | *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | 驱动比你的显卡或 GlintMiner 更旧 | 更新驱动 |
-| *…is not supported: Pearl mining needs an RTX 30-series or newer* | 这张显卡太旧（GTX、RTX 20） | 跳过这张显卡；其他显卡照常挖矿 |
+| *…is not supported: Pearl mining needs an RTX 20-series or newer* | 这张显卡太旧（GTX 10 系列或更早） | 跳过这张显卡；其他显卡照常挖矿 |
+| *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | 这张显卡没有 Tensor Core（GTX 16 系列或类似显卡） | 跳过这张显卡；其他显卡照常挖矿 |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | 有其他程序在占用显卡的显存 | 关闭它，然后重新启动 |
 | *Can't look up … — check this PC's internet or DNS settings.* | 无法解析矿池的域名 | 检查电脑的网络连接 |
 | *Couldn't set up a secure connection to …; check this PC's date and time, and any antivirus or firewall that inspects traffic.* | 这台电脑上的加密连接被拒绝 | 校正时钟；在扫描网络连接的软件中允许 GlintMiner |
 | *The pool is not accepting our work (…). Pearl's rules may have changed (a network upgrade): this version needs an update.* | GlintMiner 停了下来，而不是继续发送会被拒绝的工作 | [更新](#更新与卸载) |
 | *…glint.json is not valid (delete it to run the setup again)* | 设置文件已损坏 | 删除 `glint.json`，重新进行设置 |
-| *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again.* | 驱动没有提供调校所需的控制功能 | 更新驱动；在此期间显卡以出厂设置挖矿 |
+| *Tuning needs a newer NVIDIA driver: update it and start GlintMiner again.* | 驱动低于 555，没有提供调校所需的控制功能 | 更新驱动；在此期间显卡以出厂设置挖矿 |
+| *The processor is too busy to prepare new work in time; some shares may arrive late.* | 另一个程序（病毒扫描、游戏、解压大文件）占满了所有处理器核心，矿池发来的新任务要等一会儿显卡才能开始挖，部分份额会被判为过期 | 通常无需处理：该程序结束后即恢复。在此期间 GlintMiner 以正常优先级准备工作。如果经常出现，请在不挖矿时运行完整病毒扫描，或将 GlintMiner 文件夹排除在实时扫描之外 |
 
 更多内容，包括每一条自动调校提示，见[提示信息的含义](auto-tune.zh-CN.md#提示信息的含义)和[故障排除表](faq.zh-CN.md#故障排除)。
 

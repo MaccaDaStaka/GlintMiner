@@ -19,9 +19,9 @@ knowledge, config files or command lines.
 
 ## What you need
 
-1. **An NVIDIA graphics card from the RTX 30, 40 or 50 series**, for example an RTX 3060, 3080, 4070, 4090, 5060 or
-   5090. If you play recent games on it, you almost certainly have one. Older cards (GTX, RTX 20) and AMD or Intel
-   cards aren't supported.
+1. **An NVIDIA graphics card from the RTX 20, 30, 40 or 50 series**, for example an RTX 2060, 2070, 3060, 3080, 4070,
+   4090, 5060 or 5090. If you play recent games on it, you almost certainly have one. Older cards (GTX 10 and GTX
+   16-series) and AMD or Intel cards aren't supported.
 2. **A recent NVIDIA driver.** If yours is more than a year old, update it from nvidia.com or the NVIDIA app first.
 3. **Windows 10/11 (64-bit) or Linux.** Or a rig running HiveOS or MMPOS.
 4. **About 1.5 GB of free memory (RAM) per graphics card.**
@@ -106,7 +106,7 @@ its own picks the first choice, shown in brackets).
   Type 1-4 and press Enter [1]: 1
 
   Found a Pearl address on your clipboard:
-    prl1pn0q...4syvu78w
+    prl1qxy7...3k9de4m2
     1) Use it
     2) Paste a different one
   Type 1 or 2 and press Enter [1]: 1
@@ -136,7 +136,7 @@ its own picks the first choice, shown in brackets).
     2) Best earnings: GlintMiner picks what makes the most money at your electricity price (recommended)
     3) Most hashrate: as fast as your card safely goes
     4) Less power: same speed, much less power
-    5) Coolest and quietest: lowest power, a little slower
+    5) Cool and quiet: about a third less power, clearly cooler and quieter, somewhat slower
   Type 1-5 and press Enter [1]: 1
 
   Open the dashboard (charts, earnings, settings) in your browser at start?
@@ -156,8 +156,8 @@ What each question is for:
 - **Electricity price.** Optional. With it, GlintMiner shows profit after power, not just income. Your bill shows the
   price per kWh. The currency also sets how your earnings are shown.
 - **Tune your card?** Optional and off by default. You choose by what you want: best earnings (recommended; setup asks
-  for your electricity price if you skipped it), the most hashrate, less power at the same speed, or the coolest and
-  quietest card. If you pick one, setup shows the risk in one sentence and turns
+  for your electricity price if you skipped it), the most hashrate, less power at the same speed, or a card clearly
+  cooler and quieter (Cool and quiet, at its Cooler strength; Cool and Coolest are on the dashboard). If you pick one, setup shows the risk in one sentence and turns
   tuning on only if you type **Y**. On Windows it offers to restart GlintMiner as administrator, which tuning needs.
   Say no and the card mines at stock. Read [Auto-tune](auto-tune.md) first.
 - **Open the dashboard at start?** The dashboard is a web page served by GlintMiner on your own PC, with charts,
@@ -206,8 +206,13 @@ made to you (the latest few, with a link to the pool's full history).
 
 ## Updating
 
-GlintMiner tells you when a new version is out (in the console and on the dashboard). It never downloads or installs
-anything by itself. To update:
+GlintMiner checks for a new version once a day and, by default, asks: on the dashboard click **Update now** (or
+**Later**, or **Skip this version**). It downloads the new version, checks it against GlintMiner's release signature,
+swaps it in and restarts within about a minute, with your settings. To have updates install by themselves, choose
+**Install automatically** in Settings → Updates. More in [Updates](../README.md#updates). `glint --update` does the
+same from the command line.
+
+To update by hand instead:
 
 1. Close GlintMiner.
 2. Download the new file from the [latest release](https://github.com/MaccaDaStaka/GlintMiner/releases/latest).
@@ -215,7 +220,8 @@ anything by itself. To update:
    the zip, so they stay.
 4. Start `glint.exe` again. It carries on mining with your settings.
 
-On Linux, replace `glint`. On HiveOS, point the custom miner's installation URL at the new version.
+On Linux, replace `glint`. On HiveOS, point the custom miner's installation URL at the new version (the dashboard
+shows the link when one is out).
 
 ## Stopping and uninstalling
 

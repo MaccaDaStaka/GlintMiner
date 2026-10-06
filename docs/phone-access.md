@@ -52,7 +52,10 @@ From any device other than the mining PC, the dashboard is **view only**: you se
 settings, start or pause tuning. The page says so at the top. Changes are made on the mining PC.
 
 To allow changes from your other devices too, start GlintMiner with `--api-allow-remote-control`. Only do that on a
-network you trust (your own Tailscale network is one).
+network you trust (your own Tailscale network is one). The other device then asks once for the remote-control code: it
+is printed when GlintMiner starts and shown on the mining PC's dashboard (Settings). To make a new code, delete
+`api_remote_code` from `glint.json` and restart. A page opened through a proxy on the mining PC (`tailscale serve`,
+nginx) counts as another device and needs the code too.
 
 ## Headless rigs (HiveOS, MMPOS, Linux)
 
