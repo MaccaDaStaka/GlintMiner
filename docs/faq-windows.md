@@ -163,7 +163,9 @@ turn off the NVIDIA app's automatic tuning ([Before you start](auto-tune.md#befo
 **The screen went black for a moment (or the driver reset) while it was tuning.**
 That's the tune finding the card's limit. GlintMiner logs *a GPU stopped responding; restarting GlintMiner*,
 starts itself again, puts the card back to a safe setting and carries on. It doesn't open another browser tab when
-it does this. If the whole PC froze or crashed soon after a tune was applied, the next start uses a safer setting.
+it does this. If the whole PC froze or crashed soon after a tune was applied, the next start uses a safer setting. If cards keep stopping while several tune at once (`--tune-at-once`), the rest of the tune goes one card at a
+time, and tuning pauses if they still do ([how](auto-tune.md#rigs-with-several-cards)). Restarts that keep coming
+with no card tuning wait longer each time, up to half an hour, while the cards that still work keep mining.
 
 **Can I play games while it tunes?**
 Please don't. A tune measures differences of about 1%, so games, video, local AI apps and animated wallpapers make
@@ -274,7 +276,7 @@ power while tuning, set a rig power budget. More in [Rigs with several cards](au
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | The NVIDIA driver is missing | Install the current driver |
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Windows sees no NVIDIA card GlintMiner can use | Check the card and driver; run `glint --gpu-info` |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | The driver predates your card or GlintMiner | Update the driver |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | The driver predates your card or GlintMiner | Update the driver |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | That card is too old (GTX 10-series or older) | That card is skipped; the others mine |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | That card has no tensor cores (a GTX 16-series or similar) | That card is skipped; the others mine |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Something else is using the card's memory | Close it and start again |

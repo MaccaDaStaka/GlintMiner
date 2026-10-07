@@ -32,7 +32,7 @@ MMPOS 会用你配置中的钱包和矿工名替换 `%WALLET%` 和 `%WORKER%`。
 
 **它用哪个矿池？我配置中的矿池好像被忽略了。** 启动命令没有传入矿池，所以 GlintMiner 和在其他地方一样，根据你的钱包选择矿池：Pearl 地址用最近的 HeroMiners 服务器，Kryptex 账户用 Kryptex，`COIN:address` 用 unMineable。如果想改为通过 Kryptex 以 PRL 收款，在 `START` 行中加上 `--pool stratum+ssl://prl.kryptex.network:8048`。
 
-**如何添加其他参数，比如电价或自动调校？** 把它们加到 `START` 行中，例如 `--kwh-price 0.12 --currency EUR`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。每次启动时，命令行参数都优先于 `glint.json`，所以如果你在面板上也改了某项设置，下次启动时它会变回命令行中的值。在 MMPOS 上，这包括钱包、矿工名、端口、简洁控制台和不写日志文件。推荐码也加到 `START` 行：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。要在矿机的命令行中申请成为推荐人，请在矿工程序目录中运行 `glint --become-affiliate --wallet <你的挖矿钱包>`（钱包仅用于生成匿名安装 ID；在你输入 yes 之前不会发送任何内容）。
+**如何添加其他参数，比如电价或自动调校？** 把它们加到 `START` 行中，例如 `--kwh-price 0.12 --currency EUR`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。每次启动时，命令行参数都优先于 `glint.json`，所以如果你在面板上也改了某项设置，下次启动时它会变回命令行中的值。在 MMPOS 上，这包括钱包、矿工名、端口、简洁控制台和不写日志文件。在中国大陆，请在这里加上 `--github-proxy https://v4.gh-proxy.org/`，以便获取推荐码列表和更新（[原因](faq.zh-CN.md#常见问题)）。推荐码也加到 `START` 行：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。要在矿机的命令行中申请成为推荐人，请在矿工程序目录中运行 `glint --become-affiliate --wallet <你的挖矿钱包>`（钱包仅用于生成匿名安装 ID；在你输入 yes 之前不会发送任何内容）。
 
 **可以更改端口吗？** 请保持为 4078。`START` 行和 `mmp-stats.sh` 都使用 4078，而在面板上更改的端口每次启动时都会被 `--api-port 4078` 替换。
 

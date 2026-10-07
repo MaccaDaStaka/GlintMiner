@@ -97,6 +97,19 @@ To fix it, let the fee through:
 
 Until it connects, the console says *Dev fee 1%: can't connect for a day: mining paused until it can*.
 
+**GitHub is blocked on my network (mainland China).**
+GlintMiner fetches two things from GitHub: the affiliate code list (only when you entered a code) and updates. Where
+github.com, raw.githubusercontent.com and api.github.com can't be reached, the log says once *GitHub can't be reached
+from this network*, an affiliate code shows as *not recognised* (its list couldn't be fetched) and update checks fail.
+Set a GitHub proxy: `--github-proxy https://v4.gh-proxy.org/` (HiveOS and mmpOS: in the extra arguments),
+`"github_proxy": "https://v4.gh-proxy.org/"` in `glint.json`, or **Settings → Mining → GitHub proxy** on the dashboard.
+GlintMiner then asks the proxy for the same GitHub links (the full link goes after the proxy's address). The proxy is
+only a way through: the code list is still checked against its own signing key and its issue date, and an update
+against the signed `SHA256SUMS.txt` and the package's checksum: what gets installed is signature-checked, whatever
+the proxy sends. A proxy could still announce an update that doesn't exist (it would fail those checks), so while one
+is set an update offer shows only the version, marked *(via GitHub proxy)*, without release notes. It must be an
+`https://` address. GlintMiner never uses a proxy you didn't set; `--github-proxy off` removes it.
+
 **What is an affiliate code?**
 The code of someone who referred you to GlintMiner. Enter it in setup, in **Settings → Affiliate code**, with
 `--affiliate CODE` (HiveOS and mmpOS: in the extra arguments; `--affiliate off` removes it) or as `"affiliate"` in
@@ -116,9 +129,12 @@ the fee from every rig that uses your code, paid by the pool to your PRL wallet.
 it goes: the PRL payout wallet you give, your Discord username if you give it, the install's anonymous id and the
 GlintMiner version; nothing is sent until you tick the confirmation (or type `yes`). The Discord username is optional,
 but it is how you get the Affiliate role and channel on [Discord](https://discord.gg/dXBTwVzJNy) (2–32 characters:
-lower-case letters, digits, `_` and `.`). The developer checks each request by hand; once approved, the Discord bot
-gives you the role and you get your code, and the code list is signed and published
-automatically within minutes; running miners pick it up when they start or within a day. The dashboard (or
+lower-case letters, digits, `_` and `.`). Give your username, not your display name: click your profile picture on
+Discord; the username is the smaller grey name, like `cri_ver`. The developer checks each request by hand. You don't need Discord to
+hear back: while your request waits, GlintMiner asks about every hour how it stands (sending only the install's id and
+the request's token), and once approved your code shows up by itself in the log and as a notice on the dashboard's
+Home page (with a Copy button), and on Discord too if you gave your username (the bot gives you the role). The code
+list is signed and published automatically within about 5 minutes; running miners pick it up when they start or within a day. The dashboard (or
 `--become-affiliate` again) shows whether it is waiting, approved or not.
 
 **Does GlintMiner update itself?**
@@ -140,7 +156,10 @@ No personal data. The fee's shares carry an anonymous label (card models and cou
 tuned), and from 1.2.8 GlintMiner sends an anonymous check-in every 15 minutes (the same id, version, OS, cards,
 hashrate, power, temperatures, share counts, GPU errors, how and why the last run ended, self-restarts in the last 24 h, auto-tune's state, mode, stage and time left, dev-fee
 state, update setting, driver version, the affiliate code if you entered one). Never your wallet, rig name, pool, IP address, location or tuning settings. [What exactly is sent, and why](../README.md#anonymous-check-in); turn the check-in off with
-`--no-telemetry` or `"telemetry": false` in `glint.json`. The dashboard runs on your PC.
+`--no-telemetry` or `"telemetry": false` in `glint.json`. From 1.2.9 it also sends short excerpts of its own log
+(around errors and restarts, and a short tail once an hour), redacted on your PC first: wallet, worker, pool, IP
+addresses, folders and tokens are replaced. [What exactly](../README.md#diagnostic-logs-from-129); turn that part off
+with `--no-log-share`, `"log_share": false` or Settings → Console. The dashboard runs on your PC.
 
 ## Troubleshooting
 
@@ -152,6 +171,7 @@ state, update setting, driver version, the affiliate code if you entered one). N
 | **Hashrate lower than expected** | Other programs using the card (games, video or animated wallpapers, browser tabs with video, AI apps), or the card is hot | Close them; check the temperature on the dashboard; keep the card's airflow clear |
 | **The console says the pool can't be reached** | Internet or DNS trouble, or a firewall | Check the PC's internet; GlintMiner retries and fails over by itself. `glint --net-test host:port` tests a pool |
 | **Shares rejected** | Rare; usually an unstable overclock from another tool | Reset other overclocking tools to default. GlintMiner checks every share before sending it |
+| **Stale shares right after a new job** | A slower card or an older processor took a moment to move to the pool's new job, and the pool already counted that work as stale | Use the latest version: from 1.2.9 a card moves to a new job as soon as it is ready, and new jobs are prepared sooner. If the log says the processor is too busy, close what keeps it busy |
 | **"Tuning can't start yet"** | Not running as administrator | Close GlintMiner, right-click, **Run as administrator** |
 | **"MSI Afterburner is running"** (or another tool) | That tool can change clocks during a tune | Close it; tuning starts by itself |
 | **Tuned result looks low** | The PC was busy during the tune | Leave the PC idle and **Tune again** (Rigs) |
@@ -168,8 +188,8 @@ Still stuck? Run `glint --self-test` and see [Getting help](#getting-help).
 Every release lists a SHA-256 checksum for each file in `SHA256SUMS.txt` on the release page. To check yours:
 
 - **Windows** (in PowerShell or Command Prompt, in the folder with the file):
-  `certutil -hashfile glint-1.2.7-windows.zip SHA256` (or `glint.exe`)
-- **Linux:** `sha256sum glint-1.2.7-linux.tar.gz` (or `glint`)
+  `certutil -hashfile glint-1.2.9-windows.zip SHA256` (or `glint.exe`)
+- **Linux:** `sha256sum glint-1.2.9-linux.tar.gz` (or `glint`)
 
 First check that `SHA256SUMS.txt` itself is GlintMiner's: from 1.2.8 it is signed (see [Verify your download](../README.md#verify-your-download) in the README). The result must match the line for that file in `SHA256SUMS.txt`. If it doesn't, don't run it: download it again from
 the [Releases page](https://github.com/MaccaDaStaka/GlintMiner/releases). Only download GlintMiner from this

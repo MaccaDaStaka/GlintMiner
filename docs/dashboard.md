@@ -76,9 +76,9 @@ today, the hottest card and its temperature limit, and your shares (accepted, re
 | **Dashboard** | Who can open it (this computer only, or other devices view-only), the port, and opening it at start |
 | **Appearance and language** | Light, dark or automatic theme, and the language |
 | **Telegram alerts** | A message when a card stops or the pool is lost |
-| **Mining** (advanced) | The rig (worker) name, which cards to use, and a pool override |
+| **Mining** (advanced) | The rig (worker) name, which cards to use, a pool override, and a GitHub proxy for networks that can't reach GitHub (mainland China; see the [FAQ](faq.md#questions)) |
 | **Affiliate code** | The code of whoever referred you: a quarter of the 1% fee goes to them, never more for you (see the [FAQ](faq.md#questions)) |
-| **Become an affiliate** | Ask to become an affiliate: shows exactly what is sent, sends it only after you confirm, then shows whether it is approved |
+| **Become an affiliate** | Ask to become an affiliate: shows exactly what is sent, sends it only after you confirm, then shows whether it is approved (GlintMiner checks about every hour by itself while it waits; once approved, your code also shows as a notice on Home with a Copy button, until you dismiss it). It asks for your Discord username, not your display name: the smaller grey name under your profile picture, like `cri_ver` |
 | **Console and logs** | The plain console for services and rig OSes, and whether to write `glint.log` |
 
 Changes are saved to `glint.json`. A few (the port, who can open the dashboard) apply after GlintMiner restarts; the

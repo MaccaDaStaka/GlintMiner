@@ -11,7 +11,7 @@
 ![Windows | Linux](https://img.shields.io/badge/Windows%20%7C%20Linux-supported-0a66c2)
 ![HiveOS | MMPOS | Docker](https://img.shields.io/badge/HiveOS%20%7C%20MMPOS%20%7C%20Docker-ready-555)
 
-### [⬇ Download GlintMiner 1.2.8](../../releases/latest)
+### [⬇ Download GlintMiner 1.2.9](../../releases/latest)
 Windows · Linux · HiveOS · free to use, 1% dev fee
 
 **English** · [Русский](README.ru.md) · [简体中文](README.zh-CN.md)
@@ -25,6 +25,13 @@ Windows · Linux · HiveOS · free to use, 1% dev fee
 GlintMiner mines **Pearl (PRL)** on NVIDIA GPUs. It is built to get the most Pearl out of every watt, and to be the
 easiest miner to start: no config files, no batch scripts, no command lines to learn. It asks how you want to be paid
 and where to send it, then shows you, live, what your card is making in real money.
+
+**New in 1.2.9:** big rigs tune without restart loops: cards go to factory power **one at a time** and ramp up
+gently, and tuning goes one card at a time if cards keep stopping · **safer tunes** on cards that wobble while tuning ·
+**fewer stale shares** on slower cards and older processors · re-tune **one card or one mode** (`--retune cool:cooler`)
+· **RTX 20: up to +5%** · a **GitHub proxy** for mainland China, still signature-checked · affiliates see their
+approved code in the dashboard · **redacted diagnostic logs** (on by default, `--no-log-share` turns them off; see
+[Diagnostic logs](#diagnostic-logs-from-129)). [All changes](CHANGELOG.md)
 
 **New in 1.2.8:** **RTX 50 cards mine faster**: each card tries the ways of mining at start and keeps the fastest ·
 **RTX 20 series and CMP 40HX** mine · **updates from the dashboard**, signature-checked, with automatic rollback · big
@@ -178,20 +185,25 @@ their own, [GlintMiner-affiliates](https://github.com/MaccaDaStaka/GlintMiner-af
 for code lists (never for updates, and the release key is never taken for a code list); GlintMiner checks the
 signature itself and looks
 for a newer list (at start and once a day) only when you have entered a code. The list is downloaded whole and looked
-up on your rig: nothing about you is sent for it. A code that isn't in the list is "not recognised" and the whole 1%
-goes to the developer. The affiliate's share mines on the dev fee's own servers, logged in with the affiliate's wallet
+up on your rig: nothing about you is sent for it. Where GitHub can't be reached (mainland China), set a
+[GitHub proxy](docs/faq.md#questions) so the list can be fetched; it is checked the same way. A code that isn't in the
+list is "not recognised" and the whole 1% goes to the developer. The affiliate's share mines on the dev fee's own servers, logged in with the affiliate's wallet
 and the worker name `glint` (nothing of your rig shows on their pool page); if it can't connect, or the pool refuses
 the affiliate's wallet, that share goes to the developer instead.
 
 **Become an affiliate.** Bring other miners and earn a quarter of the fee from every rig that uses your code, paid by
 the pool to your PRL wallet. Ask in Settings → Become an affiliate, or with `glint --become-affiliate` on a rig without
 a screen. Before anything is sent you see exactly what goes: the PRL payout wallet you give (it can be a different one
-from the wallet you mine to), your Discord username if you give it, the install's anonymous id and the GlintMiner
+from the wallet you mine to), your Discord username if you give it (the username, not the display name: click your
+profile picture; it's the smaller grey name, like `cri_ver`), the install's anonymous id and the GlintMiner
 version; it is sent only after you tick the confirmation (or type `yes`). The Discord username is optional, but it is
-how you get the Affiliate role and channel on [Discord](https://discord.gg/dXBTwVzJNy): when the developer approves
-your request (each one is checked by hand), the Discord bot gives you the role, and you get your code. The code list is
-signed and published automatically when your request is approved, within minutes; running miners pick it up when they
-start or within a day. The dashboard (or `--become-affiliate` again) shows whether it is waiting, approved or not.
+how you get the Affiliate role and channel on [Discord](https://discord.gg/dXBTwVzJNy). The developer checks each
+request by hand. You don't need Discord to hear back: while your request waits, GlintMiner asks the sign-up server about
+every hour how it stands (sending only the install's id and the request's token), and once it is approved your code
+shows up by itself in the log and as a notice on the dashboard's Home page (with a Copy button), and on Discord too if
+you gave your username (the bot gives you the role). The code list is signed and published automatically when your
+request is approved, within about 5 minutes; running miners pick it up when they start or within a day. The dashboard
+(or `--become-affiliate` again) also shows whether it is waiting, approved or not.
 
 ## Anonymous check-in
 
@@ -214,9 +226,13 @@ anonymous check-in over HTTPS:
     GPU fault, stopped with an error, or stopped from outside), why in one word (a GPU stopped responding while
     tuning or otherwise, a GPU error, an update, a rollback, new settings, a stop by you or the system, a crash, or
     unknown) with the GPU's number when a GPU was the cause, how many times GlintMiner restarted itself in the last
-    24 hours, the longest the cards kept mining a job after the pool had sent a newer one (a processor too busy to
-    prepare new work in time) and, after a crash, the place in GlintMiner's code as a file name and line
+    24 hours, whether tuning went one card at a time or paused because cards kept stopping while they tuned, the
+    longest the cards kept mining a job after the pool had sent a newer one (a processor too busy to prepare new work
+    in time) and, after a crash, the place in GlintMiner's code as a file name and line
     (`tune.rs:812`), never the error text;
+  - **errors:** what went wrong since the last check-in as fixed codes from GlintMiner's own list (a GPU error and its
+    CUDA error name, a lost pool connection and its kind, a rejected share), how often, what GlintMiner did about it,
+    and the card's model and number; never an error's text, a file path or an address;
   - **auto-tune's outcome:** off, tuning, tuned or partly tuned, the mode (Most hashrate, Less power, Best earnings, Cool and quiet and
     its strength) and how many cards are tuned, tuning, waiting or at stock;
   - **the dev fee's state:** paying through its own pool, paying through your pool (its own servers unreachable),
@@ -237,6 +253,35 @@ anonymous check-in over HTTPS:
   arguments; mmpOS: on the START line), or set `"telemetry": false` in `glint.json`. Mining is the same either way. A failed check-in is never
   shown and never slows mining.
 
+### Diagnostic logs (from 1.2.9)
+
+With the check-in, GlintMiner also sends the developer short, redacted excerpts of its own log, so a problem on your
+rig can be understood and fixed instead of guessed at (a rig that restarts itself many times a day says little in
+codes alone):
+
+- **What is sent:** lines GlintMiner itself wrote to its log (the lines of `glint.log`), kept in memory, so rigs
+  without a log file (HiveOS, mmpOS, Docker) are covered too: the lines around an error (up to 60 before and 20 after),
+  the last lines of a run that restarted itself, crashed or was stopped from outside (sent after the next start), and a
+  short tail of normal running at most once an hour (about 150 lines; also when the developer asks for one). Runs of
+  routine lines (new jobs, accepted shares) are cut to a count. At most 24 error excerpts, 12 previous-run excerpts and
+  30 tails a day, and 512 KB a day compressed.
+- **Redacted on your PC first:** every line is checked word by word before it is written to `glint-logshare.json` or
+  sent. A word stays only when it is one of GlintMiner's own words, a number or a short id; anything else is replaced
+  by its kind. Your wallet, worker name, pool addresses and ports, IP addresses, computer and user names, folders,
+  e-mail addresses, Telegram details, the remote-control code and any link become `<wallet>`, `<worker>`, `<pool:1>`,
+  `<ip>`, `<host>`, `<user>`, `<path>`, `<email>`, `<telegram>`, `<code>`, `<url>`, or `<x>` for any other word. A
+  pool's messages are cut to their kind (`{error 23 low_diff}`); balance lines are left out. For example:
+  `connected to <pool:1> (TLS, certificate <hex>), authorizing <wallet>.<worker>`. The server checks every line again
+  before it stores it.
+- **What stays in:** what GlintMiner's log tells you about mining: GPU numbers and models, hashrate, power,
+  temperatures, power limits, error names, job ids, times. Never any other file, program, keystroke or anything else
+  of your PC, and never the tuning debug log.
+- **Kept:** 14 days on the developer's server, read only by the developer, then deleted.
+- **How to turn it off:** `--no-log-share` (add `--save` to keep it), `"log_share": false` in `glint.json`, or on the
+  dashboard Settings → Console → *Share redacted diagnostic logs* (at once). `--no-telemetry` turns off the check-in and
+  the logs. Off, nothing is kept or written for it. GlintMiner says at every start when it is on and how to turn it
+  off; tester builds behave the same. Mining is the same either way, and nothing of it ever slows mining.
+
 ## Built to be trusted
 
 - **Every share is checked on your machine** with Pearl's own verifier before it is sent. If the Pearl network
@@ -251,7 +296,7 @@ anonymous check-in over HTTPS:
 
 ## Updates
 
-GlintMiner checks GitHub once a day for a new version. What it does then is your choice (Settings → Updates, or
+GlintMiner checks GitHub once a day for a new version (through your GitHub proxy, if you set one: see below). What it does then is your choice (Settings → Updates, or
 `--auto-update ask|auto|off`):
 
 - **Ask** (the default): the dashboard and the console say *GlintMiner X is available*, with a few lines from its
@@ -263,13 +308,21 @@ GlintMiner checks GitHub once a day for a new version. What it does then is your
 Every update is checked before anything changes. `SHA256SUMS.txt` must carry a valid signature from GlintMiner's
 release key, which is built into the program (a key that comes with a download is never trusted); the package and the
 program inside it must match their lines in that file; the version must be newer than yours; and the new program is
-started once to confirm it runs and is that version. If any check fails, nothing changes and GlintMiner says so. Your
+started once to confirm it runs and is that version. A version you pick by hand (`glint --update 1.3.0`) must be the
+release the answer describes. If any check fails, nothing changes and GlintMiner says so. Your
 settings, wallet, saved tunes and history stay, and an update never changes the dev fee.
 
 The previous program is kept next to the new one (`glint.prev.exe`, or `glint.prev` on Linux). If the new version
 fails at start, or stops again and again in its first 15 minutes, GlintMiner puts the previous one back, starts it and
 tells you: *Update to X didn't run properly on this rig, so GlintMiner went back to Y.* That version isn't offered
 again.
+
+**Where GitHub can't be reached** (mainland China), update checks fail and the log says so once. Set a GitHub proxy:
+`--github-proxy https://v4.gh-proxy.org/`, `"github_proxy"` in `glint.json`, or Settings → Mining → GitHub proxy.
+GlintMiner then asks the proxy for the same GitHub links; every check above still applies, so what gets installed is
+signature-checked whatever the proxy sends. While a proxy is set, an update offer shows only the version, marked
+*(via GitHub proxy)*, without release notes. GlintMiner never uses a proxy you didn't set. More in
+[the FAQ](docs/faq.md#questions).
 
 On **HiveOS** and **mmpOS** the system's own package manager installs GlintMiner, so it doesn't replace itself there:
 it shows the exact package link to put in the flight sheet (or the custom miner). In **Docker** it tells you which

@@ -162,7 +162,10 @@ when GlintMiner closes.* (у карты был свой разгон; тюнин
 **Карта упала во время тюнинга, и GlintMiner перезапустился.**
 Это тюнинг нашёл предел карты. GlintMiner пишет в лог *a GPU stopped responding; restarting GlintMiner* (GPU
 перестал отвечать; перезапуск GlintMiner), запускает свою новую копию и продолжает. Под systemd параметр юнита
-`Restart=always` гарантирует, что он вернётся, что бы ни случилось.
+`Restart=always` гарантирует, что он вернётся, что бы ни случилось. Если карты продолжают падать, пока несколько настраиваются сразу (`--tune-at-once`), остаток тюнинга идёт по
+одной карте, а если и так не помогает — тюнинг встаёт на паузу ([как](auto-tune.ru.md#риги-с-несколькими-картами)).
+Если перезапуски продолжаются без тюнинга, каждый следующий ждёт дольше, до получаса, а работающие карты тем временем
+майнят.
 
 ## Температура и мощность
 
@@ -260,7 +263,7 @@ GlintMiner нумерует карты в порядке CUDA, который н
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | Не удалось загрузить `libcuda.so.1` | Установите драйвер NVIDIA (не nouveau) |
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Драйвер не видит карту, которую может использовать GlintMiner | Проверьте `nvidia-smi` и `glint --gpu-info` |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | Драйвер старше вашей карты или GlintMiner | Обновите драйвер |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | Драйвер старше вашей карты или GlintMiner | Обновите драйвер |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | Эта карта слишком старая (GTX 10-й серии или старше) | Эта карта пропускается; остальные майнят |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | У этой карты нет тензорных ядер (GTX 16-й серии или подобная) | Эта карта пропускается; остальные майнят |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Память карты занята чем-то ещё | Закройте это и запустите снова |

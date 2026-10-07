@@ -27,7 +27,7 @@
 
 **矿工无法启动，提示 “CUSTOM_TEMPLATE (wallet) is empty”。** 飞行表中的钱包和矿工模板是空的。把它设为 `%WAL%`，并确认飞行表所用的钱包里填了地址。
 
-**什么都没发生，`miner` 显示 "There is no screen to be attached matching miner"；或者 HiveOS 提示自定义矿工名称应为 "glint-1.2.6"。** HiveOS 从软件包的文件名中取矿工名称，即版本号之前的部分：`glint-1.2.7.tar.gz` 得到 `glint`，也就是软件包里的文件夹名。1.2.6 及更早的软件包名为 `glint-…-hiveos.tar.gz`，HiveOS 会把它读成名为 `glint-1.2.6` 的矿工，因此无法作为 HiveOS 自定义矿工安装。请使用名为 `glint-<版本>.tar.gz` 的 HiveOS 软件包，并把 **Miner name** 设为 `glint`。另外请确认模板只写 `%WAL%`（GlintMiner 会自己加上矿机名；`%WAL%.%WORKER_NAME%` 会让地址无效），如果填写了 Pool URL，要以 `stratum+ssl://` 开头。`miner log` 会显示启动失败的原因。
+**什么都没发生，`miner` 显示 "There is no screen to be attached matching miner"；或者 HiveOS 提示自定义矿工名称应为 "glint-1.2.6"。** HiveOS 从软件包的文件名中取矿工名称，即版本号之前的部分：`glint-1.2.9.tar.gz` 得到 `glint`，也就是软件包里的文件夹名。1.2.6 及更早的软件包名为 `glint-…-hiveos.tar.gz`，HiveOS 会把它读成名为 `glint-1.2.6` 的矿工，因此无法作为 HiveOS 自定义矿工安装。请使用名为 `glint-<版本>.tar.gz` 的 HiveOS 软件包，并把 **Miner name** 设为 `glint`。另外请确认模板只写 `%WAL%`（GlintMiner 会自己加上矿机名；`%WAL%.%WORKER_NAME%` 会让地址无效），如果填写了 Pool URL，要以 `stratum+ssl://` 开头。`miner log` 会显示启动失败的原因。
 
 **GlintMiner 在 HiveOS 上会问设置问题吗？** 不会。HiveOS 通过命令行把钱包和矿机名传给它，所以它会直接开始挖矿。
 
@@ -47,7 +47,7 @@
 
 **GlintMiner 的设置保存在矿机上的哪里？** 在 `/hive/miners/custom/glint/glint.json` 中。已保存的调校结果、面板图表所用的历史记录和基准测试结果也保存在同一个文件夹中。
 
-**如何添加其他参数？** 把任何 GlintMiner 参数填入 **Extra config arguments**，例如 `--kwh-price 0.12 --currency EUR`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。推荐码也填在这里：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。要在矿机的命令行中申请成为推荐人，请在矿工程序目录中运行 `glint --become-affiliate --wallet <你的挖矿钱包>`（钱包仅用于生成匿名安装 ID；在你输入 yes 之前不会发送任何内容）。
+**如何添加其他参数？** 把任何 GlintMiner 参数填入 **Extra config arguments**，例如 `--kwh-price 0.12 --currency EUR`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。在中国大陆，请在这里加上 `--github-proxy https://v4.gh-proxy.org/`，以便获取推荐码列表和更新（[原因](faq.zh-CN.md#常见问题)）。推荐码也填在这里：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。要在矿机的命令行中申请成为推荐人，请在矿工程序目录中运行 `glint --become-affiliate --wallet <你的挖矿钱包>`（钱包仅用于生成匿名安装 ID；在你输入 yes 之前不会发送任何内容）。
 
 ## HiveOS 中的统计数据
 
@@ -82,6 +82,8 @@
 **GlintMiner 有调校所需的权限吗？** 它会自己检查。如果无法更改显卡的设置，显卡会以出厂设置挖矿，日志会显示 *Tuning needs administrator rights: … (on Linux, with sudo). Until then this card mines at stock.*（调校需要管理员权限：…（Linux 上使用 sudo）。在此之前这张显卡以出厂设置挖矿。），面板会显示“调优还无法开始”。
 
 **调校在 HiveOS 中是什么样子？** 显卡全程都在挖矿，调校期间会稍慢一些；在快的显卡上，调校大约需要 1 到 1.5 小时。在 GlintMiner 的面板上查看进度和结果。详见[调校期间](auto-tune.zh-CN.md#调校期间)。
+
+**我的 CMP 40HX 只有约 45 TH/s，还能更高吗？** 通常可以：差别在于频率，而不是矿工软件。CMP 40HX 的算力随核心频率变化（使用 GlintMiner 约每 GHz 32–33 TH/s），在出厂电压下，显卡大约在 1400 MHz 就达到功耗上限，也就是你看到的约 45 TH/s。在其额定的 1650 MHz 下约为 52–54 TH/s；要在同样的功耗内达到这个频率，显卡需要在该频率下使用更低的电压。在 HiveOS 中就是把核心锁定（Core lock）在 1650，并加上正的核心偏移（一份公开的此卡调校用的是 +255；小步增加，如果显卡出错或矿机卡死就退回），功耗上限设为显卡允许的最高值。降低显存频率（例如 -2000）可以省几瓦，而且不影响算力。GlintMiner 的自动调校（Speed）会自己达到同样的效果，并检查每一步是否出错；它需要 470 或更新的驱动（见上）。两者选其一，不要同时使用（见上）。
 
 ## 温度与功耗
 
@@ -121,14 +123,18 @@
 
 **GlintMiner 的 GPU 编号和 HiveOS 的对不上。** GlintMiner 按 CUDA 的顺序给显卡编号，在装有不同显卡的矿机上，这个顺序可能与 HiveOS 显示的不同。要确认哪张是哪张，在矿机上运行 `/hive/miners/custom/glint/glint --gpu-info`：它会列出每张显卡的编号、名称和 PCI 总线地址。`--tune-card` 也接受总线地址。
 
+**如何只重新调校一张显卡？** 在 GlintMiner 的面板上：矿机 → 该显卡的调优面板 → **重新调优这张显卡（当前模式）**（在矿机本机上，或输入远程控制码）。也可以在 **Extra config arguments** 中加上 `--tune-card 07:00.0=efficiency --retune`（显卡的总线地址或编号，以及要重新调校的模式）：只有这张显卡在该模式下从出厂设置重新调校，它其他模式的结果和其他显卡的调校结果都保留。想让所有显卡只重新调校一个模式、保留其他模式（例如保留不错的“更省电”结果，重做“凉爽安静”）：`--retune cool:cooler`（或 `speed`、`efficiency`、`profit`、`cool`）。不带模式也不带 `--tune-card` 的 `--retune` 会重新调校所有显卡的所有模式。调校开始后请删掉 `--retune`：HiveOS 每次启动矿工都会传入 Extra config arguments，如果一直留着，每次启动都会从出厂设置重新调校。
+
 **为什么另一张显卡调校时，这张显卡以较低功耗运行？** 矿机每次只调校一张显卡，这可能要花几个小时。如果这段时间里让等待的显卡一直保持满额出厂功耗，会浪费电并让矿机发热——包括正在调校的那张显卡，从而让它的结果不够准确。所以它们会降温运行，直到轮到自己：这段时间挖矿会略少（大约少一成），并且在轮到自己之前都会恢复满功耗。拥有自己核心超频或功耗上限的显卡会保留这些设置。要在调校期间限制整台矿机的功耗，可设置矿机功耗预算。详见[多显卡矿机](auto-tune.zh-CN.md#多显卡矿机)。
+
+**多张显卡同时调校（`--tune-at-once`）时，GlintMiner 不断自行重启。** 每张正在调校的显卡都以出厂满功耗上限运行；使用你自己功耗上限的显卡会逐张切换，间隔 20 秒，每张约用一分钟分几步升上去，矿机功耗平稳上升，AutoFan 也跟得上（日志会在启动时说明可能多耗多少瓦）。如果电源仍然承受不了，请使用 `--tune-at-once 1` 或 `--tune-power-budget`。多张显卡同时测量出厂算力时会同时满功耗运行，有些电源和转接卡（riser）承受不了。半小时内出现三次这样的停止响应后，GlintMiner 会把剩下的显卡改为一次调校一张（*Several cards stopped responding while tuning together; tuning carries on one card at a time*）。如果显卡仍不断停止响应，或在显卡调校期间 15 分钟内自行重启六次，调校会暂停：尚未调校的显卡以出厂设置挖矿，已调校的显卡保留调校结果，面板会说明原因。请检查电源和转接卡，然后点击“继续调优”（一次一张）或“重新调优”。如果在没有显卡调校时仍不断重启，每次重启前会等待更久（5 分钟，最多半小时），期间仍正常的显卡会继续挖矿。详见[多显卡矿机](auto-tune.zh-CN.md#多显卡矿机)。
 
 ## 提示信息及其含义
 
 | 你在日志中看到的提示 | 含义 | 该怎么做 |
 |---|---|---|
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | 没有 GlintMiner 能用的显卡 | 检查矿机的显卡和驱动 |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | 矿机的驱动太旧 | 更新矿机上的 NVIDIA 驱动 |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | 矿机的驱动太旧 | 更新矿机上的 NVIDIA 驱动 |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | 这张显卡太旧（GTX 10 系列或更早） | 跳过它；其他显卡照常挖矿 |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | 这张显卡没有 Tensor Core（GTX 16 系列或类似显卡） | 跳过它；其他显卡照常挖矿 |
 | *The dashboard and stats API couldn't start: port 4078 is already in use…* | 有其他程序占用了这个端口 | 停止那个程序，或使用 `--api-port` |

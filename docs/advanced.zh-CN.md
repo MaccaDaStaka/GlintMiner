@@ -53,9 +53,9 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 | `--confirm-tuning` | 确认你接受自动调校的风险（会被保存） |
 | `--tune-card 0=speed,1=cool:coolest,2=off` | 为每张显卡设置模式（`default` 跟随 `--tune`；只写 `cool` 表示矿机的程度）；未列出的显卡跟随 `--tune` |
 | `--tune-exclude 0,2` | 其他显卡调校时，让这几张显卡保持出厂设置 |
-| `--retune` | 清除已保存的调校结果，所有显卡从出厂设置重新调校 |
+| `--retune [模式]` | 清除所有模式下已保存的调校结果，所有显卡从出厂设置重新调校。带上模式时（`--retune cool:cooler`、`--retune efficiency`；单写 `cool` 表示 `--cool-strength` 的强度），只清除该模式的调校结果，各显卡其他模式的结果保留。与 `--tune-card` 一起使用时，只重新调校其中列出的显卡，各按列出的模式（`--tune-card 07:00.0=efficiency --retune`）；它们其他模式的结果以及其他显卡的调校结果都保留。调校开始后请删掉它：如果一直留着（例如 HiveOS 飞行表），每次启动都会重新调校 |
 | `--tune-reset` | 清除已保存的调校结果、各卡模式和排除列表，并关闭调校 |
-| `--tune-at-once N` | 同时调校最多 N 张显卡（默认 1）。**每张正在调校的显卡以出厂设置运行 1–2 小时，比你自己的超频更热、更吵**：同时 N 张就是 N 张显卡同时处于出厂设置。请设置固定风扇转速（70% 以上），并确认散热和电源能承受；出现崩溃时也更难确定是哪张显卡引起的。等待中的显卡保留自己的设置，或以较低功耗运行 |
+| `--tune-at-once N` | 同时调校最多 N 张显卡（默认 1）。**每张正在调校的显卡以出厂设置运行 1–2 小时，比你自己的超频更热、更吵**：同时 N 张就是 N 张显卡同时处于出厂设置。请让风扇随温度调节（HiveOS 或 mmpOS 的 AutoFan、风扇曲线），或设置 70% 以上的固定转速，并确认散热和电源能承受；出现崩溃时也更难确定是哪张显卡引起的。等待中的显卡保留自己的设置，或以较低功耗运行。如果多张显卡同时调校时不断有显卡停止响应，剩下的调校会改为一次一张；如果仍然如此，调校会暂停（[说明](auto-tune.zh-CN.md#多显卡矿机)） |
 | `--tune-power-budget 瓦数` | 显卡调校期间，让整台矿机保持在这个瓦数以下（0 或 `off`：不限制，默认）。会先降低等待中显卡的功耗；只有在预算允许时显卡才开始调校。也可在设置中修改 |
 | `--speed-power-raise max` | “算力最高”可以给每张显卡增加多少功耗，从安全到冒险：`none`（从不高于默认）、`low`（最多多 10%）、`medium`（最多多 25%）或 `max`（最高到显卡自身的上限，默认）；也可以写每张显卡最多增加的瓦数，如 `50`。也可在设置中修改。见[多显卡矿机](auto-tune.zh-CN.md#多显卡矿机) |
 | `--speed-power-raise-card 0=none,1=50` | 为单张显卡（按编号或 PCI 总线 ID）设置同样的内容，取代 `--speed-power-raise`；`rig` 表示重新跟随矿机的设置。保存为 `speed_power_raise_cards` |
@@ -67,6 +67,7 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 | `--share-diff N` | 仅限 Kryptex：向矿池申请的份额难度（0 = 自动） |
 | `--auto-update ask` | 更新：`ask`（默认：由你选择立即更新、稍后或跳过）、`auto`（在没有显卡处于调优过程中时安装，然后重启）或 `off`（不检查）。见[更新](../README.zh-CN.md#更新) |
 | `--affiliate 推荐码` | 推荐你的人的推荐码（`off` 可删除；保存在 `glint.json` 的 `"affiliate"` 中）。你仍然只付 1%：其中四分之一归推荐人。见[常见问题](faq.zh-CN.md#常见问题) |
+| `--github-proxy 网址` | 用于无法访问 GitHub 的网络（中国大陆）：通过它请求 GitHub 链接的代理，例如 `https://v4.gh-proxy.org/`（`off` 可删除；保存在 `glint.json` 的 `"github_proxy"` 中，也可在 设置 → 挖矿 中设置）。用于推荐码列表和更新，它们仍然校验签名。见[常见问题](faq.zh-CN.md#常见问题) |
 | `--api-port 4078` | 面板端口 |
 | `--api-bind 0.0.0.0` | 向你的网络开放面板（其他设备仅可查看） |
 | `--api-allow-remote-control` | 同时允许从这些设备更改设置，需输入远程控制码（启动时打印，并显示在本机控制面板上；仅在你信任的网络中使用） |
@@ -74,6 +75,7 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 | `--telegram-token TOKEN`, `--telegram-chat ID` | 显卡停止或矿池断开时通过 Telegram 提醒 |
 | `--plain` | 输出纯文本日志行，而不是实时表格（适用于系统服务、矿机系统、读屏软件） |
 | `--no-log-file` | 不写入 `glint.log` |
+| `--no-log-share` | 不随签到发送 GlintMiner 日志的脱敏片段（默认开启；在 `glint.json` 中保存为 `"log_share"`，也可在“设置 → 控制台”中设置）。`--no-telemetry` 会同时关闭签到和日志。见[诊断日志](../README.zh-CN.md#诊断日志129-起) |
 | `--save` | 将这些参数写入 `glint.json` |
 | `--config PATH` | 使用其他设置文件（默认：`glint` 旁边的 `glint.json`） |
 
@@ -85,12 +87,12 @@ glint --wallet prl1... --tune speed --confirm-tuning --save
 |---|---|
 | `glint --self-test` | 端到端检查显卡、驱动和挖矿代码，然后退出。提交 bug 报告时请附上它的输出 |
 | `glint --gpu-info` | 列出你的 NVIDIA 显卡及其编号、显存、驱动和计算能力 |
-| `glint --bench 60` | 离线挖矿 60 秒并报告算力（结果会被保存） |
+| `glint --bench 60` | 离线挖矿 60 秒并报告算力（结果会被保存）。RTX 50 显卡会先像每次启动时那样比较它的几种挖矿方式（需要几分钟），然后用它保留的那种方式测试；结果行会说明是哪一种 |
 | `glint --benchmarks` | 显示已保存的基准测试结果 |
 | `glint --pools ADDRESS` | 显示某个地址会使用哪个矿池和线路 |
 | `glint --net-test host:port` | 测试到矿池服务器的连接 |
 | `glint --update [版本]` | 检查新版本，校验签名后安装并启动（如果这台电脑上已在运行 GlintMiner，则由它自行更新）；`版本` 可指定某个发布版本，也可以是更旧的；`--no-start` 只安装 |
-| `glint --become-affiliate` | 在没有屏幕的矿机上申请成为推荐人：显示将发送的全部内容，只在你输入 `yes` 后发送；再次运行可查看状态（等待中、已通过并附推荐码、未通过或已撤销） |
+| `glint --become-affiliate` | 在没有屏幕的矿机上申请成为推荐人：显示将发送的全部内容，只在你输入 `yes` 后发送；再次运行可查看状态（等待中、已通过并附推荐码、未通过或已撤销）。申请等待期间，正在运行的矿工也会大约每小时自动查询一次，通过后把推荐码写进日志并显示在面板上 |
 
 ## 多显卡与多台矿机
 

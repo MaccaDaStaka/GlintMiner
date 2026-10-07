@@ -40,7 +40,7 @@ The flight sheet's wallet and worker template is empty. Set it to `%WAL%` and ma
 an address.
 
 **Nothing happens, and `miner` says "There is no screen to be attached matching miner"; or HiveOS says the custom miner name should be "glint-1.2.6".**
-HiveOS takes the miner's name from the package's file name, everything before the version: `glint-1.2.7.tar.gz` gives
+HiveOS takes the miner's name from the package's file name, everything before the version: `glint-1.2.9.tar.gz` gives
 `glint`, the folder inside the package. Packages up to 1.2.6 were named `glint-…-hiveos.tar.gz`, which HiveOS reads as a
 miner called `glint-1.2.6`, so they can't be installed as a HiveOS custom miner. Use the HiveOS package named
 `glint-<version>.tar.gz` and set the **Miner name** to `glint`. Also check the template is `%WAL%` alone (GlintMiner
@@ -78,6 +78,7 @@ results are kept in the same folder.
 **How do I add other options?**
 Put any GlintMiner options in **Extra config arguments**, for example `--kwh-price 0.12 --currency EUR`. The full list
 is in [All options](advanced.md#all-options).
+In mainland China, add `--github-proxy https://v4.gh-proxy.org/` there so the affiliate code list and updates can be fetched ([why](faq.md#questions)).
 An affiliate code goes there too: `--affiliate CODE` ([what it is](faq.md#questions)). To become an affiliate from the rig's shell, run `glint --become-affiliate --wallet <your mining wallet>` in the miner's folder (the wallet is only for the anonymous install id; nothing is sent until you type yes).
 
 ## Stats in HiveOS
@@ -171,6 +172,16 @@ The card keeps mining the whole time, a little slower while it tunes; tuning tak
 card. Follow the progress and the result on GlintMiner's dashboard. More in
 [While it tunes](auto-tune.md#while-it-tunes).
 
+**My CMP 40HX mines about 45 TH/s. Can it do more?**
+Usually, yes: the difference is the clock, not the miner. A CMP 40HX's hashrate follows its core clock (about 32-33
+TH/s per GHz with GlintMiner), and at its factory voltage the card reaches its power limit at about 1,400 MHz, which is
+the ~45 TH/s you see. At its rated 1,650 MHz it does about 52-54 TH/s; to get there within the same power the card needs
+a lower voltage at that clock. In HiveOS that is a core clock lock at 1650 with a positive core offset (a published
+tune for this card used +255; raise it in small steps and back off if the card errors or the rig freezes) and the power limit as high
+as the card allows. A memory underclock (such as -2000) saves a few watts and doesn't cost hashrate. GlintMiner's
+auto-tune (Speed) reaches the same kind of result by itself and checks each step for errors; it needs driver 470 or
+newer, as above. Use one or the other, not both (see above).
+
 ## Temperature and power
 
 **Does GlintMiner fight HiveOS over fans?**
@@ -242,6 +253,15 @@ arguments**. Allow about 1.5 GB of system memory per card.
 GlintMiner numbers cards in CUDA's order, which on a rig with different cards can differ from the order HiveOS shows.
 To see which is which, run `/hive/miners/custom/glint/glint --gpu-info` on the rig: it lists each card's number, name and PCI bus address. `--tune-card` also takes the bus address.
 
+**How do I re-tune one card?**
+On GlintMiner's dashboard: Rigs → the card's tuning panel → **Tune this card again (this mode)** (on the rig itself,
+or with the remote-control code). Or in **Extra config arguments**: `--tune-card 07:00.0=efficiency --retune` (the
+card's bus address or number, and the mode to tune again) tunes only that card again from stock, in that mode; its tunes
+for other modes and the other cards' tunes are kept. To tune one mode again on every card and keep the others (a good
+Less power tune, a Cool and quiet one to redo): `--retune cool:cooler` (or `speed`, `efficiency`, `profit`, `cool`).
+`--retune` alone tunes every card again, in every mode. Remove `--retune` once the tune has begun: HiveOS passes the
+Extra config arguments at every miner start, so left in, it starts the tune over from stock at every start.
+
 **Why does a card run at lower power while another card tunes?**
 A rig tunes one card at a time, which can take hours. Leaving the waiting cards at full stock power that whole time
 wastes electricity and heats the rig — including the card being tuned, which can make its result less accurate. So
@@ -249,12 +269,25 @@ they run cooler until their turn: they mine a little less meanwhile (about a ten
 power back before its own turn. A card with its own core overclock or power limit keeps it. To cap the whole rig's
 power while tuning, set a rig power budget. More in [Rigs with several cards](auto-tune.md#rigs-with-several-cards).
 
+**GlintMiner keeps restarting itself while several cards tune together (`--tune-at-once`).**
+Each card tuning runs at its full factory power limit; cards on a power limit of your own go there one at a time, 20
+seconds apart, each in steps over about a minute, so the rig's draw rises gradually and AutoFan keeps up (the log says
+at the start how much more it may draw). If the power supply still can't carry it, use `--tune-at-once 1` or
+`--tune-power-budget`. Several cards measuring stock together all run at full power together, which some power
+supplies and risers can't take. After three such hangs within half an hour, GlintMiner tunes the rest one card at a
+time (*Several cards stopped responding while tuning together; tuning carries on one card at a time*). If cards still
+keep stopping, or it restarts itself six times within 15 minutes while cards tune, tuning pauses: cards not yet tuned
+mine at stock, tuned cards keep their tune, and the dashboard says why. Check the power supply and risers, then Resume
+tuning (one card at a time) or Tune again on the dashboard. Restarts that keep coming with no card tuning wait longer
+each time (5 minutes, up to half an hour) while the cards that still work keep mining. More in [Rigs with several
+cards](auto-tune.md#rigs-with-several-cards).
+
 ## Messages and what they mean
 
 | What you see in the log | What it means | What to do |
 |---|---|---|
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | No card GlintMiner can use | Check the rig's cards and driver |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | The rig's driver is too old | Update the NVIDIA driver on the rig |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | The rig's driver is too old | Update the NVIDIA driver on the rig |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | That card is too old (GTX 10-series or older) | It is skipped; the others mine |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | That card has no tensor cores (a GTX 16-series or similar) | It is skipped; the others mine |
 | *The dashboard and stats API couldn't start: port 4078 is already in use…* | Another program uses the port | Stop it, or use `--api-port` |

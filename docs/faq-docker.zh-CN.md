@@ -38,7 +38,7 @@ docker run -d --restart unless-stopped --gpus all -p 127.0.0.1:4078:4078 glint -
 
 在镜像名后面重复其中某个参数不会改变它：GlintMiner 使用它找到的第一个，而镜像的参数排在前面。
 
-**可以添加哪些参数？** 其他所有参数，写在镜像名后面：`--wallet`、`--worker`、`--pool`、`--devices`、`--kwh-price`、`--currency`、`--tune` 和其他调校参数、`--telegram-token` 和 `--telegram-chat`、`--share-diff`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。推荐码同样写在镜像名后面：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。
+**可以添加哪些参数？** 其他所有参数，写在镜像名后面：`--wallet`、`--worker`、`--pool`、`--devices`、`--kwh-price`、`--currency`、`--tune` 和其他调校参数、`--telegram-token` 和 `--telegram-chat`、`--share-diff`。完整列表见[全部参数](advanced.zh-CN.md#全部参数)。推荐码同样写在镜像名后面：`--affiliate 推荐码`（[这是什么](faq.zh-CN.md#常见问题)）。在中国大陆，请在镜像名后面加上 `--github-proxy https://v4.gh-proxy.org/`，以便推荐码列表和检查更新能访问 GitHub（[原因](faq.zh-CN.md#常见问题)）。
 
 **我的设置保存在哪里，会保留吗？** 在容器内的 `/glint/glint.json` 中，已保存的调校结果和面板图表所用的历史记录也在它旁边。容器停止后再启动，它们都会保留。容器被删除时（例如为了更新到新镜像），它们就会丢失。所以请把想保留的一切都写在 `docker run` 命令行中；在面板上所做的更改只在那个容器存在期间有效。
 

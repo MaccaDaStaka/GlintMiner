@@ -11,7 +11,8 @@
    - **Pool URL:** leave empty to let GlintMiner choose the nearest server, or enter your own `stratum+ssl://host:port`
      (for example `stratum+ssl://prl.kryptex.network:8048` to be paid in PRL through Kryptex: 2% fee, paid for every
      share, sent to your wallet from 1 PRL)
-   - **Extra config arguments:** optional, e.g. `--kwh-price 0.12 --currency EUR`
+   - **Extra config arguments:** optional, e.g. `--kwh-price 0.12 --currency EUR` (in mainland China, also
+     `--github-proxy https://v4.gh-proxy.org/`, so the affiliate code list and updates can be fetched)
 4. Apply the Flight Sheet to your rig.
 
 The rig name from HiveOS is used as the worker name. Hashrate, temperatures, fans and shares appear in the HiveOS

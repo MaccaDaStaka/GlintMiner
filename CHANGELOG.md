@@ -2,6 +2,141 @@
 
 All notable changes to GlintMiner are listed here.
 
+## [1.2.9] - 2026-10-07
+
+### Added
+- **A GitHub proxy for networks that can't reach GitHub (mainland China).** `--github-proxy https://v4.gh-proxy.org/`,
+  `"github_proxy"` in `glint.json`, or Settings → Mining → GitHub proxy: the affiliate code list, update checks and
+  update downloads are asked of the proxy, the full GitHub link after its address. The proxy is only a way through:
+  the code list is still checked against its own key, serial and issue date, and an update against the signed
+  `SHA256SUMS.txt` and the package's checksum: what gets installed is signature-checked. While a proxy is set, an
+  update offer shows only the version, marked *(via GitHub proxy)*, without release notes (the proxy could announce a
+  release that doesn't exist). It must be `https://` in plain ASCII, with a server name, no user name, a port from 1
+  to 65535 if any, and not this PC's or the local network's own address (anything else is refused, saying why); a
+  redirect may lead only to the proxy itself (same port) or, for a download, to GitHub's file hosts. A version picked
+  by hand (`glint --update 1.3.0`) must be the release the answer describes. GlintMiner never uses a proxy you didn't set: when GitHub can't be reached it says once
+  *GitHub can't be reached from this network; if you're in mainland China, set --github-proxy
+  https://v4.gh-proxy.org/ (the code list and updates stay signature-checked)*, and the dashboard says the same next
+  to an affiliate code that couldn't be checked. FAQ: *GitHub is blocked on my network*.
+
+- **The anonymous check-in reports errors as fixed codes.** What went wrong since the last check-in now goes with it,
+  so the developer sees which errors hit which cards, drivers and versions across all rigs and can fix them sooner: a
+  GPU error with its CUDA error name, a card that stopped responding or whose driver did, a lost pool or dev-fee
+  connection with its kind (DNS, timeout, secure connection, refused login), a rejected share by its kind, an update
+  or affiliate code list that couldn't be fetched or checked, a tuning error, a crash's place in the code, and what
+  GlintMiner did about each (restarted the card, restarted itself, gave up, carried on), with how often and when,
+  the card's model and number and whether it was tuning. Only words from GlintMiner's own list and numbers are sent:
+  never an error's text, a file path, a pool address, a wallet, an IP address or a tuning setting. Errors are kept
+  until a check-in carrying them is delivered, also across a restart (in `glint-lastrun.json`), so the error that made
+  GlintMiner restart itself is reported after the restart; at most 12 go in one check-in. `--no-telemetry` turns this
+  off with the rest of the check-in.
+
+- **Redacted diagnostic logs with the check-in (on by default; `--no-log-share` turns them off).** Error codes say what
+  went wrong, not why: a HiveOS rig with six RTX 3090s restarted itself 77 times in a day and the developer could only
+  guess at the cause. GlintMiner now also sends short excerpts of its own log: the lines around an error, the last
+  lines of a run that restarted itself, crashed or was stopped from outside (after the next start), and a short tail
+  of normal running at most once an hour, or when the developer asks for one. Every line is redacted on the PC before
+  it is written to `glint-logshare.json` or sent: a word stays only when it is one of GlintMiner's own words, a number
+  or a short id, anything else is replaced by its kind, so the wallet, worker, pool addresses, IP addresses, computer
+  and user names, folders, e-mail addresses, Telegram details, the remote-control code and links become `<wallet>`,
+  `<worker>`, `<pool:1>`, `<ip>`, `<host>`, `<user>`, `<path>` and so on; a pool's messages are cut to their kind and
+  balance lines are left out. Only GlintMiner's own log lines, never any other file of the PC, never the tuning debug
+  log. Bounded: at most 24 error excerpts, 12 previous-run excerpts and 30 tails a day, 512 KB a day compressed, kept 14
+  days on the developer's server. Turn it off with `--no-log-share`, `"log_share": false` or Settings → Console →
+  *Share redacted diagnostic logs* (EN/RU/ZH); `--no-telemetry` turns off the check-in and the logs. The start-up log,
+  setup, the dashboard, the README (*Diagnostic logs*, EN/RU/ZH) and the FAQ say so. A save from the dashboard no
+  longer turns the check-in back on after `--no-telemetry` without `--save` (it took the setting from `glint.json`).
+
+- **You hear back about an affiliate sign-up without Discord.** While a sign-up from this install waits, GlintMiner
+  asks the sign-up server how it stands by itself, a minute or two after the start and then about every hour (only the
+  install's id and the sign-up's token, as the Check status button sends; it stops once the answer is in, and
+  remembers it across restarts). Once approved, the log says *Your affiliate application was approved: your code is
+  …* and the dashboard's Home page shows the code with a Copy button until you dismiss it (a rejection or a withdrawn
+  code is said the same way, with the Discord link for questions). The sign-up texts no longer say the code only
+  comes on Discord: it shows up in GlintMiner's dashboard and log, and on Discord too if you gave your username.
+
+### Changed
+- **`--retune` with `--tune-card` re-tunes only the cards listed.** A HiveOS rig's owner wanted one of six RTX 3090s
+  tuned again and ran `--tune-card 07:00.0=efficiency --retune`, which tuned the whole rig again. Now `--retune`
+  together with `--tune-card` forgets the saved tunes of only the cards named there (by number or bus id), as **Tune
+  this card again** on the dashboard does; the other cards keep theirs. `--retune` on its own still tunes every card
+  again. A start with `--retune` now says in the log *--retune re-tunes from stock at every start; remove it once the
+  tune has begun*: a flight sheet passes it at every start (a restart GlintMiner makes itself never repeats it). FAQ:
+  *How do I re-tune one card?* (HiveOS).
+- **Re-tune one mode and keep the others.** The same rig's owner had a good Less power tune and a Cool and quiet
+  (Cooler) tune he wanted redone, and tried `--retune cool:cooler`. A card's retune (**Tune this card again**, now
+  labelled *(this mode)*, or `--tune-card <card>=<mode> --retune`) now forgets only the card's saved tune for the mode
+  it tunes in; its tunes for other modes are kept, so switching back to one applies it at once. `--retune <mode>`
+  (`--retune cool:cooler`, `--retune efficiency`, ...) re-tunes that mode on every card that has a tune for it and
+  keeps every other mode; an unknown mode is refused with a message. `--retune` alone, and the dashboard's whole-rig
+  **Re-tune** (whose question now says so), still forget every mode. A retune still forgets the card's crash records
+  from earlier runs, as before, but no longer one made in the current run: a setting that crashed since GlintMiner
+  started stays avoided.
+- **Fewer stale shares on slower cards and older processors.** A tester's HiveOS rig (CMP 40HX and RTX 3060 Ti cards
+  on a dual-core Core i3, mining on Kryptex) had its stale shares come in right after each new job. A card used to
+  finish the stretch of work it was on, and the next one it had already lined up, on the old job before it moved to
+  a new one: over 2 seconds on a CMP 40HX, while Kryptex already called those shares stale. A card now moves to the
+  new job as soon as it is ready, within a fraction of a second (on a slow card it lines up less old work while the
+  new job is being prepared). Once the pool has shown that it drops a replaced job at once, a card waits the moment
+  the new job takes to prepare instead of making shares that could only come back stale. Work done on the old job
+  still counts in the hashrate, and the dev fee stays exactly 1% of the work done. Mining between job changes is
+  exactly as before.
+- **New jobs are ready sooner on older processors.** Preparing a new job is about a quarter quicker (it hashes the
+  same 2 GB, with less around it), and it now goes first: your pool's job before the dev fee's when both come at
+  once (on a new block every pool sends one), at normal priority while cards mine, and with no card preparing more
+  work for the old job meanwhile. Each job also takes about 2 MB of memory instead of about 130 MB.
+- **Cards that keep stopping while several tune together: one at a time.** With `--tune-at-once`, every card tuning
+  measures stock at full power, together; a rig whose power supply or risers can't take that lost a card again and
+  again (6x RTX 3090 + a 4070 Ti, `--tune-at-once 7`, Cool: GlintMiner restarted itself 24 times in 23 minutes). Now
+  three hangs within half an hour while more than one card tunes send the rest of the tune one card at a time
+  (*Several cards stopped responding while tuning together; tuning carries on one card at a time*), kept across
+  GlintMiner's own restarts. If cards still stop one at a time (three more within half an hour), or GlintMiner
+  restarts itself six times within 15 minutes while cards tune, tuning pauses: every card mines at stock or on its
+  own settings and says why. Resume tuning carries on one card at a time; Tune again, or starting GlintMiner by hand,
+  tunes as you set it. The log, the dashboard and the check-in say it plainly.
+- **Cards on your own overclock go to factory settings one at a time.** A HiveOS rig (6x RTX 3090 + a 4070 Ti, each on
+  its own power limit, `--tune-at-once 7`, Efficiency) switched all seven cards to factory settings within seconds of
+  every start: the rig's draw jumped by hundreds of watts, a card dropped out within a minute or so, and GlintMiner
+  restarted itself into the same thing, 77 times in a day. Now, when several cards start or resume tuning together (at
+  a start, after GlintMiner restarts itself, or when tuning resumes), each goes to factory settings 20 seconds after
+  the one before, and its power limit rises from yours to the factory limit in steps over about a minute before its
+  stock is measured, so the rig's draw rises gradually and fans that follow the temperature (HiveOS AutoFan, a fan
+  curve) keep up: the same rig's 4070 Ti, on AutoFan, reached about 90 °C right after the switch and was stopped by
+  the temperature guard. Cards not yet switched keep your settings meanwhile. It adds about a minute per card to the
+  tune (a few minutes to a whole rig's, against hours). With `--tune-at-once` above 1 and cards on power limits of
+  their own, the start now says plainly that each tuning card goes to its full factory power limit, about how many
+  watts more the rig will draw than on your settings, and to use `--tune-at-once 1` or `--tune-power-budget` if the
+  power supply can't carry that.
+- A card that stops while it measures stock together with other cards isn't held to account for it (it is the rig's
+  power, not a setting), and stock is never recorded as a setting a card crashed at.
+- **Auto-tune leaves more headroom on cards that showed instability while tuning.** An RTX 4090 that stopped
+  responding twice while it tuned settled close to where it had failed: the setting held through its checks, then
+  crashed the PC a few minutes into mining. A card that stops responding or hits a GPU error while it tunes now keeps
+  its full safety margin from where that happened, and its final check runs about three times as long, so trouble
+  that only shows after a while shows there, under watch, instead of while you mine. Such a card's tune takes 10 to 30
+  minutes longer and may end slightly lower. Cards that tune without a fault tune exactly as before.
+- **A tuned card that hits a GPU error steps back for good.** It still moves to a safer setting at once, but no longer
+  tries the setting that failed again after a few days of stable mining, nor when the room is cooler (a card that only
+  returned a bad result still earns its setting back as before). Tune again starts afresh.
+- **Restarting itself again and again with no card tuning, GlintMiner waits longer between restarts:** after six
+  within 15 minutes, five minutes before the next, then five more each time, at most half an hour. The cards that
+  still work keep mining meanwhile, and the log says what to check.
+- **The affiliate sign-up asks for your Discord *username*, not your display name:** click your profile picture; it's
+  the smaller grey name, like `cri_ver` (dashboard and `glint --become-affiliate`).
+- **RTX 20: up to 5% more hashrate on cards whose SM count left part of the card idle.** The RTX 20 kernel works in
+  launches of 1024 columns; where a launch's tiles didn't divide evenly over the card's SMs, some sat idle at the end of
+  every launch. Launches are now sized to the card: measured on rented cards at stock, same power: Quadro RTX 5000
+  (48 SMs, like the RTX 2080 SUPER) +5.2%, Titan RTX +3.3%, RTX 2070 SUPER +1.2%, RTX 2070 (36 SMs, like the CMP
+  40HX) +1.3%, every hit and pool share valid. RTX 2060, 2060 SUPER and 2080 Ti were already even and run as before.
+- **FAQ (HiveOS): why a CMP 40HX mines about 45 TH/s and how it gets to 52-54:** its core clock, held near 1,400 MHz
+  by the power limit at factory voltage; a core lock near 1650 with a positive core offset, or auto-tune's Speed mode.
+
+### Fixed
+- **`glint --bench` on RTX 50 cards measures the way the card mines.** It measured while the card was still comparing
+  its ways of mining, mostly the usual way: 3–4% under what the card then mined. It now runs the same comparison as
+  every start, with shorter windows (about 30 s per way), measures the one the card keeps, and says which in its
+  result line.
+
 ## [1.2.8] - 2026-10-06
 
 ### Security

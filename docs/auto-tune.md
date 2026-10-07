@@ -39,7 +39,10 @@ Your card's result will be different, because every chip is. Many cards find a f
 hashrate on less power (from under a tenth to nearly half less, depending on the card). **Cool and quiet** goes further
 on power, for some hashrate: from about 90% of stock speed on 25–50% less power to 70–75% of stock speed on 45–60%
 less, as you choose. A card with little headroom may find nothing worth keeping, and then
-it simply stays at stock (see [No stable gain](#what-the-messages-mean)).
+it simply stays at stock (see [No stable gain](#what-the-messages-mean)). A card already held back by its own power
+limit at stock has little to gain: a 600 W RTX 5090 mines about the same with Most hashrate as at stock (about 420
+TH/s), and Less power saves only about 10 W on it. A smaller card can do better on power: an RTX 2060 SUPER holds its
+stock 49.7 TH/s with Less power on about 167 W instead of 182 W.
 
 ## The choices
 
@@ -141,6 +144,12 @@ makes the result worse. For the best result:
    so the tune starts from real stock, and puts your own settings back when it closes.
 4. **Run it as administrator** (Windows) or root (Linux). Changing clocks needs it. On Windows GlintMiner offers to
    restart itself as administrator when tuning is on; Windows asks you to allow it.
+5. **Let the fans follow the temperature.** A card being tuned runs at factory power, so it gets hotter than with your
+   own overclock. GlintMiner never touches fans, so use a temperature-based fan instead of a fixed low speed: HiveOS or
+   mmpOS AutoFan with a temperature target (on 3090-class cards a memory target too), or a fan curve in MSI Afterburner
+   (the card's own default curve favours quiet and can let it run hot), or a fixed 70% or more. With a temperature
+   target, a tuning card's fan rises by itself and drops back once it's tuned. If a card
+   still gets too hot, GlintMiner pauses it until it cools, so the tune just takes longer.
 
 ## Turning it on
 
@@ -191,12 +200,18 @@ power) or the power saved at a share of stock speed (Cool and quiet), with the h
   a safer setting and says so (*Backed off to a safer setting after an error*). If the PC freezes or crashes soon
   after a tune is applied, the next start uses a safer setting too. A small loss of speed is always better than an
   unstable card.
-- **It earns the setting back.** After three days of stable mining at the safer setting, running no hotter than when
-  it erred, the card tries its tuned setting once more, under the same long check as the original tune (never while
+- **It earns the setting back after a bad result.** If the error was a bad result (not a GPU error), then after
+  three days of stable mining at the safer setting, running no hotter than when it erred, the card tries its tuned
+  setting once more, under the same long check as the original tune (never while
   a game pauses mining or another card tunes). If it holds, the tune is back (*Regained its tuned setting after 3 days
   of stable mining*). If not, the card goes straight back to the safer setting and waits twice as long before the next
-  try: 6 days, then 12; after the third try it keeps the safer setting until you tune it again. A tune the PC crashed
-  at keeps its safer setting for good.
+  try: 6 days, then 12; after the third try it keeps the safer setting until you tune it again. A setting the card
+  hit a GPU error or stopped responding at, or the PC crashed at, isn't tried again: the card keeps its safer setting
+  for good (until you tune it again).
+- **A card that had trouble while tuning keeps more headroom.** If a card stops responding or hits a GPU error during
+  its tune, its result keeps its full safety margin from where that happened and its final check runs about three
+  times as long, so the tune takes a little longer and may end slightly lower. Cards that tune without trouble aren't
+  affected.
 - **A new NVIDIA driver** means the card is tuned again, since a driver can change how the card behaves.
 
 ## Rigs with several cards
@@ -222,6 +237,24 @@ power) or the power saved at a share of stock speed (Cool and quiet), with the h
   keeps its tune, and gets the power back when the rig cools (at night, say).
 - **A crash while one card tests a setting is put down to that setting,** even when the driver stops every card (as
   it does on Windows): the cards already tuned keep their tunes.
+- **Cards with their own overclock go to factory settings one at a time.** A card tuning starts from factory settings,
+  at its full default power limit: a card on a power limit of your own (a 3090 at 220 W, say) goes to 350 W. When
+  several cards start or resume tuning together (`--tune-at-once`, a start or restart, Resume tuning), they make that
+  switch one at a time, 20 seconds apart, so the rig's draw rises gradually instead of by hundreds of watts at once;
+  the cards not yet switched keep your settings meanwhile. And each card's power limit rises from yours to the factory
+  limit in steps over about a minute before its stock is measured, so fans that follow the temperature keep up. It
+  adds about a minute per card. With `--tune-at-once` above 1 the log says at the start how much more the rig may draw
+  than on your settings; if the power supply can't carry that, use `--tune-at-once 1` or `--tune-power-budget`.
+- **With `--tune-at-once`, cards that keep stopping make it tune one at a time.** Several cards measuring stock
+  together all run at full power together, which some power supplies and risers can't take. If cards stop responding
+  three times within half an hour while more than one card tunes, the rest of the tune goes one card at a time
+  (*Several cards stopped responding while tuning together; tuning carries on one card at a time*), and a card that
+  stopped while measuring stock with others isn't held to account for it: that is the rig's power, not a setting. If
+  cards keep stopping one at a time (three more within half an hour), or GlintMiner restarts itself six times within
+  15 minutes while cards tune, tuning pauses: every card mines at stock or on its own settings, and says why. Check
+  the power supply and risers, then **Resume tuning** (one card at a time) or **Tune again** (as you set it); starting
+  GlintMiner again by hand does the same as Tune again. Restarts that keep coming with no card tuning wait longer each
+  time (5 minutes, up to half an hour), and the cards that still work keep mining meanwhile.
 - **A power budget for the rig (optional).** **Settings → Temperature and power → Rig power budget while tuning**, or
   `--tune-power-budget 1800`: while cards tune, the whole rig is kept under that many watts. The waiting cards are held
   lower first (never under their minimum); a card starts tuning only when the rig fits the budget with that card at
@@ -291,7 +324,9 @@ GlintMiner watches every card's temperature all the time, tuned or not.
 
 | You want to… | Dashboard | Command line |
 |---|---|---|
-| Tune again from stock | Rigs → **Tune again** | `--retune` |
+| Tune the whole rig again from stock (every card's saved tunes, in every mode, are forgotten) | Rigs → **Tune again** | `--retune` |
+| Tune one mode again on every card (tunes for other modes are kept) | — | `--retune cool:cooler` (or `speed`, `efficiency`, `profit`, `cool`; 1.2.9) |
+| Tune one card again from stock in its mode (its tunes for other modes, and the other cards' tunes, are kept) | Rigs → the card's tuning panel → **Tune this card again (this mode)** (on the mining PC, or with the remote-control code; not on view-only pages) | `--tune-card 07:00.0=efficiency --retune` (the card's bus id or number, and the mode to tune again; 1.2.9) |
 | Pause tuning | Rigs → **Pause** | — |
 | Change the mode | Settings → Tuning | `--tune efficiency` |
 | Change how cool Cool and quiet runs | Settings → Tuning → **Cool**, **Cooler** or **Coolest** | `--cool-strength coolest` |
@@ -357,10 +392,12 @@ its own mode, and where two times overlap the first in the list wins.
 | **MSI Afterburner is running** (or another tool) | That tool can change clocks mid-tune | Close it (and its *apply at startup*); tuning starts by itself within a minute |
 | **Waiting for another card to finish tuning** | One card tunes at a time | Nothing; it starts when its turn comes |
 | **Carrying on after a restart** | The card crashed while testing its limit, or GlintMiner restarted | Nothing; this is normal during a tune |
-| **No stable gain** | Nothing beat stock without errors on this card | Nothing; it stays at stock. Try again another day, or after a driver update |
-| **Backed off to a safer setting** | The card made an error while mining tuned | Nothing; it's safer now, and it tries its tuned setting again by itself after a few days of stable mining. **Tune again** if you don't want to wait |
+| **No stable gain** | Nothing beat stock without errors on this card | Nothing; it stays at stock. To try again another day, or after a driver update: **Tune this card again (this mode)** in the card's tuning panel (or `--tune-card <bus id>=<mode> --retune`) |
+| **Backed off to a safer setting** | The card made an error while mining tuned | Nothing; it's safer now. After a bad result it tries its tuned setting again by itself after a few days of stable mining; after a GPU error it keeps the safer setting. **Tune again** if you don't want to wait |
 | **… as far as this card goes** | Cool and quiet reached 70% of stock speed before saving its strength's share of power | Nothing; that's this card's limit for Cool and quiet. A lower strength, or Less power, if you'd rather keep more hashrate |
 | **This card can't be tuned** | The driver doesn't allow clock changes on it | Nothing; it mines at stock |
+| **Several cards stopped responding while tuning together; tuning carries on one card at a time** | Cards stopped responding three times within half an hour while more than one tuned: the power supply or risers may not take several cards at full power together | Nothing; the rest of the tune goes one card at a time. If it keeps happening, check the power supply and risers |
+| **Cards kept stopping responding while tuning, even one at a time; tuning is paused** (or **GlintMiner kept restarting itself while cards tuned; tuning is paused**) | Cards kept stopping one at a time too, or GlintMiner restarted itself six times within 15 minutes while cards tuned. Cards not yet tuned mine at stock; cards already tuned keep their tune | Check the power supply and risers, then **Resume tuning** (one card at a time) or **Tune again**; starting GlintMiner by hand does the same as Tune again ([more](#rigs-with-several-cards)) |
 
 ## The risk, plainly
 

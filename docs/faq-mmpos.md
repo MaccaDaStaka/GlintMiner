@@ -51,6 +51,7 @@ Add them to the `START` line, for example `--kwh-price 0.12 --currency EUR`. The
 [All options](advanced.md#all-options). Options on the command line win over `glint.json` at every start, so a
 setting you also change on the dashboard goes back to the command line's value at the next start. On MMPOS that is
 the wallet, the worker name, the port, the plain console and no log file.
+In mainland China, add `--github-proxy https://v4.gh-proxy.org/` there so the affiliate code list and updates can be fetched ([why](faq.md#questions)).
 An affiliate code goes on the `START` line too: `--affiliate CODE` ([what it is](faq.md#questions)). To become an affiliate from the rig's shell, run `glint --become-affiliate --wallet <your mining wallet>` in the miner's folder (the wallet is only for the anonymous install id; nothing is sent until you type yes).
 
 **Can I change the port?**

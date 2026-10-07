@@ -56,6 +56,7 @@ Everything else, after the image name: `--wallet`, `--worker`, `--pool`, `--devi
 `--tune` and the other tuning options, `--telegram-token` and `--telegram-chat`, `--share-diff`. The full list is in
 [All options](advanced.md#all-options).
 An affiliate code goes there too: `--affiliate CODE` after the image name ([what it is](faq.md#questions)).
+In mainland China, add `--github-proxy https://v4.gh-proxy.org/` after the image name so the affiliate code list and update checks can reach GitHub ([why](faq.md#questions)).
 
 **Where are my settings kept, and do they survive?**
 In `/glint/glint.json` inside the container, with the saved tunes and the history behind the dashboard's charts next

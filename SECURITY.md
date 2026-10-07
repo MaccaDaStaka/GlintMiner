@@ -21,7 +21,14 @@
   program inside it match that file, and the version is newer than yours (an older one only when you pick it with
   `glint --update VERSION`). Any failed check leaves everything as it was. The previous program is kept as
   `glint.prev.exe` / `glint.prev` and put back if the new version doesn't run properly. An update never touches your
-  settings, wallet, the dev fee or the release key. On HiveOS, mmpOS and Docker it never replaces itself.
+  settings, wallet, the dev fee or the release key. On HiveOS, mmpOS and Docker it never replaces itself. A version
+  you pick by hand must be the release the answer describes.
+- Uses a GitHub proxy only if you set one (`--github-proxy`, for networks that can't reach GitHub, such as mainland
+  China): the same GitHub links (updates, and the affiliate code list if you entered a code) are then asked of it. The
+  proxy is only a way through: every check above still applies, and the code list is still checked against its own
+  signing key, so what the proxy sends can't change what gets installed or which codes count. While a proxy is set,
+  an update offer shows only the version, marked *(via GitHub proxy)*, without release notes. The proxy must be an
+  `https://` address and not this computer's or the local network's own.
 - Serves its dashboard on `127.0.0.1:4078`, reachable from this computer only, unless you choose `--api-bind 0.0.0.0`.
   Even then, other devices on your network can only view it: settings and tuning can be changed from this computer
   alone, unless you also start GlintMiner with `--api-allow-remote-control`. Only do that on a network you trust.

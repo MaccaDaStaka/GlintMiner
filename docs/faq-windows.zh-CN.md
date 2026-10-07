@@ -85,7 +85,7 @@
 
 **我已经给显卡超频了（在 MSI Afterburner 或 NVIDIA App 中），会怎样？** 调校之前，GlintMiner 会把显卡恢复为出厂设置，让调校从真正的出厂状态开始，日志会显示 *Your card had its own overclock; tuning starts from factory settings and puts yours back when GlintMiner closes.*（你的显卡有自己的超频设置；调校从出厂设置开始，GlintMiner 关闭时会恢复你的设置。）你自己的设置会在 GlintMiner 关闭时恢复，崩溃后则在下次启动时恢复。为获得最佳结果，还请关闭 NVIDIA App 的自动调优（[开始之前](auto-tune.zh-CN.md#开始之前)）。
 
-**调校时屏幕黑了一下（或驱动重置了）。** 这是调校在寻找显卡的极限。GlintMiner 会记录 *a GPU stopped responding; restarting GlintMiner*（某张显卡停止响应，正在重启 GlintMiner），自行重新启动，把显卡恢复到安全的设置并继续。这时它不会再打开一个浏览器标签页。如果某个调校结果应用后不久整台电脑死机或崩溃，下次启动时会使用更稳妥的设置。
+**调校时屏幕黑了一下（或驱动重置了）。** 这是调校在寻找显卡的极限。GlintMiner 会记录 *a GPU stopped responding; restarting GlintMiner*（某张显卡停止响应，正在重启 GlintMiner），自行重新启动，把显卡恢复到安全的设置并继续。这时它不会再打开一个浏览器标签页。如果某个调校结果应用后不久整台电脑死机或崩溃，下次启动时会使用更稳妥的设置。如果多张显卡同时调校（`--tune-at-once`）时不断有显卡停止响应，剩下的调校会改为一次一张；如果仍然如此，调校会暂停（[说明](auto-tune.zh-CN.md#多显卡矿机)）。如果在没有显卡调校时仍不断重启，每次重启前会等待更久，最多半小时，期间仍正常的显卡会继续挖矿。
 
 **调校时可以玩游戏吗？** 请不要这样做。调校测量的差异大约只有 1%，所以游戏、视频、本地 AI 应用和动态壁纸都会让结果变差。让电脑保持空闲，最好在夜间进行。显卡调校完成后，你就可以照常使用电脑了。
 
@@ -143,7 +143,7 @@
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | 缺少 NVIDIA 驱动 | 安装最新驱动 |
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Windows 找不到 GlintMiner 能用的 NVIDIA 显卡 | 检查显卡和驱动；运行 `glint --gpu-info` |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | 驱动比你的显卡或 GlintMiner 更旧 | 更新驱动 |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | 驱动比你的显卡或 GlintMiner 更旧 | 更新驱动 |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | 这张显卡太旧（GTX 10 系列或更早） | 跳过这张显卡；其他显卡照常挖矿 |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | 这张显卡没有 Tensor Core（GTX 16 系列或类似显卡） | 跳过这张显卡；其他显卡照常挖矿 |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | 有其他程序在占用显卡的显存 | 关闭它，然后重新启动 |

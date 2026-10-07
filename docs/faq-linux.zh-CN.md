@@ -92,7 +92,7 @@ cd glint
 
 **能让一些显卡用我自己的超频、另一些用自动调校吗？** 可以。模式为 **关闭** 的显卡会完全保持原样。在面板上按显卡设置，或使用 `--tune-card 0=speed,1=off`（显卡可以用编号或 PCI 总线地址指定，例如 `01:00.0`）。
 
-**显卡在调校时崩溃，GlintMiner 重启了。** 这是调校在寻找显卡的极限。GlintMiner 会记录 *a GPU stopped responding; restarting GlintMiner*（某张显卡停止响应，正在重启 GlintMiner），启动一个新的自身副本并继续。在 systemd 下，单元中的 `Restart=always` 确保无论发生什么它都会回来。
+**显卡在调校时崩溃，GlintMiner 重启了。** 这是调校在寻找显卡的极限。GlintMiner 会记录 *a GPU stopped responding; restarting GlintMiner*（某张显卡停止响应，正在重启 GlintMiner），启动一个新的自身副本并继续。在 systemd 下，单元中的 `Restart=always` 确保无论发生什么它都会回来。如果多张显卡同时调校（`--tune-at-once`）时不断有显卡停止响应，剩下的调校会改为一次一张；如果仍然如此，调校会暂停（[说明](auto-tune.zh-CN.md#多显卡矿机)）。如果在没有显卡调校时仍不断重启，每次重启前会等待更久，最多半小时，期间仍正常的显卡会继续挖矿。
 
 ## 温度与功耗
 
@@ -142,7 +142,7 @@ cd glint
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | 无法加载 `libcuda.so.1` | 安装 NVIDIA 官方驱动（不是 nouveau） |
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | 驱动找不到 GlintMiner 能用的显卡 | 检查 `nvidia-smi` 和 `glint --gpu-info` |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | 驱动比你的显卡或 GlintMiner 更旧 | 更新驱动 |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | 驱动比你的显卡或 GlintMiner 更旧 | 更新驱动 |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | 这张显卡太旧（GTX 10 系列或更早） | 跳过这张显卡；其他显卡照常挖矿 |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | 这张显卡没有 Tensor Core（GTX 16 系列或类似显卡） | 跳过这张显卡；其他显卡照常挖矿 |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | 有其他程序在占用显卡的显存 | 关闭它，然后重新启动 |

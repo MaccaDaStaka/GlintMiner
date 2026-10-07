@@ -176,7 +176,10 @@ GlintMiner). Ваши собственные настройки возвраща
 Это тюнинг нашёл предел карты. GlintMiner пишет в лог *a GPU stopped responding; restarting GlintMiner* (GPU
 перестал отвечать; перезапуск GlintMiner), запускается заново, возвращает карте безопасную настройку и продолжает.
 При этом он не открывает новую вкладку браузера. Если вскоре после применения настройки завис или упал весь ПК,
-следующий запуск использует более безопасную настройку.
+следующий запуск использует более безопасную настройку. Если карты продолжают падать, пока несколько настраиваются сразу (`--tune-at-once`), остаток тюнинга идёт по
+одной карте, а если и так не помогает — тюнинг встаёт на паузу ([как](auto-tune.ru.md#риги-с-несколькими-картами)).
+Если перезапуски продолжаются без тюнинга, каждый следующий ждёт дольше, до получаса, а работающие карты тем временем
+майнят.
 
 **Можно играть, пока идёт тюнинг?**
 Пожалуйста, не надо. Тюнинг измеряет различия примерно в 1%, поэтому игры, видео, локальные ИИ-приложения и живые
@@ -294,7 +297,7 @@ GlintMiner проверяет GitHub при запуске и раз в день
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | Драйвера NVIDIA нет | Установите актуальный драйвер |
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | Windows не видит карту NVIDIA, которую может использовать GlintMiner | Проверьте карту и драйвер; запустите `glint --gpu-info` |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | Драйвер старше вашей карты или GlintMiner | Обновите драйвер |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | Драйвер старше вашей карты или GlintMiner | Обновите драйвер |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | Эта карта слишком старая (GTX 10-й серии или старше) | Эта карта пропускается; остальные майнят |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | У этой карты нет тензорных ядер (GTX 16-й серии или подобная) | Эта карта пропускается; остальные майнят |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Память карты занята чем-то ещё | Закройте это и запустите снова |

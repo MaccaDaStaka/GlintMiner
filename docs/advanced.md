@@ -55,9 +55,9 @@ Options given on the command line are used for that run. Add `--save` to write t
 | `--confirm-tuning` | Confirms you accept auto-tune's risk (saved) |
 | `--tune-card 0=speed,1=cool:coolest,2=off` | A mode for each card (`default` follows `--tune`; plain `cool` is the rig's strength); cards not listed follow `--tune` |
 | `--tune-exclude 0,2` | Keep these cards at stock while the others tune |
-| `--retune` | Forget the saved tunes and tune every card again from stock |
+| `--retune [MODE]` | Forget the saved tunes and tune every card again from stock, in every mode. With a mode (`--retune cool:cooler`, `--retune efficiency`; plain `cool` is the `--cool-strength`), only the tunes for that mode are forgotten; every card's tunes for other modes are kept. With `--tune-card`, only the cards listed there tune again, in the mode listed for each (`--tune-card 07:00.0=efficiency --retune`); their tunes for other modes and the other cards' tunes are kept. Remove it once the tune has begun: left in (a HiveOS flight sheet), it starts over at every start |
 | `--tune-reset` | Forget saved tunes, per-card modes and exclusions, and turn tuning off |
-| `--tune-at-once N` | Tune up to N cards at the same time (default 1). **Every card tuning runs at factory settings, hotter and louder than your own overclock, for 1–2 hours**: N at once means N cards at stock together. Set fixed fan speeds (70%+) and make sure cooling and power can take it; a crash is harder to pin on the card that caused it. Cards waiting keep their own settings, or run at reduced power |
+| `--tune-at-once N` | Tune up to N cards at the same time (default 1). **Every card tuning runs at factory settings, hotter and louder than your own overclock, for 1–2 hours**: N at once means N cards at stock together. Let the fans follow the temperature (HiveOS or mmpOS AutoFan, a fan curve) or set a fixed speed of 70% or more, and make sure cooling and power can take it; a crash is harder to pin on the card that caused it. Cards waiting keep their own settings, or run at reduced power. If cards keep stopping while several tune together, the rest of the tune goes one card at a time, and tuning pauses if they still do ([how](auto-tune.md#rigs-with-several-cards)) |
 | `--tune-power-budget WATTS` | While cards tune, keep the whole rig under this many watts (0 or `off`: none, the default). Waiting cards are held lower first; a card starts tuning only when it fits. Also in Settings |
 | `--speed-power-raise max` | How much power Most hashrate may add to each card, safer to riskier: `none` (never above stock), `low` (up to 10% more), `medium` (up to 25% more) or `max` (up to the card's own maximum, the default); or the most watts to add per card, like `50`. Also in Settings. See [Rigs with several cards](auto-tune.md#rigs-with-several-cards) |
 | `--speed-power-raise-card 0=none,1=50` | The same for one card (by number or PCI bus id) in place of `--speed-power-raise`; `rig` follows the rig's again. Saved as `speed_power_raise_cards` |
@@ -69,6 +69,7 @@ Options given on the command line are used for that run. Add `--save` to write t
 | `--share-diff N` | Kryptex only: the share difficulty to ask for (0 = automatic) |
 | `--auto-update ask` | Updates: `ask` (default: you choose Update now, Later or Skip), `auto` (install at a moment no card is mid-tune, then restart) or `off` (no checks). See [Updates](../README.md#updates) |
 | `--affiliate CODE` | The affiliate code of whoever referred you (`off` removes it; kept in `glint.json` as `"affiliate"`). You still pay 1%: a quarter of it goes to the affiliate. See [the FAQ](faq.md#questions) |
+| `--github-proxy URL` | For networks that can't reach GitHub (mainland China): a proxy the GitHub links are asked through, like `https://v4.gh-proxy.org/` (`off` removes it; kept in `glint.json` as `"github_proxy"`, or set in Settings → Mining). Used for the affiliate code list and updates, which stay signature-checked. See [the FAQ](faq.md#questions) |
 | `--api-port 4078` | The dashboard's port |
 | `--api-bind 0.0.0.0` | Open the dashboard to your network (view-only from other devices) |
 | `--api-allow-remote-control` | Also allow changes from those devices, with the remote-control code shown at start and on this PC's dashboard (only on a network you trust) |
@@ -76,6 +77,7 @@ Options given on the command line are used for that run. Add `--save` to write t
 | `--telegram-token TOKEN`, `--telegram-chat ID` | Alerts on Telegram when a card stops or the pool is lost |
 | `--plain` | Plain log lines instead of the live table (services, rig OSes, screen readers) |
 | `--no-log-file` | Don't write `glint.log` |
+| `--no-log-share` | Don't send redacted excerpts of GlintMiner's log with the check-in (on by default; kept in `glint.json` as `"log_share"`, also in Settings → Console). `--no-telemetry` turns off the check-in and the logs. See [Diagnostic logs](../README.md#diagnostic-logs-from-129) |
 | `--save` | Write these options to `glint.json` |
 | `--config PATH` | Use another settings file (default: `glint.json` next to `glint`) |
 
@@ -87,12 +89,12 @@ The full list is always in `glint --help`. Auto-tune in depth: [Auto-tune](auto-
 |---|---|
 | `glint --self-test` | Checks the card, driver and the mining code end to end, then exits. Include its output in bug reports |
 | `glint --gpu-info` | Lists your NVIDIA cards with their numbers, memory, driver and compute capability |
-| `glint --bench 60` | Mines offline for 60 seconds and reports the hashrate (the result is saved) |
+| `glint --bench 60` | Mines offline for 60 seconds and reports the hashrate (the result is saved). An RTX 50 card first compares its ways of mining, as every start does (a few minutes), and the bench measures the one it keeps; the result line says which |
 | `glint --benchmarks` | Shows saved benchmark results |
 | `glint --pools ADDRESS` | Shows which pool and route an address would use |
 | `glint --net-test host:port` | Tests the connection to a pool server |
 | `glint --update [VERSION]` | Checks for a new version, verifies its signature and installs it, then starts it (a GlintMiner running on this PC updates itself instead); `VERSION` picks a release, an older one too; `--no-start` installs only |
-| `glint --become-affiliate` | Sign up as an affiliate on a rig without a screen: shows exactly what is sent and sends it only after you type `yes`; run it again to see the status (pending, approved with your code, rejected or revoked) |
+| `glint --become-affiliate` | Sign up as an affiliate on a rig without a screen: shows exactly what is sent and sends it only after you type `yes`; run it again to see the status (pending, approved with your code, rejected or revoked). A running miner also checks about every hour by itself while it waits and puts your code in its log and on the dashboard once approved |
 
 ## Several GPUs and several rigs
 

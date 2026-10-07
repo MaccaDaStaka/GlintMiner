@@ -153,7 +153,9 @@ Yes. A card whose mode is **Off** is left exactly as it is. Set it per card on t
 **The card crashed while tuning and GlintMiner restarted.**
 That's the tune finding the card's limit. GlintMiner logs *a GPU stopped responding; restarting GlintMiner*, starts
 a fresh copy of itself and carries on. Under systemd, the unit's `Restart=always` makes sure it comes back whatever
-happens.
+happens. If cards keep stopping while several tune at once (`--tune-at-once`), the rest of the tune goes one card at a
+time, and tuning pauses if they still do ([how](auto-tune.md#rigs-with-several-cards)). Restarts that keep coming
+with no card tuning wait longer each time, up to half an hour, while the cards that still work keep mining.
 
 ## Temperature and power
 
@@ -245,7 +247,7 @@ GlintMiner numbers cards in CUDA's order, which on a machine with different card
 |---|---|---|
 | *No NVIDIA driver was found. Install the current GeForce driver from nvidia.com and start again.* | `libcuda.so.1` couldn't be loaded | Install NVIDIA's driver (not nouveau) |
 | *No NVIDIA GPU was found. GlintMiner needs an RTX 20-series or newer card.* | The driver sees no card GlintMiner can use | Check `nvidia-smi` and `glint --gpu-info` |
-| *Your NVIDIA driver is too old for this GPU. Update to driver 550 or newer (580+ for RTX 50) and start again.* | The driver predates your card or GlintMiner | Update the driver |
+| *Your NVIDIA driver is too old for this GPU. Update to driver 570 or newer (580+ for RTX 50) and start again.* | The driver predates your card or GlintMiner | Update the driver |
 | *…is not supported: Pearl mining needs an RTX 20-series or newer* | That card is too old (GTX 10-series or older) | That card is skipped; the others mine |
 | *…is not supported: Pearl mining needs tensor cores (an RTX 20-series or newer)* | That card has no tensor cores (a GTX 16-series or similar) | That card is skipped; the others mine |
 | *The GPU ran out of memory. Close other GPU programs (games, other miners) and start again.* | Something else is using the card's memory | Close it and start again |
